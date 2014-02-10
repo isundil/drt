@@ -1,13 +1,16 @@
+DEBUG=	-g3
 
-SRC=	main.cpp
+SRC=	main.cpp					\
+		config/Config.cpp			\
+		config/ConfigParam.cpp
 
 OBJ=	$(SRC:.cpp=.o)
 
-NAME=	drt
+NAME=	./drt
 
-CXX=	clang++
+CXX=	clang++ -std=c++11
 
-CXXFLAGS=	-W -Wall -Wextra
+CXXFLAGS=	-W -Wall -Wextra $(DEBUG)
 
 LDFLAGS=
 
@@ -24,5 +27,14 @@ fclean:	clean
 
 re:	fclean all
 
-.PHONY:	all clean fclean re
+run:	all
+	$(NAME)
+
+memleaks:	all
+	valgrind $(NAME)
+
+degub:	all
+	gdb $(NAME)
+
+.PHONY:	all clean fclean re run
 
