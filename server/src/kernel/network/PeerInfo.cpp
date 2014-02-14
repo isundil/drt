@@ -4,7 +4,7 @@
 
 using namespace drt::network;
 
-PeerInfo::PeerInfo(Socket *s): closing(true), socket(s)
+PeerInfo::PeerInfo(Socket *s, unsigned short _id): closing(true), socket(s), id(_id)
 { }
 
 PeerInfo::~PeerInfo()
@@ -24,5 +24,16 @@ bool PeerInfo::isClosing() const
 
 void PeerInfo::read(WorkerManager &manager)
 {
+#warning "Unimplemented"
+	(void) manager;
+	//TODO read from socket and add operation to manager
+}
+
+unsigned short PeerInfo::getId() const
+{ return id; }
+
+PeerInfo *PeerInfo::getMe()
+{
+	return new PeerInfo(nullptr, 1);
 }
 

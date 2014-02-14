@@ -18,6 +18,7 @@ class NetworkWorker: public AWorker
 	{
 		public:
 			NetworkWorker(WorkerManager &manager, unsigned int id);
+			~NetworkWorker();
 			virtual void nextOp(Operation *); //Do nothing
 			virtual void start(); // Do network listen
 			virtual void stop(); //close sockets
@@ -25,6 +26,8 @@ class NetworkWorker: public AWorker
 		private:
 			drt::network::ServerSocket * server;
 			std::list <drt::network::PeerInfo *> clients;
+			drt::network::PeerInfo *myself;
+			unsigned short biggerId;
 
 			void readAll();
 	};

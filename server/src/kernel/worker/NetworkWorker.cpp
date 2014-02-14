@@ -13,7 +13,7 @@
 
 using namespace drt::worker;
 
-NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AWorker(_manager, _id)
+NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AWorker(_manager, _id), myself(drt::network::PeerInfo::getMe()), biggerId(myself->getId())
 {
 	const drt::parser::ServerSection *config;
 
@@ -26,6 +26,11 @@ NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AW
 		new drt::network::ServerSocket(config->getPort());
 		_manager.log(std::cout, *this, ss.str());
 	}
+}
+
+NetworkWorker::~NetworkWorker()
+{
+	delete myself;
 }
 
 void NetworkWorker::start()

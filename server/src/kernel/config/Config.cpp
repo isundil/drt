@@ -133,6 +133,7 @@ int Config::parseParamFull(char **str)
 
 bool Config::parseParamShort(char *str)
 {
+#warning "Unimplemented method"
 	//TODO parse
 	(void)str;
 	return true;

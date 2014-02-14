@@ -22,6 +22,7 @@ void Worker::stop()
 
 void Worker::nextOp(Operation *op)
 {
+#warning "Unimplemented"
 	//TODO op
 	(void) op;
 }
