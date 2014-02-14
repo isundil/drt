@@ -14,11 +14,23 @@ const std::string ConfigParam::IValue::getDefault() const
 const std::string ConfigParam::IValue::getName() const
 { return name; }
 
-ConfigParam::BooleanValue::BooleanValue(const std::string &n, bool d, bool m): IValue(n, m, d ? "true" : "false"), set(false), value(d)
+ConfigParam::BooleanValue::BooleanValue(const std::string &n, bool d, bool m): IValue(n, m, d ? "true" : "false"), set(false), value(d), defaultBool(d)
 { }
 
 ConfigParam::StringValue::StringValue(const std::string &n, const std::string &d, bool m): IValue(n, m, d), value(d)
 { }
+
+ConfigParam::BooleanValue::BooleanValue(const BooleanValue &o): BooleanValue(o.name, o.defaultBool, o.mendatory)
+{ }
+
+ConfigParam::StringValue::StringValue(const StringValue &o): StringValue(o.name, o.defaultValue, o.mendatory)
+{ }
+
+ConfigParam::IValue *ConfigParam::StringValue::clone() const
+{ return new ConfigParam::StringValue(*this); }
+
+ConfigParam::IValue *ConfigParam::BooleanValue::clone() const
+{ return new ConfigParam::BooleanValue(*this); }
 
 const std::string ConfigParam::StringValue::getValue() const
 { return value; }
@@ -49,6 +61,12 @@ bool ConfigParam::BooleanValue::isValid() const
 	return set == true;
 }
 
+ConfigParam::~ConfigParam()
+{
+	for (auto i = params.cbegin(); i != params.cend(); i++)
+		delete (*i);
+}
+
 const std::list<ConfigParam::IValue *> ConfigParam::getItems() const
 { return params; }
 
@@ -60,9 +78,9 @@ ConfigParam::IValue *ConfigParam::get(const std::string &name) const
 	return nullptr;
 }
 
-ConfigParam &ConfigParam::operator<<(ConfigParam::IValue *item)
+ConfigParam &ConfigParam::operator<<(const ConfigParam::IValue &item)
 {
-	params.push_back(item);
+	params.push_back(item.clone());
 	return *this;
 }
 

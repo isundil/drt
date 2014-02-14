@@ -1,20 +1,43 @@
 #include <iostream>
 #include <fstream>
+#include <exception>
+#include <stdexcept>
 #include "Config.hpp"
+#include "UnixParser.hpp"
 
 using namespace drt;
 
-Config::Config(ConfigParam &c, int ac, char **av): usage(c), progName(*av), configFile(DEFAULT_CONFIG), valid(true)
+Config::Config(ConfigParam &c): usage(c), valid(true)
+{
+}
+
+Config::~Config()
+{
+	for (auto i = infos.cbegin(); i != infos.cend(); i++)
+		delete (*i);
+}
+
+template <class T> void Config::eval(int ac, char **av)
 {
 	if (parseParam(ac, av))
-		parseFile();
+	{
+		try
+		{
+			parseFile<T>();
+		}
+		catch (std::exception &e)
+		{
+			valid = false;
+			std::cerr << "Failed to parse file: " << e.what() << std::endl;
+		}
+	}
 	else
 		printUsage();
 }
 
 void Config::printUsage() const
 {
-	std::list<ConfigParam::IValue *> l;
+	std::list<ConfigParam::IValue *> l = this->usage.getItems();
 
 	std::cerr << "Usage: " << progName;
 	for (auto _i = l.cbegin(); _i != l.cend(); _i++)
@@ -62,17 +85,26 @@ bool Config::parseParam(int ac, char **av)
 	return true;
 }
 
-bool Config::parseFile()
+template <class Parser>
+void Config::parseFile()
 {
-	std::ifstream in(configFile.c_str());
-	if (in.is_open() == false)
+	drt::ConfigParam::StringValue *configFile = dynamic_cast<drt::ConfigParam::StringValue *>(usage.get("config-file"));
+	std::ifstream in;
+
+	in.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try
 	{
-		valid = false;
-		return false;
+		in.open(configFile->getValue().c_str());
 	}
-	//TODO parse file
+	catch (std::ifstream::failure &e)
+	{
+		throw std::runtime_error("Failed opening file");
+	}
+	Parser *p = new Parser();
+	p->parseFile(in);
+	infos = p->getSections();
+	delete p;
 	in.close();
-	return true;
 }
 
 int Config::parseParamFull(char **str)
@@ -101,6 +133,10 @@ int Config::parseParamFull(char **str)
 
 bool Config::parseParamShort(char *str)
 {
+	//TODO parse
+	(void)str;
 	return true;
 }
+
+template void drt::Config::eval<drt::parser::UnixParser>(int, char**);
 

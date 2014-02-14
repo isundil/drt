@@ -1,24 +1,34 @@
 #ifndef DRT_CONFIG
 
-# ifndef DEFAULT_CONFIG
-#  define DEFAULT_CONFIG "server.conf"
-# endif
 # include <string> //std::string
-
 # include "ConfigParam.hpp"
+# include "ISection.hpp"
 
 namespace drt
 {
+	namespace parser
+	{
+		class UnixParser;
+	}
 class Config
 {
 	public:
-		Config(ConfigParam &usage, int ac, char **av);
+		Config(ConfigParam &usage);
+		~Config();
 
+		template<class Parser> void eval(int ac, char **av);
 		void printUsage() const;
 		bool isValid() const;
+		template <class Section> const Section *getSection() const
+		{
+			for (auto i = infos.cbegin(); i != infos.cend(); i++)
+				if (dynamic_cast<Section const *> (*i) != nullptr)
+					return (const Section *)(*i);
+			return nullptr;
+		}
 
 	private:
-		bool parseFile();
+		template<class Parser>void parseFile(); //throw
 		bool parseParam(int ac, char **av);
 
 		bool parseParamShort(char *str);
@@ -27,8 +37,9 @@ class Config
 	private:
 		const ConfigParam &usage;
 		const std::string progName;
-		std::string configFile;
 		bool valid;
+
+		std::list<const parser::ISection *> infos;
 };
 }
 
