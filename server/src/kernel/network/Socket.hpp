@@ -14,6 +14,7 @@ namespace network
 			~Socket();
 
 			int getSocketNumber() const;
+			FILE * getSocket() const;
 
 		private:
 			int socket;

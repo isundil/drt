@@ -1,5 +1,9 @@
+#include <stdexcept>
+#include <iostream>
+#include <stdio.h>
 #include "network/PeerInfo.hpp"
 #include "network/Socket.hpp"
+#include "network/NetworkPacket.hpp"
 #include "worker/WorkerManager.hpp"
 
 using namespace drt::network;
@@ -25,8 +29,18 @@ bool PeerInfo::isClosing() const
 
 void PeerInfo::read(WorkerManager &manager)
 {
+	char code;
+
 	(void) manager;
-	//TODO read from socket and add operation to manager
+
+	::fread(&code, sizeof(code), 1, socket->getSocket());
+	ANetworkPacket *packet = ANetworkPacket::fromSocket(code, socket->getSocket());
+	if (packet == nullptr)
+	{
+		throw std::runtime_error("Invalid packet type");
+		std::cerr << "Fatal: invalid packet detected (code " << (int)code << ")" << std::endl;
+	}
+	delete packet;
 }
 
 unsigned short PeerInfo::getId() const

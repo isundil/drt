@@ -118,12 +118,25 @@ void NetworkWorker::readAll()
 			}
 		}
 		else
-			(*i)->read(manager);
+			this->readPeer((*i));
 	}
 	for (auto i = discon.cbegin(); i != discon.cend(); i++)
 	{
 		clients.remove(*i);
 		delete *i;
+	}
+}
+
+void NetworkWorker::readPeer(network::PeerInfo *peer)
+{
+	try
+	{
+		peer->read(manager);
+	}
+	catch (std::exception &e)
+	{
+#warning "TODO"
+		//TODO netsplit
 	}
 }
 

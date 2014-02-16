@@ -17,6 +17,7 @@ SRC=	main.cpp					\
 		network/Socket.cpp			\
 		network/ServerSocket.cpp	\
 		network/PeerInfo.cpp		\
+		network/NetworkPacket.cpp	\
 		\
 		modules/ModuleManager.cpp	\
 		modules/AModule.cpp

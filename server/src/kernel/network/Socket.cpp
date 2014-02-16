@@ -14,3 +14,6 @@ Socket::~Socket() //Calling fclose call fopen
 int Socket::getSocketNumber() const
 { return socket; }
 
+FILE * Socket::getSocket() const
+{ return socket_std; }
+
