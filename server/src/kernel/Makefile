@@ -25,7 +25,7 @@ OBJ=	$(SRC:.cpp=.o)
 
 NAME=	./drt
 
-CXX=	clang++ -std=c++11 -DDEFAULT_PORT=10242 -DMODULE_DIRS=\""modules,../../modules/"\"
+CXX=	clang++ -std=c++11 -DDEFAULT_PORT=11424 -DMODULE_DIRS=\""modules,../../modules/"\"
 
 CXXFLAGS=	-W -Wall -Wextra $(DEBUG) -I./
 

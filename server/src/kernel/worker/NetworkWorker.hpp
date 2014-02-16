@@ -25,10 +25,13 @@ class NetworkWorker: public AWorker
 
 		private:
 			drt::network::ServerSocket * server;
+			std::list<std::pair<std::string, unsigned short> >connectedPeers;
 			std::list <drt::network::PeerInfo *> clients;
 			drt::network::PeerInfo *myself;
 			unsigned short biggerId;
 
+			void acceptNew();
+			void connectToPeers();
 			void readAll();
 	};
 }

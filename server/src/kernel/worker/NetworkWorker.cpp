@@ -5,6 +5,7 @@
 #include <stropts.h>
 #include "worker/NetworkWorker.hpp"
 #include "worker/WorkerManager.hpp"
+#include "config/PeerSection.hpp"
 #include "config/ServerSection.hpp"
 #include "config/Config.hpp"
 #include "network/ServerSocket.hpp"
@@ -13,7 +14,25 @@
 
 using namespace drt::worker;
 
-NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AWorker(_manager, _id), myself(drt::network::PeerInfo::getMe()), biggerId(myself->getId())
+class is_connected
+{
+	public:
+		is_connected(std::list<std::pair<std::string, unsigned short> >e): list(e)
+		{ }
+
+		bool operator()(const std::pair<std::string, unsigned short> item)
+		{
+			for (auto i = list.cbegin(); i != list.cend(); i++)
+				if (*i == item)
+					return true;
+			return false;
+		}
+
+	private:
+		std::list<std::pair<std::string, unsigned short> >list;
+};
+
+NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AWorker(_manager, _id), myself(drt::network::PeerInfo::getMe()), biggerId(1)
 {
 	const drt::parser::ServerSection *config;
 
@@ -23,7 +42,7 @@ NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AW
 	{
 		std::stringstream ss;
 		ss << "Started server on port " << config->getPort();
-		new drt::network::ServerSocket(config->getPort());
+		server = new drt::network::ServerSocket(config->getPort());
 		_manager.log(std::cout, *this, ss.str());
 	}
 }
@@ -31,23 +50,39 @@ NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AW
 NetworkWorker::~NetworkWorker()
 {
 	delete myself;
+	if (server)
+		delete server;
 }
 
 void NetworkWorker::start()
 {
 	while (!manager.isDone())
 	{
-		if (server != nullptr)
-		{
-			drt::network::Socket *s = server->accept();
-			if (s)
-			{
-				clients.push_back(new drt::network::PeerInfo(s));
-				manager.log(std::cout, *this, "new client");
-			}
-		}
+		acceptNew();
 		readAll();
+		connectToPeers();
 	}
+}
+
+void NetworkWorker::acceptNew()
+{
+	if (server != nullptr)
+	{
+		drt::network::Socket *s = server->accept();
+		if (s)
+		{
+			clients.push_back(new drt::network::PeerInfo(s));
+			manager.log(std::cout, *this, "new client");
+		}
+	}
+}
+
+void NetworkWorker::connectToPeers()
+{
+	std::list<std::pair<std::string, unsigned short> >clients = manager.config()->getSection<drt::parser::PeerSection>()->getPeerlist();
+	is_connected d(connectedPeers);
+
+	clients.remove_if(d);
 }
 
 void NetworkWorker::readAll()
@@ -97,7 +132,10 @@ void NetworkWorker::stop()
 	for (auto i = clients.begin(); i != clients.end(); i++)
 		delete (*i);
 	if (server)
+	{
 		delete server;
+		server = nullptr;
+	}
 }
 
 void NetworkWorker::nextOp(Operation *)

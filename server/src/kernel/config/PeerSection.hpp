@@ -19,6 +19,8 @@ class PeerSection: public ISection
 
 		virtual ISection *clone() const;
 
+		const std::list<std::pair<std::string, unsigned short> >getPeerlist() const;
+
 	private:
 		std::list<std::pair<std::string, unsigned short> >peerList; //ip, port
 };

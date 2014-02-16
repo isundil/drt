@@ -9,7 +9,8 @@ PeerInfo::PeerInfo(Socket *s, unsigned short _id): closing(true), socket(s), id(
 
 PeerInfo::~PeerInfo()
 {
-	delete socket;
+	if (socket)
+		delete socket;
 }
 
 Socket *PeerInfo::getSocket() const
@@ -24,7 +25,6 @@ bool PeerInfo::isClosing() const
 
 void PeerInfo::read(WorkerManager &manager)
 {
-#warning "Unimplemented"
 	(void) manager;
 	//TODO read from socket and add operation to manager
 }

@@ -46,9 +46,10 @@ void PeerSection::addParam(const std::string &name, const std::string &value)
 }
 
 bool PeerSection::exists(const std::string &name) const
-{
-	return name == "Server";
-}
+{ return name == "Server"; }
+
+const std::list<std::pair<std::string, unsigned short> >PeerSection::getPeerlist() const
+{ return peerList; }
 
 ISection *PeerSection::clone() const
 {
