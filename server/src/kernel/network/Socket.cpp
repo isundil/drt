@@ -1,3 +1,4 @@
+#include <sstream>
 #include <stdexcept>
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -24,7 +25,9 @@ Socket::Socket(const std::string &ip, unsigned short port)
 	if (connect(socket, (struct sockaddr *) &addr, sizeof(addr)) == -1)
 	{
 		::close(socket);
-		throw std::runtime_error("Cannot connect to server");
+		std::stringstream ss("Cannot connect to ");
+		ss << "Cannot connect to " << ip << ":" << port;
+		throw std::runtime_error(ss.str());
 	}
 	socket_std = fdopen(socket, "r+");
 }

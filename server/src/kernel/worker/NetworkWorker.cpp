@@ -38,6 +38,8 @@ NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AW
 {
 	const drt::parser::ServerSection *config;
 
+	lastConnectAtempt = 0;
+
 	config = _manager.config()->getSection<drt::parser::ServerSection>();
 	server = nullptr;
 	if (config->enabled())
@@ -85,11 +87,24 @@ void NetworkWorker::connectToPeers()
 	std::list<std::pair<std::string, unsigned short> >clients = manager.config()->getSection<drt::parser::PeerSection>()->getPeerlist();
 	is_connected d(connectedPeers);
 
+	if (time(nullptr) - lastConnectAtempt < 5)
+		return;
+	lastConnectAtempt = time(nullptr);
 	clients.remove_if(d);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{
 		std::pair<std::string, unsigned short> addr = (*i);
-		network::PeerInfo *pi = new network::PeerInfo(addr.first, addr.second);
+		network::PeerInfo *pi;
+
+		try
+		{
+			pi = new network::PeerInfo(addr.first, addr.second);
+		}
+		catch (std::exception &e)
+		{
+			std::cout << "Unable to server: " << e.what() << std::endl;
+			continue;
+		}
 
 		manager.send(pi, new network::SAuth(myself->getId()));
 		this->clients.push_back(pi);

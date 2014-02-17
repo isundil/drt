@@ -30,6 +30,8 @@ class NetworkWorker: public AWorker
 			drt::network::PeerInfo *myself;
 			unsigned short biggerId;
 
+			time_t lastConnectAtempt;
+
 			void acceptNew();
 			void connectToPeers();
 			void readAll();
