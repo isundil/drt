@@ -33,6 +33,7 @@ class NetworkWorker: public AWorker
 			void acceptNew();
 			void connectToPeers();
 			void readAll();
+			void sendAll();
 			void readPeer(network::PeerInfo *);
 	};
 }

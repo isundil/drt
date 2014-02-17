@@ -17,6 +17,11 @@ namespace worker
 {
 class AWorker;
 }
+namespace network
+{
+class ANetworkPacket;
+class PeerInfo;
+}
 
 class WorkerManager
 {
@@ -34,7 +39,16 @@ class WorkerManager
 		void stop();
 		const drt::Config * config() const;
 
+		// socket stuff
+		void send(network::PeerInfo *peer, network::ANetworkPacket *packet);
+		void broadcast(network::ANetworkPacket *packet, int avoid =-1);
+
 		void log(std::ostream &channel, const worker::AWorker &sender, const std::string &msg);
+
+		bool getNextBroadcast(network::ANetworkPacket **packet, int *avoid);
+		bool getNextSend(network::ANetworkPacket **packet, network::PeerInfo **dst);
+		bool broadcastQueueEmpty();
+		bool sendQueueEmpty();
 
 	private:
 		WorkerManager(drt::Config * const);
@@ -43,6 +57,8 @@ class WorkerManager
 	private:
 		std::list<worker::AWorker *> workers;
 		std::queue<Operation *>operationList;
+		std::queue<std::pair<int, network::ANetworkPacket *> >broadcastQueue;
+		std::queue<std::pair<network::PeerInfo *, network::ANetworkPacket *> >sendQueue;
 		drt::Config * const info;
 		bool done;
 		bool ready;
@@ -50,6 +66,7 @@ class WorkerManager
 		module::ModuleManager *modules;
 
 		pthread_mutex_t logMutex;
+		pthread_mutex_t netMutex;
 		pthread_mutex_t queueMutex;
 
 	private:

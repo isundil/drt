@@ -11,6 +11,7 @@ namespace network
 	class PeerInfo
 	{
 		public:
+			PeerInfo(const std::string &ip, unsigned short port);
 			PeerInfo(Socket *socket, unsigned short id = 0);
 			virtual ~PeerInfo();
 
@@ -20,6 +21,7 @@ namespace network
 			unsigned short getId() const;
 
 			static PeerInfo *getMe();
+			void sendData(std::stringstream &ss, size_t len);
 
 		private:
 			bool closing;

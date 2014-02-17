@@ -1,3 +1,4 @@
+#include <set>
 #include <sstream>
 #include <iostream>
 #include <sys/ioctl.h>
@@ -11,6 +12,7 @@
 #include "network/ServerSocket.hpp"
 #include "network/Socket.hpp"
 #include "network/PeerInfo.hpp"
+#include "network/NetworkPacket.hpp"
 
 using namespace drt::worker;
 
@@ -61,6 +63,7 @@ void NetworkWorker::start()
 		acceptNew();
 		readAll();
 		connectToPeers();
+		sendAll();
 	}
 }
 
@@ -83,6 +86,14 @@ void NetworkWorker::connectToPeers()
 	is_connected d(connectedPeers);
 
 	clients.remove_if(d);
+	for (auto i = clients.cbegin(); i != clients.cend(); i++)
+	{
+		std::pair<std::string, unsigned short> addr = (*i);
+		network::PeerInfo *pi = new network::PeerInfo(addr.first, addr.second);
+
+		manager.send(pi, new network::SAuth(myself->getId()));
+		this->clients.push_back(pi);
+	}
 }
 
 void NetworkWorker::readAll()
@@ -148,6 +159,45 @@ void NetworkWorker::stop()
 	{
 		delete server;
 		server = nullptr;
+	}
+}
+
+void NetworkWorker::sendAll()
+{
+	while (!manager.broadcastQueueEmpty())
+	{
+		int avoid;
+		network::ANetworkPacket *packet;
+		std::set<unsigned int> alreadySent;
+
+		manager.getNextBroadcast(&packet, &avoid);
+		alreadySent.insert(avoid);
+		for (auto i = clients.begin(); i != clients.end(); i++)
+		{
+			std::stringstream *ss;
+			size_t packet_len;
+
+			if (alreadySent.find((*i)->getSocket()->getSocketNumber()) != alreadySent.end())
+				continue;
+			ss = packet->getStream(&packet_len);
+			(*i)->sendData(*ss, packet_len);
+			alreadySent.insert((*i)->getSocket()->getSocketNumber());
+			delete ss;
+		}
+		delete packet;
+	}
+	while (!manager.sendQueueEmpty())
+	{
+		network::PeerInfo *peer;
+		network::ANetworkPacket *packet;
+		std::stringstream *ss;
+		size_t packet_len;
+
+		manager.getNextSend(&packet, &peer);
+		ss = packet->getStream(&packet_len);
+		peer->sendData(*ss, packet_len);
+		delete ss;
+		delete packet;
 	}
 }
 

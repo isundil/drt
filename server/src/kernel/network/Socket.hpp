@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <stdio.h>
 
 namespace drt
@@ -10,6 +11,7 @@ namespace network
 	class Socket
 	{
 		public:
+			Socket(const std::string &ip, unsigned short port);
 			Socket(unsigned int _socket);
 			~Socket();
 

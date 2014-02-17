@@ -15,6 +15,7 @@ class ANetworkPacket
 {
 	public:
 		static ANetworkPacket *fromSocket (char code, FILE *socket);
+		virtual ~ANetworkPacket() { };
 
 		virtual std::stringstream *getStream(size_t *buflen) const =0;
 

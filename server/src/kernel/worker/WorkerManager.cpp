@@ -6,6 +6,8 @@
 #include "config/Config.hpp"
 #include "config/WorkerSection.hpp"
 #include "modules/ModuleManager.hpp"
+#include "network/NetworkPacket.hpp"
+#include "network/PeerInfo.hpp"
 
 using namespace drt;
 
@@ -15,6 +17,7 @@ WorkerManager::WorkerManager(drt::Config * const conf): info(conf), done(false)
 
 	modules = new module::ModuleManager();
 	pthread_mutex_init(&logMutex, nullptr);
+	pthread_mutex_init(&netMutex, nullptr);
 	pthread_mutex_init(&queueMutex, nullptr);
 	try
 	{
@@ -23,6 +26,7 @@ WorkerManager::WorkerManager(drt::Config * const conf): info(conf), done(false)
 	catch (std::runtime_error &e)
 	{
 		pthread_mutex_destroy(&logMutex);
+		pthread_mutex_destroy(&netMutex);
 		pthread_mutex_destroy(&queueMutex);
 		std::cerr << "Fatal: cannot start server (" << e.what() << ")" << std::endl;
 		throw e;
@@ -42,6 +46,7 @@ WorkerManager::~WorkerManager()
 	delete info;
 	delete modules;
 	pthread_mutex_destroy(&logMutex);
+	pthread_mutex_destroy(&netMutex);
 	pthread_mutex_destroy(&queueMutex);
 }
 
@@ -110,6 +115,66 @@ void WorkerManager::log(std::ostream &out, const worker::AWorker &sender, const 
 	else
 		out << "[network]: " << message << std::endl;
 	pthread_mutex_unlock(&logMutex);
+}
+
+void WorkerManager::broadcast(network::ANetworkPacket *packet, int avoid)
+{
+	pthread_mutex_lock(&netMutex);
+	broadcastQueue.push(std::pair<int, network::ANetworkPacket *>(avoid, packet));
+	pthread_mutex_unlock(&netMutex);
+}
+
+void WorkerManager::send(network::PeerInfo *peer, network::ANetworkPacket *packet)
+{
+	pthread_mutex_lock(&netMutex);
+	sendQueue.push(std::pair<network::PeerInfo *, network::ANetworkPacket *>(peer, packet));
+	pthread_mutex_unlock(&netMutex);
+}
+
+bool WorkerManager::getNextBroadcast(network::ANetworkPacket **packet, int *avoid)
+{
+	if (broadcastQueueEmpty())
+		return false;
+	pthread_mutex_lock(&netMutex);
+	auto i = broadcastQueue.front();
+	broadcastQueue.pop();
+	*packet = i.second;
+	*avoid = i.first;
+	pthread_mutex_unlock(&netMutex);
+	return true;
+}
+
+bool WorkerManager::getNextSend(network::ANetworkPacket **packet, network::PeerInfo **dst)
+{
+	if (sendQueueEmpty())
+		return false;
+	pthread_mutex_lock(&netMutex);
+	auto i = sendQueue.front();
+	sendQueue.pop();
+	*packet = i.second;
+	*dst = i.first;
+	pthread_mutex_unlock(&netMutex);
+	return true;
+}
+
+bool WorkerManager::broadcastQueueEmpty()
+{
+	bool r;
+
+	pthread_mutex_lock(&netMutex);
+	r = broadcastQueue.size() == 0;
+	pthread_mutex_unlock(&netMutex);
+	return r;
+}
+
+bool WorkerManager::sendQueueEmpty()
+{
+	bool r;
+
+	pthread_mutex_lock(&netMutex);
+	r = sendQueue.size() == 0;
+	pthread_mutex_unlock(&netMutex);
+	return r;
 }
 
 WorkerManager *WorkerManager::instance;
