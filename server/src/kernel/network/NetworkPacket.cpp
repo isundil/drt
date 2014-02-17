@@ -113,7 +113,10 @@ ANetworkPacket * CompilFail::create(FILE * socket)
 std::stringstream * SAuth::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	*ss << '\0' << (unsigned short) id;
+	char c = 0x00;
+	ss->write((char *) &c, sizeof(c));
+	ss->write((char *) &id, sizeof(id));
+	*buflen = sizeof(c) +sizeof(id);
 	return ss;
 }
 

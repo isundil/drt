@@ -23,7 +23,12 @@ namespace network
 			static PeerInfo *getMe();
 			void sendData(std::stringstream &ss, size_t len);
 
+			std::pair<std::string, unsigned short> getConInfo() const;
+
 		private:
+			std::string ip;
+			unsigned short port;
+
 			bool closing;
 			Socket *socket;
 			unsigned short id;

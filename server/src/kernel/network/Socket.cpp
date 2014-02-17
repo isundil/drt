@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 #include <string.h>
 #include "network/Socket.hpp"
 
@@ -24,9 +25,9 @@ Socket::Socket(const std::string &ip, unsigned short port)
 
 	if (connect(socket, (struct sockaddr *) &addr, sizeof(addr)) == -1)
 	{
-		::close(socket);
 		std::stringstream ss("Cannot connect to ");
-		ss << "Cannot connect to " << ip << ":" << port;
+		ss << "Cannot connect to " << ip << ":" << port << " (" << strerror(errno) << ")";
+		::close(socket);
 		throw std::runtime_error(ss.str());
 	}
 	socket_std = fdopen(socket, "r+");

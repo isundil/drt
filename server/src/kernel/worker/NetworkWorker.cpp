@@ -102,12 +102,16 @@ void NetworkWorker::connectToPeers()
 		}
 		catch (std::exception &e)
 		{
-			std::cout << "Unable to server: " << e.what() << std::endl;
+			manager.log(std::cout, *this, "Unable to server: " +std::string(e.what()));
 			continue;
 		}
 
 		manager.send(pi, new network::SAuth(myself->getId()));
+		connectedPeers.push_back(std::pair<std::string, unsigned short> (*i));
 		this->clients.push_back(pi);
+		std::stringstream ss;
+		ss << "Successfull connection to " << addr.first << ":" << addr.second;
+		manager.log(std::cout, *this, ss.str());
 	}
 }
 
@@ -149,6 +153,10 @@ void NetworkWorker::readAll()
 	for (auto i = discon.cbegin(); i != discon.cend(); i++)
 	{
 		clients.remove(*i);
+		connectedPeers.remove((*i)->getConInfo());
+		std::stringstream ss;
+		ss << "Lost connection to " << (*i)->getConInfo().first << ":" << (*i)->getConInfo().second;
+		manager.log(std::cout, *this, ss.str());
 		delete *i;
 	}
 }
