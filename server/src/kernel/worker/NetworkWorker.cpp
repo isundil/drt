@@ -106,7 +106,7 @@ void NetworkWorker::connectToPeers()
 			continue;
 		}
 
-		manager.send(pi, new network::SAuth(myself->getId()));
+		manager.send(pi, new network::SAuth(-1));
 		connectedPeers.push_back(std::pair<std::string, unsigned short> (*i));
 		this->clients.push_back(pi);
 		std::stringstream ss;
@@ -224,6 +224,20 @@ void NetworkWorker::sendAll()
 	}
 }
 
+drt::network::PeerInfo *NetworkWorker::getPeer(unsigned short id)
+{
+	for (auto i =clients.cbegin(); i != clients.cend(); i++)
+		if (id == (*i)->getId())
+			return *i;
+	return nullptr;
+}
+
+drt::network::PeerInfo *NetworkWorker::getMe()
+{ return myself; }
+
 void NetworkWorker::nextOp(Operation *)
 { }
+
+unsigned short NetworkWorker::incBiggerId()
+{ return ++biggerId; }
 

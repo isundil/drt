@@ -8,8 +8,10 @@
 
 namespace drt
 {
+class WorkerManager;
 namespace network
 {
+class PeerInfo;
 
 class ANetworkPacket
 {
@@ -18,6 +20,8 @@ class ANetworkPacket
 		virtual ~ANetworkPacket() { };
 
 		virtual std::stringstream *getStream(size_t *buflen) const =0;
+
+		virtual void doMagic(drt::WorkerManager &manager, network::PeerInfo *peer) { };
 
 	protected:
 };
@@ -31,6 +35,8 @@ class SAuth: public ANetworkPacket
 
 		static ANetworkPacket *create(FILE * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+
+		void doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *);
 
 	private:
 		SAuth();
@@ -49,8 +55,13 @@ class CAuth: public ANetworkPacket
 class Welcome: public ANetworkPacket
 {
 	public:
+		Welcome(unsigned short _id);
 		static ANetworkPacket *create(FILE * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		void doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *);
+
+	private:
+		unsigned short id;
 };
 
 class IdCh: public ANetworkPacket
@@ -58,6 +69,16 @@ class IdCh: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(FILE * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+
+		IdCh(unsigned short oldId, unsigned short newId);
+
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+
+	private:
+		IdCh();
+
+		unsigned short oldId;
+		unsigned short newId;
 };
 
 class Relog: public ANetworkPacket

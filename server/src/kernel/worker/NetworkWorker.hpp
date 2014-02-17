@@ -23,6 +23,10 @@ class NetworkWorker: public AWorker
 			virtual void start(); // Do network listen
 			virtual void stop(); //close sockets
 
+			unsigned short incBiggerId();
+			drt::network::PeerInfo *getMe();
+			drt::network::PeerInfo *getPeer(unsigned short id);
+
 		private:
 			drt::network::ServerSocket * server;
 			std::list<std::pair<std::string, unsigned short> >connectedPeers;

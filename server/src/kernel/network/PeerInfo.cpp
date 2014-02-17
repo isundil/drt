@@ -46,6 +46,7 @@ void PeerInfo::read(WorkerManager &manager)
 		throw std::runtime_error("Invalid packet type");
 		std::cerr << "Fatal: invalid packet detected (code " << (int)code << ")" << std::endl;
 	}
+	packet->doMagic(manager, this);
 	delete packet;
 }
 
@@ -65,6 +66,9 @@ void PeerInfo::sendData(std::stringstream &ss, size_t len)
 
 std::pair<std::string, unsigned short> PeerInfo::getConInfo() const
 { return std::pair<std::string, unsigned short>(ip, port); }
+
+void PeerInfo::setId(unsigned short _id)
+{ id = _id; }
 
 unsigned short PeerInfo::getId() const
 { return id; }

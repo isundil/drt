@@ -1,5 +1,11 @@
+#include <iostream>
+
+
 #include <map>
 #include "NetworkPacket.hpp"
+#include "PeerInfo.hpp"
+#include "worker/NetworkWorker.hpp"
+#include "worker/WorkerManager.hpp"
 
 using namespace drt::network;
 
@@ -32,6 +38,12 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, FILE *socket)
 SAuth::SAuth(unsigned short _id): id(_id)
 { }
 
+Welcome::Welcome(unsigned short _id): id(_id)
+{ }
+
+IdCh::IdCh(unsigned short o, unsigned short n): oldId(o), newId(n)
+{ }
+
 ANetworkPacket * SAuth::create(FILE * socket)
 {
 	unsigned short id;
@@ -47,12 +59,18 @@ ANetworkPacket * CAuth::create(FILE * socket)
 
 ANetworkPacket * Welcome::create(FILE * socket)
 {
-	return new Welcome();
+	unsigned short id;
+
+	fread(&id, sizeof(id), 1, socket);
+	return new Welcome(id);
 }
 
 ANetworkPacket * IdCh::create(FILE * socket)
 {
-	return new IdCh();
+	unsigned short ids[2];
+
+	fread(&ids, sizeof(*ids), 2, socket);
+	return new IdCh(ids[0], ids[1]);
 }
 
 ANetworkPacket * Relog::create(FILE * socket)
@@ -110,6 +128,53 @@ ANetworkPacket * CompilFail::create(FILE * socket)
 	return new CompilFail();
 }
 
+void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
+{
+	if (peer->getId() == (unsigned short)-1 && id == (unsigned short)-1)
+	{
+		std::cout << "client handshake detected (peer->" << peer->getId() << "), (id->" << id << ")" << std::endl;
+
+		peer->setId(manager.getNetwork()->incBiggerId());
+		manager.broadcast(new SAuth(peer->getId()), peer);
+		manager.send(peer, new Welcome(peer->getId()));
+		//TODO send other server SAuth
+		//(foreach clients send peer-> SAuth client->id)
+	}
+	else
+	{
+#warning "TODO"
+		//TODO add server to map
+	}
+}
+
+void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
+{
+	unsigned short oldId;
+
+	oldId = m.getNetwork()->getMe()->getId();
+	if (oldId == id)
+		return;
+	m.getNetwork()->getMe()->setId(id);
+	m.broadcast(new IdCh(oldId, id), p);
+	m.broadcast(new Relog(), p);
+}
+
+void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
+{
+	if (oldId == newId)
+		return;
+	if (m.getNetwork()->getMe()->getId() == oldId)
+		m.getNetwork()->getMe()->setId(newId);
+	else
+	{
+		PeerInfo *pi = m.getNetwork()->getPeer(oldId);
+		if (pi == nullptr)
+			return;
+		pi->setId(newId);
+	}
+	m.broadcast(new IdCh(*this), p);
+}
+
 std::stringstream * SAuth::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
@@ -128,13 +193,22 @@ std::stringstream * CAuth::getStream(size_t *buflen) const
 
 std::stringstream * Welcome::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char c = 0x01;
+	ss->write((char *) &c, sizeof(c));
+	ss->write((char *) &id, sizeof(id));
+	*buflen = sizeof(c) +sizeof(id);
 	return ss;
 }
 
 std::stringstream * IdCh::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char c = 0x02;
+	ss->write((char *) &c, sizeof(c));
+	ss->write((char *) &oldId, sizeof(oldId));
+	ss->write((char *) &newId, sizeof(newId));
+	*buflen = sizeof(c) +sizeof(oldId) +sizeof(newId);
 	return ss;
 }
 

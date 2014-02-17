@@ -12,12 +12,13 @@ namespace network
 	{
 		public:
 			PeerInfo(const std::string &ip, unsigned short port);
-			PeerInfo(Socket *socket, unsigned short id = 0);
+			PeerInfo(Socket *socket, unsigned short id = -1);
 			virtual ~PeerInfo();
 
 			bool isClosing() const;
 			Socket *getSocket() const;
 			void read(WorkerManager&);
+			void setId(unsigned short id);
 			unsigned short getId() const;
 
 			static PeerInfo *getMe();

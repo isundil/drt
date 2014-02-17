@@ -8,6 +8,7 @@
 #include "modules/ModuleManager.hpp"
 #include "network/NetworkPacket.hpp"
 #include "network/PeerInfo.hpp"
+#include "network/Socket.hpp"
 
 using namespace drt;
 
@@ -21,7 +22,8 @@ WorkerManager::WorkerManager(drt::Config * const conf): info(conf), done(false)
 	pthread_mutex_init(&queueMutex, nullptr);
 	try
 	{
-		workers.push_back(new worker::NetworkWorker(*this, 0));
+		networkWorker = new worker::NetworkWorker(*this, 0);
+		workers.push_back(networkWorker);
 	}
 	catch (std::runtime_error &e)
 	{
@@ -117,6 +119,13 @@ void WorkerManager::log(std::ostream &out, const worker::AWorker &sender, const 
 	pthread_mutex_unlock(&logMutex);
 }
 
+void WorkerManager::broadcast(network::ANetworkPacket *packet, network::PeerInfo *avoid)
+{
+	if (avoid == nullptr)
+		return broadcast(packet, -1);
+	return broadcast(packet, avoid->getSocket()->getSocketNumber());
+}
+
 void WorkerManager::broadcast(network::ANetworkPacket *packet, int avoid)
 {
 	pthread_mutex_lock(&netMutex);
@@ -176,6 +185,9 @@ bool WorkerManager::sendQueueEmpty()
 	pthread_mutex_unlock(&netMutex);
 	return r;
 }
+
+worker::NetworkWorker *WorkerManager::getNetwork()
+{ return (worker::NetworkWorker *) networkWorker; }
 
 WorkerManager *WorkerManager::instance;
 
