@@ -67,7 +67,7 @@ void WorkerManager::start()
 {
 	if (this == nullptr)
 		return;
-	(*workers.begin())->start();
+	networkWorker->start();
 }
 
 WorkerManager *WorkerManager::createInstance(Config * const infos)

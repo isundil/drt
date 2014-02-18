@@ -11,7 +11,7 @@
 
 using namespace drt::network;
 
-Socket::Socket(const std::string &ip, unsigned short port)
+Socket::Socket(const std::string &ip, unsigned short port): rel(0)
 {
 	struct sockaddr_in addr;
 
@@ -33,12 +33,23 @@ Socket::Socket(const std::string &ip, unsigned short port)
 	socket_std = fdopen(socket, "r+");
 }
 
-Socket::Socket(unsigned int _socket): socket(_socket), socket_std(fdopen(_socket, "r+"))
+Socket::Socket(unsigned int _socket): socket(_socket), socket_std(fdopen(_socket, "r+")), rel(0)
 { }
 
 Socket::~Socket() //Calling fclose call fopen
 {
 	::fclose(socket_std);
+}
+
+void Socket::rmRel()
+{ rel--; }
+
+void Socket::addRel()
+{ rel++; }
+
+bool Socket::lastRel() const
+{
+	return rel <= 1;
 }
 
 int Socket::getSocketNumber() const

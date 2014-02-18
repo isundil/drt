@@ -106,13 +106,18 @@ void NetworkWorker::connectToPeers()
 			continue;
 		}
 
-		manager.send(pi, new network::SAuth(-1));
+		manager.send(pi, new network::SAuth(-1, this->clients.size()));
 		connectedPeers.push_back(std::pair<std::string, unsigned short> (*i));
 		this->clients.push_back(pi);
 		std::stringstream ss;
 		ss << "Successfull connection to " << addr.first << ":" << addr.second;
 		manager.log(std::cout, *this, ss.str());
 	}
+	std::stringstream ss;
+	ss << "I'm " << this->getMe()->getId() << std::endl;
+	for (auto i = this->clients.cbegin(); i != this->clients.cend(); i++)
+		ss << "Client " << (*i)->getId() << std::endl;
+	manager.log(std::cout, *this, ss.str());
 }
 
 void NetworkWorker::readAll()
@@ -232,8 +237,40 @@ drt::network::PeerInfo *NetworkWorker::getPeer(unsigned short id)
 	return nullptr;
 }
 
+void NetworkWorker::sendConnected(drt::network::PeerInfo *p)
+{
+	return;
+	for (auto i =clients.cbegin(); i != clients.cend(); i++)
+	{
+		//TODO
+		//if ((*i)->isReady)
+		//	manager.send(p, new network::Ready((*i)->getId()));
+	}
+}
+
+drt::network::PeerInfo *NetworkWorker::addServer(drt::network::Socket *s, unsigned short id)
+{
+	if (id == 0)
+		id = incBiggerId();
+	drt::network::PeerInfo *pi = new network::PeerInfo(s, id);
+	clients.push_back(pi);
+	return pi;
+}
+
+void NetworkWorker::setMax(unsigned short newMax)
+{
+	if (biggerId < newMax)
+		biggerId = newMax;
+}
+
+unsigned int NetworkWorker::nbClient() const
+{ return clients.size(); }
+
 drt::network::PeerInfo *NetworkWorker::getMe()
 { return myself; }
+
+const std::list<drt::network::PeerInfo *> NetworkWorker::getPeers() const
+{ return clients; }
 
 void NetworkWorker::nextOp(Operation *)
 { }

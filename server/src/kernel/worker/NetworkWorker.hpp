@@ -10,6 +10,7 @@ namespace network
 {
 class PeerInfo;
 class ServerSocket;
+class Socket;
 }
 
 namespace worker
@@ -24,8 +25,15 @@ class NetworkWorker: public AWorker
 			virtual void stop(); //close sockets
 
 			unsigned short incBiggerId();
+			void setMax(unsigned short max);
 			drt::network::PeerInfo *getMe();
 			drt::network::PeerInfo *getPeer(unsigned short id);
+			const std::list<drt::network::PeerInfo *>getPeers() const;
+
+			void sendConnected(drt::network::PeerInfo *p);
+
+			unsigned int nbClient() const;
+			drt::network::PeerInfo *addServer(network::Socket *sock, unsigned short id =0);
 
 		private:
 			drt::network::ServerSocket * server;

@@ -20,6 +20,7 @@ namespace network
 			void read(WorkerManager&);
 			void setId(unsigned short id);
 			unsigned short getId() const;
+			unsigned short getOldId() const;
 
 			static PeerInfo *getMe();
 			void sendData(std::stringstream &ss, size_t len);
@@ -33,6 +34,7 @@ namespace network
 			bool closing;
 			Socket *socket;
 			unsigned short id;
+			unsigned short oldId;
 	};
 }
 }

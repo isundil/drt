@@ -31,7 +31,7 @@ typedef ANetworkPacket  *(*constructorFnc) (FILE *);
 class SAuth: public ANetworkPacket
 {
 	public:
-		SAuth(unsigned short id);
+		SAuth(unsigned short id, unsigned short nbServer);
 
 		static ANetworkPacket *create(FILE * socket);
 		std::stringstream *getStream(size_t *buflen) const;
@@ -43,6 +43,7 @@ class SAuth: public ANetworkPacket
 
 	private:
 		unsigned short id;
+		unsigned short nbServer;
 };
 
 class CAuth: public ANetworkPacket
@@ -86,13 +87,22 @@ class Relog: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(FILE * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
 };
 
 class Confirm: public ANetworkPacket
 {
 	public:
+		Confirm(unsigned short id);
+
 		static ANetworkPacket *create(FILE * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+
+	private:
+		unsigned short id;
 };
 
 class Quit: public ANetworkPacket

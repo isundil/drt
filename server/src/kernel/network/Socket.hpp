@@ -18,9 +18,15 @@ namespace network
 			int getSocketNumber() const;
 			FILE * getSocket() const;
 
+			void addRel();
+			void rmRel();
+			bool lastRel() const;
+
 		private:
 			int socket;
 			FILE *socket_std;
+
+			int rel;
 
 		private:
 			Socket();

@@ -1,6 +1,5 @@
 #include <iostream>
 
-
 #include <map>
 #include "NetworkPacket.hpp"
 #include "PeerInfo.hpp"
@@ -35,7 +34,7 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, FILE *socket)
 	return (*f).second(socket);
 }
 
-SAuth::SAuth(unsigned short _id): id(_id)
+SAuth::SAuth(unsigned short _id, unsigned short nserv): id(_id), nbServer(nserv)
 { }
 
 Welcome::Welcome(unsigned short _id): id(_id)
@@ -44,12 +43,17 @@ Welcome::Welcome(unsigned short _id): id(_id)
 IdCh::IdCh(unsigned short o, unsigned short n): oldId(o), newId(n)
 { }
 
+Confirm::Confirm(unsigned short _id): id(_id)
+{ }
+
 ANetworkPacket * SAuth::create(FILE * socket)
 {
 	unsigned short id;
+	unsigned short nserv;
 
 	fread(&id, sizeof(id), 1, socket);
-	return new SAuth(id);
+	fread(&nserv, sizeof(nserv), 1, socket);
+	return new SAuth(id, nserv);
 }
 
 ANetworkPacket * CAuth::create(FILE * socket)
@@ -69,7 +73,7 @@ ANetworkPacket * IdCh::create(FILE * socket)
 {
 	unsigned short ids[2];
 
-	fread(&ids, sizeof(*ids), 2, socket);
+	fread(ids, sizeof(*ids), 2, socket);
 	return new IdCh(ids[0], ids[1]);
 }
 
@@ -80,7 +84,10 @@ ANetworkPacket * Relog::create(FILE * socket)
 
 ANetworkPacket * Confirm::create(FILE * socket)
 {
-	return new Confirm();
+	unsigned short id;
+
+	fread(&id, sizeof(id), 1, socket);
+	return new Confirm(id);
 }
 
 ANetworkPacket * Quit::create(FILE * socket)
@@ -135,15 +142,23 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 		std::cout << "client handshake detected (peer->" << peer->getId() << "), (id->" << id << ")" << std::endl;
 
 		peer->setId(manager.getNetwork()->incBiggerId());
-		manager.broadcast(new SAuth(peer->getId()), peer);
+		if (manager.getNetwork()->nbClient() > 1)
+			manager.broadcast(new IdCh(-1, peer->getId()), peer);
 		manager.send(peer, new Welcome(peer->getId()));
-		//TODO send other server SAuth
-		//(foreach clients send peer-> SAuth client->id)
+		manager.send(peer, new SAuth(manager.getNetwork()->getMe()->getId(), 0));
+		if (manager.getNetwork()->nbClient() == 1)
+			manager.send(peer, new Confirm(peer->getId()));
+		else
+			manager.getNetwork()->sendConnected(peer);
+		for (size_t i = 0; i < nbServer; i++)
+			manager.getNetwork()->addServer(peer->getSocket());
 	}
 	else
 	{
-#warning "TODO"
-		//TODO add server to map
+		if (peer->getId() == (unsigned short)-1)
+			peer->setId(id);
+		else
+			manager.getNetwork()->addServer(peer->getSocket(), id);
 	}
 }
 
@@ -155,8 +170,7 @@ void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 	if (oldId == id)
 		return;
 	m.getNetwork()->getMe()->setId(id);
-	m.broadcast(new IdCh(oldId, id), p);
-	m.broadcast(new Relog(), p);
+	m.getNetwork()->setMax(id);
 }
 
 void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
@@ -165,14 +179,41 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 		return;
 	if (m.getNetwork()->getMe()->getId() == oldId)
 		m.getNetwork()->getMe()->setId(newId);
+	else if (newId == 0)
+		PeerInfo *pi = m.getNetwork()->addServer(p->getSocket(), oldId);
 	else
 	{
 		PeerInfo *pi = m.getNetwork()->getPeer(oldId);
 		if (pi == nullptr)
 			return;
+		if (newId == -1)
+			newId = m.getNetwork()->incBiggerId();
 		pi->setId(newId);
 	}
-	m.broadcast(new IdCh(*this), p);
+}
+
+void Relog::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
+{
+	m.broadcast(new Relog(), pi);
+}
+
+void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
+{
+	if (id != m.getNetwork()->getMe()->getId())
+		m.send(m.getNetwork()->getPeer(id), new Confirm(*this));
+	else
+	{
+		m.broadcast(new IdCh(m.getNetwork()->getMe()->getOldId(), id), pi);
+		auto clientList = m.getNetwork()->getPeers();
+		for (auto i = clientList.cbegin(); i != clientList.cend(); i++)
+		{
+			if (pi == *i)
+				continue;
+			unsigned short newId = m.getNetwork()->incBiggerId();
+			m.broadcast(new IdCh((*i)->getId(), newId), pi);
+			(*i)->setId(newId);
+		}
+	}
 }
 
 std::stringstream * SAuth::getStream(size_t *buflen) const
@@ -181,7 +222,8 @@ std::stringstream * SAuth::getStream(size_t *buflen) const
 	char c = 0x00;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
-	*buflen = sizeof(c) +sizeof(id);
+	ss->write((char *) &nbServer, sizeof(nbServer));
+	*buflen = sizeof(c) +sizeof(id) +sizeof(nbServer);
 	return ss;
 }
 
@@ -194,7 +236,7 @@ std::stringstream * CAuth::getStream(size_t *buflen) const
 std::stringstream * Welcome::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x01;
+	char c = 0x02;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
 	*buflen = sizeof(c) +sizeof(id);
@@ -204,7 +246,7 @@ std::stringstream * Welcome::getStream(size_t *buflen) const
 std::stringstream * IdCh::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x02;
+	char c = 0x03;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &oldId, sizeof(oldId));
 	ss->write((char *) &newId, sizeof(newId));
@@ -214,13 +256,20 @@ std::stringstream * IdCh::getStream(size_t *buflen) const
 
 std::stringstream * Relog::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char c = 0x04;
+	ss->write((char *) &c, sizeof(c));
+	*buflen = sizeof(c);
 	return ss;
 }
 
 std::stringstream * Confirm::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char c = 0x05;
+	ss->write((char *) &c, sizeof(c));
+	ss->write((char *) &id, sizeof(id));
+	*buflen = sizeof(c) +sizeof(id);
 	return ss;
 }
 
