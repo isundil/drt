@@ -8,7 +8,7 @@
 
 using namespace drt::network;
 
-PeerInfo::PeerInfo(const std::string &_ip, unsigned short _port): PeerInfo(new Socket(_ip, _port), -1)
+PeerInfo::PeerInfo(const std::string &_ip, unsigned short _port): PeerInfo(new Socket(_ip, _port), true, -1)
 {
 	ip = _ip;
 	port = _port;
@@ -16,7 +16,7 @@ PeerInfo::PeerInfo(const std::string &_ip, unsigned short _port): PeerInfo(new S
 		socket->addRel();
 }
 
-PeerInfo::PeerInfo(Socket *s, unsigned short _id): closing(true), socket(s), id(_id), oldId(_id)
+PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): closing(true), socket(s), id(_id), oldId(_id), direct(_direct)
 {
 	if (s)
 		s->addRel();
@@ -81,6 +81,9 @@ void PeerInfo::setId(unsigned short _id)
 	id = _id;
 }
 
+bool PeerInfo::isDirect() const
+{ return direct; }
+
 unsigned short PeerInfo::getId() const
 { return id; }
 
@@ -89,6 +92,6 @@ unsigned short PeerInfo::getOldId() const
 
 PeerInfo *PeerInfo::getMe()
 {
-	return new PeerInfo((Socket *)nullptr, 1);
+	return new PeerInfo((Socket *)nullptr, false, 1);
 }
 

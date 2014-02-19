@@ -139,17 +139,16 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 {
 	if (peer->getId() == (unsigned short)-1 && id == (unsigned short)-1)
 	{
-		std::cout << "client handshake detected (peer->" << peer->getId() << "), (id->" << id << ")" << std::endl;
+		std::cout << "DEBUG client handshake detected (peer->" << peer->getId() << "), (id->" << id << ")" << std::endl;
 
 		peer->setId(manager.getNetwork()->incBiggerId());
-		if (manager.getNetwork()->nbClient() > 1)
-			manager.broadcast(new IdCh(-1, peer->getId()), peer);
 		manager.send(peer, new Welcome(peer->getId()));
+		manager.broadcast(new SAuth(peer->getId(), 0), peer);
 		manager.send(peer, new SAuth(manager.getNetwork()->getMe()->getId(), 0));
 		if (manager.getNetwork()->nbClient() == 1)
 			manager.send(peer, new Confirm(peer->getId()));
-		else
-			manager.getNetwork()->sendConnected(peer);
+		//TODO will need to wait
+		manager.getNetwork()->sendConnected(peer);
 		for (size_t i = 0; i < nbServer; i++)
 			manager.getNetwork()->addServer(peer->getSocket());
 	}
@@ -179,15 +178,18 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 		return;
 	if (m.getNetwork()->getMe()->getId() == oldId)
 		m.getNetwork()->getMe()->setId(newId);
-	else if (newId == 0)
-		PeerInfo *pi = m.getNetwork()->addServer(p->getSocket(), oldId);
+	else if (newId == 0xFFFF)
+		m.getNetwork()->addServer(p->getSocket(), oldId);
 	else
 	{
 		PeerInfo *pi = m.getNetwork()->getPeer(oldId);
 		if (pi == nullptr)
+		{
+			m.getNetwork()->addServer(p->getSocket(), newId);
 			return;
-		if (newId == -1)
-			newId = m.getNetwork()->incBiggerId();
+		}
+		if (newId == 0xFFFF)
+			return;
 		pi->setId(newId);
 	}
 }

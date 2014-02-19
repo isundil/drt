@@ -76,7 +76,7 @@ void NetworkWorker::acceptNew()
 		drt::network::Socket *s = server->accept();
 		if (s)
 		{
-			clients.push_back(new drt::network::PeerInfo(s));
+			clients.push_back(new drt::network::PeerInfo(s, true));
 			manager.log(std::cout, *this, "new client");
 		}
 	}
@@ -131,6 +131,8 @@ void NetworkWorker::readAll()
 	FD_ZERO(&fdset);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{
+		if (!(*i)->isDirect())
+			continue;
 		FD_SET((*i)->getSocket()->getSocketNumber(), &fdset);
 		biggerFd = (biggerFd < (*i)->getSocket()->getSocketNumber()) ? (*i)->getSocket()->getSocketNumber() : biggerFd;
 	}
@@ -138,7 +140,7 @@ void NetworkWorker::readAll()
 		return;
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{
-		if (!FD_ISSET((*i)->getSocket()->getSocketNumber(), &fdset))
+		if (!FD_ISSET((*i)->getSocket()->getSocketNumber(), &fdset) || !(*i)->isDirect())
 			continue;
 		ioctl((*i)->getSocket()->getSocketNumber(), FIONREAD, &closed);
 		if (closed == 0)
@@ -176,6 +178,7 @@ void NetworkWorker::readPeer(network::PeerInfo *peer)
 	{
 #warning "TODO"
 		//TODO netsplit
+		//TODO remove peer
 	}
 }
 
@@ -239,9 +242,11 @@ drt::network::PeerInfo *NetworkWorker::getPeer(unsigned short id)
 
 void NetworkWorker::sendConnected(drt::network::PeerInfo *p)
 {
-	return;
 	for (auto i =clients.cbegin(); i != clients.cend(); i++)
 	{
+		if (p == *i)
+			continue;
+		manager.send(p, new network::SAuth((*i)->getId(), 0));
 		//TODO
 		//if ((*i)->isReady)
 		//	manager.send(p, new network::Ready((*i)->getId()));
@@ -250,9 +255,9 @@ void NetworkWorker::sendConnected(drt::network::PeerInfo *p)
 
 drt::network::PeerInfo *NetworkWorker::addServer(drt::network::Socket *s, unsigned short id)
 {
-	if (id == 0)
+	if (id <= 0)
 		id = incBiggerId();
-	drt::network::PeerInfo *pi = new network::PeerInfo(s, id);
+	drt::network::PeerInfo *pi = new network::PeerInfo(s, false, id);
 	clients.push_back(pi);
 	return pi;
 }
@@ -269,7 +274,7 @@ unsigned int NetworkWorker::nbClient() const
 drt::network::PeerInfo *NetworkWorker::getMe()
 { return myself; }
 
-const std::list<drt::network::PeerInfo *> NetworkWorker::getPeers() const
+const std::list<drt::network::PeerInfo *> &NetworkWorker::getPeers() const
 { return clients; }
 
 void NetworkWorker::nextOp(Operation *)

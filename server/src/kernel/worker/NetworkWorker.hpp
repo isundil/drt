@@ -28,7 +28,7 @@ class NetworkWorker: public AWorker
 			void setMax(unsigned short max);
 			drt::network::PeerInfo *getMe();
 			drt::network::PeerInfo *getPeer(unsigned short id);
-			const std::list<drt::network::PeerInfo *>getPeers() const;
+			const std::list<drt::network::PeerInfo *>&getPeers() const;
 
 			void sendConnected(drt::network::PeerInfo *p);
 

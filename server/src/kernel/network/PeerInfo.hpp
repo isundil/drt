@@ -12,7 +12,7 @@ namespace network
 	{
 		public:
 			PeerInfo(const std::string &ip, unsigned short port);
-			PeerInfo(Socket *socket, unsigned short id = -1);
+			PeerInfo(Socket *socket, bool direct, unsigned short id = -1);
 			virtual ~PeerInfo();
 
 			bool isClosing() const;
@@ -27,10 +27,13 @@ namespace network
 
 			std::pair<std::string, unsigned short> getConInfo() const;
 
+			bool isDirect() const;
+
 		private:
 			std::string ip;
 			unsigned short port;
 
+			const bool direct;
 			bool closing;
 			Socket *socket;
 			unsigned short id;
