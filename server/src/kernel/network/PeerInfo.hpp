@@ -33,11 +33,11 @@ namespace network
 			std::string ip;
 			unsigned short port;
 
-			const bool direct;
 			bool closing;
 			Socket *socket;
 			unsigned short id;
 			unsigned short oldId;
+			const bool direct;
 	};
 }
 }

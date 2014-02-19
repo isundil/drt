@@ -1,7 +1,6 @@
 #include <set>
 #include <sstream>
 #include <iostream>
-#include <sys/ioctl.h>
 #include <unistd.h>
 #include <stropts.h>
 #include "worker/NetworkWorker.hpp"
@@ -123,27 +122,26 @@ void NetworkWorker::connectToPeers()
 void NetworkWorker::readAll()
 {
 	fd_set fdset;
-	int closed;
-	int biggerFd =-1;
-	struct timeval timeout = { 0, 0 };
+	const network::Socket *biggerFd =nullptr;
 	std::list<network::PeerInfo *> discon;
 
+	if (clients.size() == 0)
+		return;
 	FD_ZERO(&fdset);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{
 		if (!(*i)->isDirect())
 			continue;
-		FD_SET((*i)->getSocket()->getSocketNumber(), &fdset);
-		biggerFd = (biggerFd < (*i)->getSocket()->getSocketNumber()) ? (*i)->getSocket()->getSocketNumber() : biggerFd;
+		(*i)->getSocket()->addToSet(&fdset);
+		biggerFd = (*i)->getSocket()->greater(biggerFd);
 	}
-	if (select(biggerFd +1, &fdset, nullptr, nullptr, &timeout) <= 0)
+	if (biggerFd == nullptr || biggerFd->select(&fdset) <= 0)
 		return;
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{
-		if (!FD_ISSET((*i)->getSocket()->getSocketNumber(), &fdset) || !(*i)->isDirect())
+		if (!(*i)->getSocket()->isInSet(&fdset) || !(*i)->isDirect())
 			continue;
-		ioctl((*i)->getSocket()->getSocketNumber(), FIONREAD, &closed);
-		if (closed == 0)
+		if ((*i)->getSocket()->isClosed())
 		{
 			if ((*i)->isClosing())
 				discon.push_back(*i);
@@ -197,9 +195,9 @@ void NetworkWorker::sendAll()
 {
 	while (!manager.broadcastQueueEmpty())
 	{
-		int avoid;
+		network::Socket *avoid;
 		network::ANetworkPacket *packet;
-		std::set<unsigned int> alreadySent;
+		std::set<network::Socket *> alreadySent;
 
 		manager.getNextBroadcast(&packet, &avoid);
 		alreadySent.insert(avoid);
@@ -208,11 +206,11 @@ void NetworkWorker::sendAll()
 			std::stringstream *ss;
 			size_t packet_len;
 
-			if (alreadySent.find((*i)->getSocket()->getSocketNumber()) != alreadySent.end())
+			if (alreadySent.find((*i)->getSocket()) != alreadySent.end())
 				continue;
 			ss = packet->getStream(&packet_len);
 			(*i)->sendData(*ss, packet_len);
-			alreadySent.insert((*i)->getSocket()->getSocketNumber());
+			alreadySent.insert((*i)->getSocket());
 			delete ss;
 		}
 		delete packet;

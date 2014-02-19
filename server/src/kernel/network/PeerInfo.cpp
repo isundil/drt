@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include <iostream>
-#include <stdio.h>
+#include <sys/socket.h>
 #include "network/PeerInfo.hpp"
 #include "network/Socket.hpp"
 #include "network/NetworkPacket.hpp"
@@ -46,8 +46,8 @@ void PeerInfo::read(WorkerManager &manager)
 
 	(void) manager;
 
-	::fread(&code, sizeof(code), 1, socket->getSocket());
-	ANetworkPacket *packet = ANetworkPacket::fromSocket(code, socket->getSocket());
+	code = socket->getc();
+	ANetworkPacket *packet = ANetworkPacket::fromSocket(code, socket);
 	if (packet == nullptr)
 	{
 		throw std::runtime_error("Invalid packet type");
@@ -65,10 +65,9 @@ void PeerInfo::sendData(std::stringstream &ss, size_t len)
 	while (current_pos < len)
 	{
 		ss.read(buffer, ((len - current_pos > 512) ? 512 : len - current_pos));
-		fwrite(buffer, sizeof(*buffer), ((len - current_pos > 512) ? 512 : len - current_pos), getSocket()->getSocket());
+		socket->write(buffer, ((len - current_pos > 512) ? 512 : len - current_pos));
 		current_pos += ((len - current_pos > 512) ? 512 : len - current_pos);
 	}
-	fflush(getSocket()->getSocket());
 }
 
 std::pair<std::string, unsigned short> PeerInfo::getConInfo() const

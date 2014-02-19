@@ -21,6 +21,7 @@ class NetworkWorker;
 namespace network
 {
 class ANetworkPacket;
+class Socket;
 class PeerInfo;
 }
 
@@ -42,12 +43,12 @@ class WorkerManager
 
 		// socket stuff
 		void send(network::PeerInfo *peer, network::ANetworkPacket *packet);
-		void broadcast(network::ANetworkPacket *packet, int avoid =-1);
+		void broadcast(network::ANetworkPacket *packet, network::Socket *avoid =nullptr);
 		void broadcast(network::ANetworkPacket *packet, network::PeerInfo *avoid);
 
 		void log(std::ostream &channel, const worker::AWorker &sender, const std::string &msg);
 
-		bool getNextBroadcast(network::ANetworkPacket **packet, int *avoid);
+		bool getNextBroadcast(network::ANetworkPacket **packet, network::Socket **avoid);
 		bool getNextSend(network::ANetworkPacket **packet, network::PeerInfo **dst);
 		bool broadcastQueueEmpty();
 		bool sendQueueEmpty();
@@ -63,7 +64,7 @@ class WorkerManager
 		worker::AWorker *networkWorker;
 
 		std::queue<Operation *>operationList;
-		std::queue<std::pair<int, network::ANetworkPacket *> >broadcastQueue;
+		std::queue<std::pair<network::Socket *, network::ANetworkPacket *> >broadcastQueue;
 		std::queue<std::pair<network::PeerInfo *, network::ANetworkPacket *> >sendQueue;
 		drt::Config * const info;
 		bool done;

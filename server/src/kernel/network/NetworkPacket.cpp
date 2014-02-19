@@ -3,12 +3,13 @@
 #include <map>
 #include "NetworkPacket.hpp"
 #include "PeerInfo.hpp"
+#include "Socket.hpp"
 #include "worker/NetworkWorker.hpp"
 #include "worker/WorkerManager.hpp"
 
 using namespace drt::network;
 
-ANetworkPacket *ANetworkPacket::fromSocket(char code, FILE *socket)
+ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 {
 	std::map<short, constructorFnc> ctors;
 
@@ -46,91 +47,91 @@ IdCh::IdCh(unsigned short o, unsigned short n): oldId(o), newId(n)
 Confirm::Confirm(unsigned short _id): id(_id)
 { }
 
-ANetworkPacket * SAuth::create(FILE * socket)
+ANetworkPacket * SAuth::create(network::Socket * socket)
 {
 	unsigned short id;
 	unsigned short nserv;
 
-	fread(&id, sizeof(id), 1, socket);
-	fread(&nserv, sizeof(nserv), 1, socket);
+	socket->read(&id, sizeof(id));
+	socket->read(&nserv, sizeof(nserv));
 	return new SAuth(id, nserv);
 }
 
-ANetworkPacket * CAuth::create(FILE * socket)
+ANetworkPacket * CAuth::create(network::Socket * socket)
 {
 	return new CAuth();
 }
 
-ANetworkPacket * Welcome::create(FILE * socket)
+ANetworkPacket * Welcome::create(network::Socket * socket)
 {
 	unsigned short id;
 
-	fread(&id, sizeof(id), 1, socket);
+	socket->read(&id, sizeof(id));
 	return new Welcome(id);
 }
 
-ANetworkPacket * IdCh::create(FILE * socket)
+ANetworkPacket * IdCh::create(network::Socket * socket)
 {
 	unsigned short ids[2];
 
-	fread(ids, sizeof(*ids), 2, socket);
+	socket->read(ids, sizeof(*ids) *2);
 	return new IdCh(ids[0], ids[1]);
 }
 
-ANetworkPacket * Relog::create(FILE * socket)
+ANetworkPacket * Relog::create(network::Socket * socket)
 {
 	return new Relog();
 }
 
-ANetworkPacket * Confirm::create(FILE * socket)
+ANetworkPacket * Confirm::create(network::Socket * socket)
 {
 	unsigned short id;
 
-	fread(&id, sizeof(id), 1, socket);
+	socket->read(&id, sizeof(id));
 	return new Confirm(id);
 }
 
-ANetworkPacket * Quit::create(FILE * socket)
+ANetworkPacket * Quit::create(network::Socket * socket)
 {
 	return new Quit();
 }
 
-ANetworkPacket * Netsplit::create(FILE * socket)
+ANetworkPacket * Netsplit::create(network::Socket * socket)
 {
 	return new Netsplit();
 }
 
-ANetworkPacket * NewJob::create(FILE * socket)
+ANetworkPacket * NewJob::create(network::Socket * socket)
 {
 	return new NewJob();
 }
 
-ANetworkPacket * EndJob::create(FILE * socket)
+ANetworkPacket * EndJob::create(network::Socket * socket)
 {
 	return new EndJob();
 }
 
-ANetworkPacket * Ready::create(FILE * socket)
+ANetworkPacket * Ready::create(network::Socket * socket)
 {
 	return new Ready();
 }
 
-ANetworkPacket * Proc::create(FILE * socket)
+ANetworkPacket * Proc::create(network::Socket * socket)
 {
 	return new Proc();
 }
 
-ANetworkPacket * Calc::create(FILE * socket)
+ANetworkPacket * Calc::create(network::Socket * socket)
 {
 	return new Calc();
 }
 
-ANetworkPacket * Result::create(FILE * socket)
+ANetworkPacket * Result::create(network::Socket * socket)
 {
 	return new Result();
 }
 
-ANetworkPacket * CompilFail::create(FILE * socket)
+ANetworkPacket * CompilFail::create(network::Socket * socket)
 {
 	return new CompilFail();
 }

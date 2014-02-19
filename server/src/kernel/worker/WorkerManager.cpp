@@ -122,14 +122,14 @@ void WorkerManager::log(std::ostream &out, const worker::AWorker &sender, const 
 void WorkerManager::broadcast(network::ANetworkPacket *packet, network::PeerInfo *avoid)
 {
 	if (avoid == nullptr)
-		return broadcast(packet, -1);
-	return broadcast(packet, avoid->getSocket()->getSocketNumber());
+		return broadcast(packet);
+	return broadcast(packet, avoid->getSocket());
 }
 
-void WorkerManager::broadcast(network::ANetworkPacket *packet, int avoid)
+void WorkerManager::broadcast(network::ANetworkPacket *packet, network::Socket *avoid)
 {
 	pthread_mutex_lock(&netMutex);
-	broadcastQueue.push(std::pair<int, network::ANetworkPacket *>(avoid, packet));
+	broadcastQueue.push(std::pair<network::Socket *, network::ANetworkPacket *>(avoid, packet));
 	pthread_mutex_unlock(&netMutex);
 }
 
@@ -140,7 +140,7 @@ void WorkerManager::send(network::PeerInfo *peer, network::ANetworkPacket *packe
 	pthread_mutex_unlock(&netMutex);
 }
 
-bool WorkerManager::getNextBroadcast(network::ANetworkPacket **packet, int *avoid)
+bool WorkerManager::getNextBroadcast(network::ANetworkPacket **packet, network::Socket **avoid)
 {
 	if (broadcastQueueEmpty())
 		return false;

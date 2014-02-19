@@ -1,3 +1,4 @@
+#include <fcntl.h>
 #include <sstream>
 #include <stdexcept>
 #include <arpa/inet.h>
@@ -5,6 +6,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 #include <errno.h>
 #include <string.h>
 #include "network/Socket.hpp"
@@ -30,16 +32,40 @@ Socket::Socket(const std::string &ip, unsigned short port): rel(0)
 		::close(socket);
 		throw std::runtime_error(ss.str());
 	}
-	socket_std = fdopen(socket, "r+");
 }
 
-Socket::Socket(unsigned int _socket): socket(_socket), socket_std(fdopen(_socket, "r+")), rel(0)
+Socket::Socket(unsigned int _socket): socket(_socket), rel(0)
 { }
 
 Socket::~Socket() //Calling fclose call fopen
+{ ::close(socket); }
+
+const Socket *Socket::greater(const Socket *o) const
 {
-	::fclose(socket_std);
+	if (o == nullptr)
+		return this;
+	return o->socket > socket ? o : this;
 }
+
+int Socket::select(fd_set *read, fd_set *error) const
+{
+	struct timeval timeout = { 0, 0 };
+
+	return ::select(socket +1, read, nullptr, error, &timeout);
+}
+
+bool Socket::isClosed() const
+{
+	int closed;
+	ioctl(socket, FIONREAD, &closed);
+	return closed == 0;
+}
+
+bool Socket::isInSet(fd_set *set) const
+{ return FD_ISSET(socket, set); }
+
+void Socket::addToSet(fd_set *set)
+{ FD_SET(socket, set); }
 
 void Socket::rmRel()
 { rel--; }
@@ -48,13 +74,27 @@ void Socket::addRel()
 { rel++; }
 
 bool Socket::lastRel() const
+{ return rel <= 1; }
+
+int Socket::read(void *buf, size_t len)
 {
-	return rel <= 1;
+	ssize_t result;
+
+	if ((result = ::read(socket, buf, len)) < (ssize_t)len)
+		throw std::runtime_error("Cannot read from socket");
+	return result;
 }
 
-int Socket::getSocketNumber() const
-{ return socket; }
+char Socket::getc()
+{
+	char b;
 
-FILE * Socket::getSocket() const
-{ return socket_std; }
+	this->read(&b, sizeof(b));
+	return b;
+}
+
+int Socket::write(void *buf, size_t len)
+{
+	return ::write(socket, buf, len);
+}
 
