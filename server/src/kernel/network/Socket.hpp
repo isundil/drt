@@ -15,10 +15,6 @@ namespace network
 			Socket(unsigned int _socket);
 			~Socket();
 
-			void addRel();
-			void rmRel();
-			bool lastRel() const;
-
 			int write(void *buffer, size_t len);
 			int read(void *buffer, size_t len);
 			char getc();
@@ -32,8 +28,6 @@ namespace network
 
 		private:
 			int socket;
-
-			int rel;
 
 		private:
 			Socket();

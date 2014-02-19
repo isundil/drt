@@ -116,8 +116,15 @@ class Quit: public ANetworkPacket
 class Netsplit: public ANetworkPacket
 {
 	public:
+		Netsplit(unsigned short id);
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+
+	private:
+		Netsplit();
+
+		unsigned short id;
 };
 
 class NewJob: public ANetworkPacket

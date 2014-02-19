@@ -47,6 +47,9 @@ IdCh::IdCh(unsigned short o, unsigned short n): oldId(o), newId(n)
 Confirm::Confirm(unsigned short _id): id(_id)
 { }
 
+Netsplit::Netsplit(unsigned short _id): id(_id)
+{ }
+
 ANetworkPacket * SAuth::create(network::Socket * socket)
 {
 	unsigned short id;
@@ -98,7 +101,10 @@ ANetworkPacket * Quit::create(network::Socket * socket)
 
 ANetworkPacket * Netsplit::create(network::Socket * socket)
 {
-	return new Netsplit();
+	unsigned short id;
+
+	socket->read(&id, sizeof(id));
+	return new Netsplit(id);
 }
 
 ANetworkPacket * NewJob::create(network::Socket * socket)
@@ -162,7 +168,7 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 	}
 }
 
-void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
+void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 {
 	unsigned short oldId;
 
@@ -217,6 +223,12 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 			(*i)->setId(newId);
 		}
 	}
+}
+
+void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
+{
+	m.getNetwork()->releasePeer(m.getNetwork()->getPeer(id));
+	m.broadcast(new Netsplit(*this), pi);
 }
 
 std::stringstream * SAuth::getStream(size_t *buflen) const
@@ -284,7 +296,11 @@ std::stringstream * Quit::getStream(size_t *buflen) const
 
 std::stringstream * Netsplit::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char c = 0x07;
+	ss->write((char *) &c, sizeof(c));
+	ss->write((char *) &id, sizeof(id));
+	*buflen = sizeof(c) +sizeof(id);
 	return ss;
 }
 

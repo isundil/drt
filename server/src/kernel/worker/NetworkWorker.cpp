@@ -12,6 +12,7 @@
 #include "network/Socket.hpp"
 #include "network/PeerInfo.hpp"
 #include "network/NetworkPacket.hpp"
+#include "system/CpuUsage.hpp"
 
 using namespace drt::worker;
 
@@ -65,6 +66,7 @@ void NetworkWorker::start()
 		readAll();
 		connectToPeers();
 		sendAll();
+		usleep(500);
 	}
 }
 
@@ -88,6 +90,7 @@ void NetworkWorker::connectToPeers()
 
 	if (time(nullptr) - lastConnectAtempt < 5)
 		return;
+	drt::system::CpuUsage::getCpuUsage();
 	lastConnectAtempt = time(nullptr);
 	clients.remove_if(d);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
@@ -119,6 +122,18 @@ void NetworkWorker::connectToPeers()
 	manager.log(std::cout, *this, ss.str());
 }
 
+void NetworkWorker::releasePeer(network::PeerInfo *peer)
+{
+	std::stringstream ss;
+
+	ss << "Lost connection to " << peer->getConInfo().first << ":" << peer->getConInfo().second;
+	clients.remove(peer);
+	if (peer->isDirect())
+		connectedPeers.remove(peer->getConInfo());
+	manager.log(std::cout, *this, ss.str());
+	delete peer;
+}
+
 void NetworkWorker::readAll()
 {
 	fd_set fdset;
@@ -147,22 +162,35 @@ void NetworkWorker::readAll()
 				discon.push_back(*i);
 			else
 			{
-				//TODO manager.broadcast(message::Netsplit((*i)));
 				discon.push_back(*i);
 				manager.log(std::cout, *this, "client disconnected");
 			}
 		}
 		else
-			this->readPeer((*i));
+		{
+			try
+			{
+				this->readPeer((*i));
+			}
+			catch (std::exception &e)
+			{
+				discon.push_back(*i);
+			}
+		}
 	}
 	for (auto i = discon.cbegin(); i != discon.cend(); i++)
 	{
-		clients.remove(*i);
-		connectedPeers.remove((*i)->getConInfo());
-		std::stringstream ss;
-		ss << "Lost connection to " << (*i)->getConInfo().first << ":" << (*i)->getConInfo().second;
-		manager.log(std::cout, *this, ss.str());
-		delete *i;
+		std::queue<network::PeerInfo *>dd;
+
+		for (auto j = clients.cbegin(); j != clients.cend(); j++)
+			if ((*j)->getSocket() == (*i)->getSocket())
+				dd.push(*j);
+		while (dd.size())
+		{
+			manager.broadcast(new network::Netsplit(dd.front()->getId()));
+			releasePeer(dd.front());
+			dd.pop();
+		}
 	}
 }
 
@@ -174,9 +202,8 @@ void NetworkWorker::readPeer(network::PeerInfo *peer)
 	}
 	catch (std::exception &e)
 	{
-#warning "TODO"
-		//TODO netsplit
-		//TODO remove peer
+		manager.broadcast(new network::Netsplit(peer->getId()));
+		releasePeer(peer);
 	}
 }
 

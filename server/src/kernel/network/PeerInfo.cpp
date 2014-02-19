@@ -5,6 +5,7 @@
 #include "network/Socket.hpp"
 #include "network/NetworkPacket.hpp"
 #include "worker/WorkerManager.hpp"
+#include "worker/NetworkWorker.hpp"
 
 using namespace drt::network;
 
@@ -12,22 +13,15 @@ PeerInfo::PeerInfo(const std::string &_ip, unsigned short _port): PeerInfo(new S
 {
 	ip = _ip;
 	port = _port;
-	if (socket)
-		socket->addRel();
 }
 
-PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): closing(true), socket(s), id(_id), oldId(_id), direct(_direct)
-{
-	if (s)
-		s->addRel();
-}
+PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): ip(""), port(0), closing(true), socket(s), id(_id), oldId(_id), direct(_direct)
+{ }
 
 PeerInfo::~PeerInfo()
 {
-	if (socket && socket->lastRel())
+	if (socket && isDirect())
 		delete socket;
-	else if (socket)
-		socket->rmRel();
 }
 
 Socket *PeerInfo::getSocket() const
@@ -50,8 +44,10 @@ void PeerInfo::read(WorkerManager &manager)
 	ANetworkPacket *packet = ANetworkPacket::fromSocket(code, socket);
 	if (packet == nullptr)
 	{
+		std::stringstream ss;
+		ss << "Fatal: invalid packet detected (code " << (int)code << ")" << std::endl;
+		manager.log(std::cerr, *(manager.getNetwork()), ss.str());
 		throw std::runtime_error("Invalid packet type");
-		std::cerr << "Fatal: invalid packet detected (code " << (int)code << ")" << std::endl;
 	}
 	packet->doMagic(manager, this);
 	delete packet;
@@ -83,11 +79,11 @@ void PeerInfo::setId(unsigned short _id)
 bool PeerInfo::isDirect() const
 { return direct; }
 
-unsigned short PeerInfo::getId() const
-{ return id; }
-
 unsigned short PeerInfo::getOldId() const
 { return oldId; }
+
+unsigned short PeerInfo::getId() const
+{ return id; }
 
 PeerInfo *PeerInfo::getMe()
 {

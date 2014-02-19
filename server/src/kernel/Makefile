@@ -20,7 +20,9 @@ SRC=	main.cpp					\
 		network/NetworkPacket.cpp	\
 		\
 		modules/ModuleManager.cpp	\
-		modules/AModule.cpp
+		modules/AModule.cpp			\
+		\
+		system/CpuUsage.cpp
 
 OBJ=	$(SRC:.cpp=.o)
 

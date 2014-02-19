@@ -35,6 +35,8 @@ class NetworkWorker: public AWorker
 			unsigned int nbClient() const;
 			drt::network::PeerInfo *addServer(network::Socket *sock, unsigned short id =0);
 
+			void releasePeer(network::PeerInfo *i);
+
 		private:
 			drt::network::ServerSocket * server;
 			std::list<std::pair<std::string, unsigned short> >connectedPeers;
