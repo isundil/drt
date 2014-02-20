@@ -15,13 +15,15 @@ PeerInfo::PeerInfo(const std::string &_ip, unsigned short _port): PeerInfo(new S
 	port = _port;
 }
 
-PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): ip(""), port(0), closing(true), socket(s), id(_id), oldId(_id), direct(_direct)
+PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): ip(""), port(0), closing(true), socket(s), id(_id), oldId(_id), direct(_direct), procInfo(nullptr)
 { }
 
 PeerInfo::~PeerInfo()
 {
 	if (socket && isDirect())
 		delete socket;
+	if (procInfo)
+		delete procInfo;
 }
 
 Socket *PeerInfo::getSocket() const
@@ -76,6 +78,16 @@ void PeerInfo::setId(unsigned short _id)
 	id = _id;
 }
 
+void PeerInfo::setStats(const PeerInfo::stats &stats)
+{
+	if (procInfo == nullptr)
+		procInfo = new PeerInfo::stats();
+	procInfo->copy(stats);
+}
+
+const PeerInfo::stats *PeerInfo::getStats() const
+{ return procInfo; }
+
 bool PeerInfo::isDirect() const
 { return direct; }
 
@@ -86,7 +98,12 @@ unsigned short PeerInfo::getId() const
 { return id; }
 
 PeerInfo *PeerInfo::getMe()
+{ return new PeerInfo((Socket *)nullptr, false, 1); }
+
+void PeerInfo::stats::copy(const PeerInfo::stats &o)
 {
-	return new PeerInfo((Socket *)nullptr, false, 1);
+	cpus = o.cpus;
+	ram = o.ram;
+	maxRam = o.maxRam;
 }
 
