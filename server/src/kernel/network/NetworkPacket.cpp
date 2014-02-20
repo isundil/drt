@@ -24,10 +24,11 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	ctors[ 8] = NewJob::create;
 	ctors[ 9] = EndJob::create;
 	ctors[10] = Ready::create;
-	ctors[11] = Proc::create;
-	ctors[12] = Calc::create;
-	ctors[13] = Result::create;
-	ctors[14] = CompilFail::create;
+	ctors[11] = Monitor::create;
+	ctors[12] = Proc::create;
+	ctors[13] = Calc::create;
+	ctors[14] = Result::create;
+	ctors[15] = CompilFail::create;
 
 	auto f = ctors.find(code);
 	if (f == ctors.end())
@@ -48,6 +49,9 @@ Confirm::Confirm(unsigned short _id): id(_id)
 { }
 
 Netsplit::Netsplit(unsigned short _id): id(_id)
+{ }
+
+Monitor::Monitor(unsigned short _src, std::list<float> &_cpus): src(_src), cpuStat(_cpus)
 { }
 
 ANetworkPacket * SAuth::create(network::Socket * socket)
@@ -120,6 +124,28 @@ ANetworkPacket * EndJob::create(network::Socket * socket)
 ANetworkPacket * Ready::create(network::Socket * socket)
 {
 	return new Ready();
+}
+
+ANetworkPacket * Monitor::create(network::Socket *socket)
+{
+	char nbProc;
+	std::list<float> cpus;
+	unsigned short src;
+
+	socket->read(&src, sizeof(src));
+	socket->read(&nbProc, sizeof(nbProc));
+	for (char i =0; i < nbProc; i++)
+	{
+		char stat;
+		float percent;
+
+		socket->read(&stat, sizeof(stat));
+		percent = stat;
+		percent *= 100;
+		percent /= 255;
+		cpus.push_back(percent);
+	}
+	return new Monitor(src, cpus);
 }
 
 ANetworkPacket * Proc::create(network::Socket * socket)
@@ -231,6 +257,10 @@ void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 	m.broadcast(new Netsplit(*this), pi);
 }
 
+void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
+{
+}
+
 std::stringstream * SAuth::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
@@ -319,6 +349,31 @@ std::stringstream * EndJob::getStream(size_t *buflen) const
 std::stringstream * Ready::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = nullptr;
+	return ss;
+}
+
+std::stringstream *Monitor::getStream(size_t *buflen) const
+{
+	std::stringstream *ss = new std::stringstream();
+	char c = 0x11;
+	char nbProc;
+
+	nbProc = (char) cpuStat.size();
+	ss->write((char *)&c, sizeof(c));
+	ss->write((char *)&src, sizeof(src));
+	ss->write((char *)&nbProc, sizeof(nbProc));
+	*buflen = sizeof(c) +sizeof(src) +sizeof(nbProc);
+	for (auto i =cpuStat.cbegin(); i != cpuStat.cend(); i++)
+	{
+		float fcurrent;
+		char currentCpu;
+
+		fcurrent = *i;
+		fcurrent /= 100;
+		fcurrent *= 255;
+		currentCpu = (char) fcurrent;
+		(*buflen) += sizeof(currentCpu);
+	}
 	return ss;
 }
 

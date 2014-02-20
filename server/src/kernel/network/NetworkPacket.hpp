@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <stdio.h>
+#include <list>
 
 #define NETWORK_MAXCODE  *create(14)
 
@@ -146,6 +147,22 @@ class Ready: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+};
+
+class Monitor: public ANetworkPacket
+{
+	public:
+		Monitor (unsigned short src, std::list<float> &cpuInfo);
+		static ANetworkPacket *create(Socket * socket);
+		std::stringstream *getStream(size_t *buflen) const;
+
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+
+	private:
+		Monitor();
+
+		unsigned short src;
+		std::list<float> cpuStat;
 };
 
 class Proc: public ANetworkPacket
