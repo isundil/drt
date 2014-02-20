@@ -1,5 +1,7 @@
 #pragma once
 
+#include <list>
+
 namespace drt
 {
 class WorkerManager;
@@ -10,6 +12,17 @@ namespace network
 
 	class PeerInfo
 	{
+		public:
+			struct stats
+			{
+				public:
+					std::list<float> cpus;
+					size_t ram;
+					size_t maxRam;
+
+					void copy(const stats &other);
+			};
+
 		public:
 			PeerInfo(const std::string &ip, unsigned short port);
 			PeerInfo(Socket *socket, bool direct, unsigned short id = -1);
@@ -26,6 +39,8 @@ namespace network
 			void sendData(std::stringstream &ss, size_t len);
 
 			std::pair<std::string, unsigned short> getConInfo() const;
+			void setStats(const stats &stats);
+			const stats *getStats() const;
 
 			bool isDirect() const;
 
@@ -38,6 +53,7 @@ namespace network
 			unsigned short id;
 			unsigned short oldId;
 			const bool direct;
+			stats *procInfo;
 	};
 }
 }
