@@ -1,5 +1,4 @@
 #include <limits>
-#include <iostream>
 #include "CpuUsage.hpp"
 
 using namespace drt::system;
@@ -27,9 +26,8 @@ int CpuUsage::evalLine(std::ifstream &stream)
 	usage_sum = (stats.user - lastData[cpuName].user) + (stats.nice - lastData[cpuName].nice) + (stats.system - lastData[cpuName].system);
 	total_sum = usage_sum + (stats.idle - lastData[cpuName].idle);
 	usage_percent = ((255 * usage_sum) / total_sum);
-	std::cout << "cpu name: {" << cpuName << "}: " << (int)usage_percent << std::endl;
 	lastData[cpuName] = stats;
-	return 1;
+	return usage_percent;
 }
 
 std::list<int> CpuUsage::getCpuUsage()

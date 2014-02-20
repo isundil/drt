@@ -46,6 +46,7 @@ class NetworkWorker: public AWorker
 
 			time_t lastConnectAtempt;
 
+			void sendCpuUsage();
 			void acceptNew();
 			void connectToPeers();
 			void readAll();

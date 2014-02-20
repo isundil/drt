@@ -83,6 +83,17 @@ void NetworkWorker::acceptNew()
 	}
 }
 
+void NetworkWorker::sendCpuUsage()
+{
+	std::list<int> usage = system::CpuUsage::getCpuUsage();
+	network::PeerInfo::stats st;
+
+	for (auto i = usage.cbegin(); i != usage.cend(); i++)
+		st.cpus.push_back((*i));
+	getMe()->setStats(st);
+	manager.broadcast(new network::Monitor(*(getMe())));
+}
+
 void NetworkWorker::connectToPeers()
 {
 	std::list<std::pair<std::string, unsigned short> >clients = manager.config()->getSection<drt::parser::PeerSection>()->getPeerlist();
@@ -90,7 +101,7 @@ void NetworkWorker::connectToPeers()
 
 	if (time(nullptr) - lastConnectAtempt < 5)
 		return;
-	drt::system::CpuUsage::getCpuUsage();
+	sendCpuUsage();
 	lastConnectAtempt = time(nullptr);
 	clients.remove_if(d);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
@@ -116,9 +127,9 @@ void NetworkWorker::connectToPeers()
 		manager.log(std::cout, *this, ss.str());
 	}
 	std::stringstream ss;
-	ss << "I'm " << this->getMe()->getId() << std::endl;
+	ss << "I'm " << this->getMe()->getId() << " - " << this->getMe()->getStats()->debug() << std::endl;
 	for (auto i = this->clients.cbegin(); i != this->clients.cend(); i++)
-		ss << "Client " << (*i)->getId() << std::endl;
+		ss << "Client " << (*i)->getId() << " - " << (*i)->getStats()->debug() << std::endl;
 	manager.log(std::cout, *this, ss.str());
 }
 
@@ -138,7 +149,7 @@ void NetworkWorker::readAll()
 {
 	fd_set fdset;
 	const network::Socket *biggerFd =nullptr;
-	std::list<network::PeerInfo *> discon;
+	std::list<network::Socket *> discon;
 
 	if (clients.size() == 0)
 		return;
@@ -159,10 +170,10 @@ void NetworkWorker::readAll()
 		if ((*i)->getSocket()->isClosed())
 		{
 			if ((*i)->isClosing())
-				discon.push_back(*i);
+				discon.push_back((*i)->getSocket());
 			else
 			{
-				discon.push_back(*i);
+				discon.push_back((*i)->getSocket());
 				manager.log(std::cout, *this, "client disconnected");
 			}
 		}
@@ -174,7 +185,7 @@ void NetworkWorker::readAll()
 			}
 			catch (std::exception &e)
 			{
-				discon.push_back(*i);
+				discon.push_back((*i)->getSocket());
 			}
 		}
 	}
@@ -183,7 +194,7 @@ void NetworkWorker::readAll()
 		std::queue<network::PeerInfo *>dd;
 
 		for (auto j = clients.cbegin(); j != clients.cend(); j++)
-			if ((*j)->getSocket() == (*i)->getSocket())
+			if ((*j)->getSocket() == *i)
 				dd.push(*j);
 		while (dd.size())
 		{
@@ -196,15 +207,7 @@ void NetworkWorker::readAll()
 
 void NetworkWorker::readPeer(network::PeerInfo *peer)
 {
-	try
-	{
-		peer->read(manager);
-	}
-	catch (std::exception &e)
-	{
-		manager.broadcast(new network::Netsplit(peer->getId()));
-		releasePeer(peer);
-	}
+	peer->read(manager);
 }
 
 void NetworkWorker::stop()
@@ -292,6 +295,7 @@ void NetworkWorker::setMax(unsigned short newMax)
 	if (biggerId < newMax)
 		biggerId = newMax;
 }
+
 
 unsigned int NetworkWorker::nbClient() const
 { return clients.size(); }

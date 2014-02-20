@@ -21,6 +21,7 @@ namespace network
 					size_t maxRam;
 
 					void copy(const stats &other);
+					std::string debug() const;
 			};
 
 		public:

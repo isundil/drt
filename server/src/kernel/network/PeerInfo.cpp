@@ -107,3 +107,15 @@ void PeerInfo::stats::copy(const PeerInfo::stats &o)
 	maxRam = o.maxRam;
 }
 
+std::string PeerInfo::stats::debug() const
+{
+	std::stringstream ss;
+
+	if (this == nullptr)
+		return "no data";
+	int num =0;
+	for (auto i = cpus.cbegin(); i != cpus.cend(); i++)
+		ss << "cpu" << num++ << ": " << (100 * (*i)) / 255 << "% | ";
+	return ss.str();
+}
+

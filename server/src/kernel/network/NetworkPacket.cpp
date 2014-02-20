@@ -54,6 +54,16 @@ Netsplit::Netsplit(unsigned short _id): id(_id)
 Monitor::Monitor(unsigned short _src, std::list<float> &_cpus): src(_src), cpuStat(_cpus)
 { }
 
+Monitor::Monitor(const PeerInfo &peer)
+{
+	src = peer.getId();
+	if (peer.getStats() == nullptr)
+		throw std::exception();
+	for (auto i = peer.getStats()->cpus.cbegin();
+			i != peer.getStats()->cpus.cend(); i++)
+		cpuStat.push_back(*i);
+}
+
 ANetworkPacket * SAuth::create(network::Socket * socket)
 {
 	unsigned short id;
@@ -137,13 +147,9 @@ ANetworkPacket * Monitor::create(network::Socket *socket)
 	for (char i =0; i < nbProc; i++)
 	{
 		char stat;
-		float percent;
 
 		socket->read(&stat, sizeof(stat));
-		percent = stat;
-		percent *= 100;
-		percent /= 255;
-		cpus.push_back(percent);
+		cpus.push_back(stat);
 	}
 	return new Monitor(src, cpus);
 }
@@ -257,14 +263,24 @@ void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 	m.broadcast(new Netsplit(*this), pi);
 }
 
-void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
+void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
 {
+	network::PeerInfo *pi = m.getNetwork()->getPeer(src);
+	network::PeerInfo::stats st;
+
+	if (pi == nullptr)
+		return;
+	m.broadcast(new Monitor(*this), s);
+	st.cpus = cpuStat;
+	st.ram = 0; //TODO
+	st.maxRam = 0; //TODO
+	pi->setStats(st);
 }
 
 std::stringstream * SAuth::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x00;
+	char c = 0;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
 	ss->write((char *) &nbServer, sizeof(nbServer));
@@ -281,7 +297,7 @@ std::stringstream * CAuth::getStream(size_t *buflen) const
 std::stringstream * Welcome::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x02;
+	char c = 2;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
 	*buflen = sizeof(c) +sizeof(id);
@@ -291,7 +307,7 @@ std::stringstream * Welcome::getStream(size_t *buflen) const
 std::stringstream * IdCh::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x03;
+	char c = 3;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &oldId, sizeof(oldId));
 	ss->write((char *) &newId, sizeof(newId));
@@ -302,7 +318,7 @@ std::stringstream * IdCh::getStream(size_t *buflen) const
 std::stringstream * Relog::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x04;
+	char c = 4;
 	ss->write((char *) &c, sizeof(c));
 	*buflen = sizeof(c);
 	return ss;
@@ -311,7 +327,7 @@ std::stringstream * Relog::getStream(size_t *buflen) const
 std::stringstream * Confirm::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x05;
+	char c = 5;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
 	*buflen = sizeof(c) +sizeof(id);
@@ -327,7 +343,7 @@ std::stringstream * Quit::getStream(size_t *buflen) const
 std::stringstream * Netsplit::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x07;
+	char c = 7;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
 	*buflen = sizeof(c) +sizeof(id);
@@ -355,7 +371,7 @@ std::stringstream * Ready::getStream(size_t *buflen) const
 std::stringstream *Monitor::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 0x11;
+	char c = 11;
 	char nbProc;
 
 	nbProc = (char) cpuStat.size();
@@ -365,13 +381,9 @@ std::stringstream *Monitor::getStream(size_t *buflen) const
 	*buflen = sizeof(c) +sizeof(src) +sizeof(nbProc);
 	for (auto i =cpuStat.cbegin(); i != cpuStat.cend(); i++)
 	{
-		float fcurrent;
-		char currentCpu;
+		char currentCpu = *i;
 
-		fcurrent = *i;
-		fcurrent /= 100;
-		fcurrent *= 255;
-		currentCpu = (char) fcurrent;
+		ss->write(&currentCpu, sizeof(currentCpu));
 		(*buflen) += sizeof(currentCpu);
 	}
 	return ss;

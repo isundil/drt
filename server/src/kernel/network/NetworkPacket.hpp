@@ -152,7 +152,8 @@ class Ready: public ANetworkPacket
 class Monitor: public ANetworkPacket
 {
 	public:
-		Monitor (unsigned short src, std::list<float> &cpuInfo);
+		Monitor(unsigned short src, std::list<float> &cpuInfo);
+		Monitor(const network::PeerInfo &peer);
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 
