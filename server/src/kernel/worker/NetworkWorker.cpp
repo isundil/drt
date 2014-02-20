@@ -13,6 +13,7 @@
 #include "network/PeerInfo.hpp"
 #include "network/NetworkPacket.hpp"
 #include "system/CpuUsage.hpp"
+#include "system/MemUsage.hpp"
 
 using namespace drt::worker;
 
@@ -85,7 +86,9 @@ void NetworkWorker::acceptNew()
 
 void NetworkWorker::sendCpuUsage()
 {
+	std::pair<int, int> memInfo[2];
 	std::list<int> usage = system::CpuUsage::getCpuUsage();
+	system::MemUsage::getMemUsage(memInfo[0], memInfo[1]);
 	network::PeerInfo::stats st;
 
 	for (auto i = usage.cbegin(); i != usage.cend(); i++)

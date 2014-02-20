@@ -22,7 +22,8 @@ SRC=	main.cpp					\
 		modules/ModuleManager.cpp	\
 		modules/AModule.cpp			\
 		\
-		system/CpuUsage.cpp
+		system/CpuUsage.cpp			\
+		system/MemUsage.cpp
 
 OBJ=	$(SRC:.cpp=.o)
 
