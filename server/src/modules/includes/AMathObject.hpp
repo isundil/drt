@@ -1,8 +1,10 @@
 #pragma once
 #include "AObject.hpp"
 
-class Camera;
-class Ray;
+#include "camera.hpp"
+#include "ray.hpp"
+
+#define SQ(a) (a * a)
 
 class AMathObject : public AObject {
 public:

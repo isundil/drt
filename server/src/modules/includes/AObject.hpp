@@ -2,7 +2,6 @@
 
 #include <string>
 #include <map>
-#define SQ(a) (a * a)
 
 #include "IObject.hh"
 
