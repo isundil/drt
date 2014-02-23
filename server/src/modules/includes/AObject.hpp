@@ -1,14 +1,17 @@
-#include "IObject.hh"
+#pragma once
 
 #include <string>
 #include <map>
+#define SQ(a) (a * a)
+
+#include "IObject.hh"
 
 class APropertyValue {};
 
 template <typename T>
 class PropertyValue : public APropertyValue {
 public:
-  PropertyValue(T _val) : _val(value) {}
+  PropertyValue(T _val) : value(_val) {}
   T getValue() { return value; }
 private :
   T value;
@@ -17,6 +20,7 @@ private :
 class ObjectProperties {
 public:
   void addProperty(std::string name, APropertyValue * property);
+  APropertyValue *operator[](std::string name) { return properties[name]; }
 
 private :
 
@@ -24,12 +28,18 @@ private :
 
 };
 
-class AObject {
+class AObject : public IObject {
 public:
+  AObject();
+
   APropertyValue	*getProperty(std::string name);
+
+  template <class T>
+  T at(std::string name) {
+    return ((PropertyValue<T> *) this->getProperty(name))->getValue();
+  }
 
 protected:
 
   ObjectProperties _props;
-  double computeEquation(AObject * camera, AObject * ray);
 };
