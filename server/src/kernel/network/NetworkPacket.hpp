@@ -138,8 +138,15 @@ class Netsplit: public ANetworkPacket
 class NewJob: public ANetworkPacket
 {
 	public:
+		NewJob( network::Socket *, unsigned short, size_t );
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		void doMagic(
+				drt::WorkerManager &, 
+				drt::network::PeerInfo *);
+
+	private:
+		unsigned short id;
 };
 
 class EndJob: public ANetworkPacket

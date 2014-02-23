@@ -23,7 +23,9 @@ SRC=	main.cpp					\
 		modules/AModule.cpp			\
 		\
 		system/CpuUsage.cpp			\
-		system/MemUsage.cpp
+		system/MemUsage.cpp			\
+		\
+		render/Scene.cpp
 
 OBJ=	$(SRC:.cpp=.o)
 
