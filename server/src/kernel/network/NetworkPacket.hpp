@@ -51,8 +51,15 @@ class SAuth: public ANetworkPacket
 class CAuth: public ANetworkPacket
 {
 	public:
+		CAuth(unsigned short _id);
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+	
+		void 
+		doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *);
+
+	private:
+		unsigned short id;
 };
 
 class Welcome: public ANetworkPacket
@@ -131,8 +138,15 @@ class Netsplit: public ANetworkPacket
 class NewJob: public ANetworkPacket
 {
 	public:
+		NewJob( network::Socket *, unsigned short, size_t );
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		void doMagic(
+				drt::WorkerManager &, 
+				drt::network::PeerInfo *);
+
+	private:
+		unsigned short id;
 };
 
 class EndJob: public ANetworkPacket

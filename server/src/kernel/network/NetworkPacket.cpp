@@ -39,6 +39,9 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 SAuth::SAuth(unsigned short _id, unsigned short nserv): id(_id), nbServer(nserv)
 { }
 
+CAuth::CAuth(unsigned short _id): id(_id)
+{ }
+
 Welcome::Welcome(unsigned short _id): id(_id)
 { }
 
@@ -49,6 +52,12 @@ Confirm::Confirm(unsigned short _id): id(_id)
 { }
 
 Netsplit::Netsplit(unsigned short _id): id(_id)
+{ }
+
+NewJob::NewJob(
+		network::Socket *socket, 
+		unsigned short _id, 
+		size_t len  ):id( _id )
 { }
 
 Monitor::Monitor(unsigned short _src, std::list<float> &_cpus, const memInfo &_ram, const memInfo &_swap): src(_src), cpuStat(_cpus), ramLevel(_ram), swapLevel(_swap)
@@ -78,7 +87,10 @@ ANetworkPacket * SAuth::create(network::Socket * socket)
 
 ANetworkPacket * CAuth::create(network::Socket * socket)
 {
-	return new CAuth();
+	unsigned short id;
+
+	socket -> read( &id, sizeof( id ) );
+	return new CAuth( id );
 }
 
 ANetworkPacket * Welcome::create(network::Socket * socket)
@@ -125,7 +137,12 @@ ANetworkPacket * Netsplit::create(network::Socket * socket)
 
 ANetworkPacket * NewJob::create(network::Socket * socket)
 {
-	return new NewJob();
+	unsigned short id;
+	size_t len;
+
+	socket -> read( &id, sizeof( id ) );
+	socket -> read( &len, sizeof( len ) );
+	return new NewJob( socket, id, len );
 }
 
 ANetworkPacket * EndJob::create(network::Socket * socket)
@@ -210,6 +227,27 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 	}
 }
 
+void
+CAuth::doMagic(
+		drt::WorkerManager &m,
+		drt::network::PeerInfo *peer )
+{
+	if( (short) id == -1 )
+	{
+		peer -> setClient();
+		peer -> setId( m.getNetwork() -> incBiggerId() );
+		m.send( peer, new Welcome( peer -> getId() ) );
+		id = peer -> getId();
+	}
+	else
+	{
+		m.getNetwork() -> addServer( peer -> getSocket(), id );
+		peer -> setClient();
+	}
+	m.broadcast( new CAuth( id ), peer );
+
+}
+
 void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 {
 	unsigned short oldId;
@@ -273,6 +311,12 @@ void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 	m.broadcast(new Netsplit(*this), pi);
 }
 
+void 
+NewJob::doMagic( drt::WorkerManager &, 
+		drt::network::PeerInfo * )
+{ }
+
+
 void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
 {
 	network::PeerInfo *pi = m.getNetwork()->getPeer(src);
@@ -300,7 +344,7 @@ std::stringstream * SAuth::getStream(size_t *buflen) const
 	return ss;
 }
 
-std::stringstream * CAuth::getStream(size_t *buflen) const
+std::stringstream * CAuth::getStream(size_t *) const
 {
 	std::stringstream *ss = nullptr;
 	return ss;
