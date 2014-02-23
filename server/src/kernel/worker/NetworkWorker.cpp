@@ -93,6 +93,10 @@ void NetworkWorker::sendCpuUsage()
 
 	for (auto i = usage.cbegin(); i != usage.cend(); i++)
 		st.cpus.push_back((*i));
+	st.ram = memInfo[0].first;
+	st.maxRam = memInfo[0].second;
+	st.swap = memInfo[1].first;
+	st.maxSwap = memInfo[1].second;
 	getMe()->setStats(st);
 	manager.broadcast(new network::Monitor(*(getMe())));
 }

@@ -1,11 +1,11 @@
 #pragma once
 
+#include <utility>
 #include <sstream>
 #include <stdio.h>
 #include <list>
 
 #define NETWORK_MAXCODE  *create(14)
-
 
 namespace drt
 {
@@ -159,7 +159,10 @@ class Ready: public ANetworkPacket
 class Monitor: public ANetworkPacket
 {
 	public:
-		Monitor(unsigned short src, std::list<float> &cpuInfo);
+		typedef std::pair<unsigned int, unsigned int> memInfo;
+
+	public:
+		Monitor(unsigned short src, std::list<float> &cpuInfo, const memInfo &ram, const memInfo &swap);
 		Monitor(const network::PeerInfo &peer);
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
@@ -171,6 +174,8 @@ class Monitor: public ANetworkPacket
 
 		unsigned short src;
 		std::list<float> cpuStat;
+		memInfo ramLevel;
+		memInfo swapLevel;
 };
 
 class Proc: public ANetworkPacket

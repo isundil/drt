@@ -12,7 +12,7 @@ class MemUsage
 		static void getMemUsage(std::pair<int, int>&mem, std::pair<int, int> &swap);
 
 	private:
-		static void toMo(unsigned long &value, const std::string &unit);
+		static unsigned int toMo(unsigned int &value, const std::string &unit);
 };
 }
 }

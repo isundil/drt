@@ -54,7 +54,7 @@ Confirm::Confirm(unsigned short _id): id(_id)
 Netsplit::Netsplit(unsigned short _id): id(_id)
 { }
 
-Monitor::Monitor(unsigned short _src, std::list<float> &_cpus): src(_src), cpuStat(_cpus)
+Monitor::Monitor(unsigned short _src, std::list<float> &_cpus, const memInfo &_ram, const memInfo &_swap): src(_src), cpuStat(_cpus), ramLevel(_ram), swapLevel(_swap)
 { }
 
 Monitor::Monitor(const PeerInfo &peer)
@@ -65,6 +65,8 @@ Monitor::Monitor(const PeerInfo &peer)
 	for (auto i = peer.getStats()->cpus.cbegin();
 			i != peer.getStats()->cpus.cend(); i++)
 		cpuStat.push_back(*i);
+	ramLevel = std::make_pair(peer.getStats()->ram, peer.getStats()->maxRam);
+	swapLevel = std::make_pair(peer.getStats()->swap, peer.getStats()->maxSwap);
 }
 
 ANetworkPacket * SAuth::create(network::Socket * socket)
@@ -147,6 +149,8 @@ ANetworkPacket * Monitor::create(network::Socket *socket)
 	char nbProc;
 	std::list<float> cpus;
 	unsigned short src;
+	memInfo ram, swap;
+	unsigned int min, max;
 
 	socket->read(&src, sizeof(src));
 	socket->read(&nbProc, sizeof(nbProc));
@@ -157,7 +161,13 @@ ANetworkPacket * Monitor::create(network::Socket *socket)
 		socket->read(&stat, sizeof(stat));
 		cpus.push_back(stat);
 	}
-	return new Monitor(src, cpus);
+	socket->read(&min, sizeof(min));
+	socket->read(&max, sizeof(max));
+	ram = std::make_pair(min, max);
+	socket->read(&min, sizeof(min));
+	socket->read(&max, sizeof(max));
+	swap = std::make_pair(min, max);
+	return new Monitor(src, cpus, ram, swap);
 }
 
 ANetworkPacket * Proc::create(network::Socket * socket)
@@ -294,8 +304,10 @@ void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
 		return;
 	m.broadcast(new Monitor(*this), s);
 	st.cpus = cpuStat;
-	st.ram = 0; //TODO
-	st.maxRam = 0; //TODO
+	st.ram = ramLevel.first;
+	st.maxRam = ramLevel.second;
+	st.swap = swapLevel.first;
+	st.maxSwap = swapLevel.second;
 	pi->setStats(st);
 }
 
@@ -408,6 +420,14 @@ std::stringstream *Monitor::getStream(size_t *buflen) const
 		ss->write(&currentCpu, sizeof(currentCpu));
 		(*buflen) += sizeof(currentCpu);
 	}
+	ss->write((char *)&(ramLevel.first), sizeof(ramLevel.first));
+	(*buflen) += sizeof(ramLevel.first);
+	ss->write((char *)&(ramLevel.second), sizeof(ramLevel.second));
+	(*buflen) += sizeof(ramLevel.second);
+	ss->write((char *)&(swapLevel.first), sizeof(swapLevel.first));
+	(*buflen) += sizeof(swapLevel.first);
+	ss->write((char *)&(swapLevel.second), sizeof(swapLevel.second));
+	(*buflen) += sizeof(swapLevel.second);
 	return ss;
 }
 
