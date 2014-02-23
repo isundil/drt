@@ -26,6 +26,8 @@ private :
 
 class AObject {
 public:
+  APropertyValue	*getProperty(std::string name);
+
 protected:
 
   ObjectProperties _props;
