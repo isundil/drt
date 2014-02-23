@@ -33,6 +33,7 @@ namespace network
 			Socket *getSocket() const;
 			void read(WorkerManager&);
 			void setId(unsigned short id);
+			void setClient();
 			unsigned short getId() const;
 			unsigned short getOldId() const;
 
@@ -55,6 +56,7 @@ namespace network
 			unsigned short oldId;
 			const bool direct;
 			stats *procInfo;
+			bool isClient;
 	};
 }
 }

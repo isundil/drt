@@ -39,6 +39,9 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 SAuth::SAuth(unsigned short _id, unsigned short nserv): id(_id), nbServer(nserv)
 { }
 
+CAuth::CAuth(unsigned short _id): id(_id)
+{ }
+
 Welcome::Welcome(unsigned short _id): id(_id)
 { }
 
@@ -76,7 +79,10 @@ ANetworkPacket * SAuth::create(network::Socket * socket)
 
 ANetworkPacket * CAuth::create(network::Socket * socket)
 {
-	return new CAuth();
+	unsigned short id;
+
+	socket -> read( &id, sizeof( id ) );
+	return new CAuth( id );
 }
 
 ANetworkPacket * Welcome::create(network::Socket * socket)
@@ -200,6 +206,22 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 	}
 }
 
+void
+CAuth::doMagic(
+		drt::WorkerManager &m,
+		drt::network::PeerInfo *peer )
+{
+	if( id == -1 )
+		peer -> setClient();
+	else
+	{
+		m.getNetwork() -> addServer( peer -> getSocket(), id );
+		peer -> setClient();
+	}
+	m.broadcast( new CAuth( id ), peer );
+
+}
+
 void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 {
 	unsigned short oldId;
@@ -288,7 +310,7 @@ std::stringstream * SAuth::getStream(size_t *buflen) const
 	return ss;
 }
 
-std::stringstream * CAuth::getStream(size_t *buflen) const
+std::stringstream * CAuth::getStream(size_t *) const
 {
 	std::stringstream *ss = nullptr;
 	return ss;
