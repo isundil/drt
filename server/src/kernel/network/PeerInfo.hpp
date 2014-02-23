@@ -19,6 +19,8 @@ namespace network
 					std::list<float> cpus;
 					size_t ram;
 					size_t maxRam;
+					size_t swap;
+					size_t maxSwap;
 
 					void copy(const stats &other);
 					std::string debug() const;

@@ -105,6 +105,8 @@ void PeerInfo::stats::copy(const PeerInfo::stats &o)
 	cpus = o.cpus;
 	ram = o.ram;
 	maxRam = o.maxRam;
+	swap = o.swap;
+	maxSwap = o.maxSwap;
 }
 
 std::string PeerInfo::stats::debug() const
@@ -116,6 +118,7 @@ std::string PeerInfo::stats::debug() const
 	int num =0;
 	for (auto i = cpus.cbegin(); i != cpus.cend(); i++)
 		ss << "cpu" << num++ << ": " << (100 * (*i)) / 255 << "% | ";
+	ss << " mem: " << ram << "/" << maxRam << " | " << swap << "/" << maxSwap;
 	return ss.str();
 }
 
