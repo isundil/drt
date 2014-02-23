@@ -1,12 +1,20 @@
 #include <iostream>
 #include <fstream>
+#include <map>
 #include "MemUsage.hpp"
 
 unsigned int drt::system::MemUsage::toMo(unsigned int &value, const std::string &unit)
 {
-	if (unit == "kB")
-		return (value = (value / 1024));
-	return value;
+	std::map<std::string, unsigned long> table;
+	table["B"] = 1024L * 1024L;
+	table["kB"] = 1024L;
+	table["mB"] = 1;
+	table["gB"] = 1L / 1024L;
+	table["tB"] = 1L / (1024L * 1024L);
+
+	if (table.find(unit) == table.end())
+		return value;
+	return (value /= table[unit]);
 }
 
 void drt::system::MemUsage::getMemUsage(std::pair<int, int> &mem, std::pair<int, int> &swap)
@@ -22,6 +30,7 @@ void drt::system::MemUsage::getMemUsage(std::pair<int, int> &mem, std::pair<int,
 	{
 		if (!(s >> name >> value >> unit))
 			break;
+		toMo(value, unit);
 		if (name == "MemTotal:")
 			mem.second = toMo(value, unit);
 		else if (name == "MemFree:")
@@ -30,6 +39,8 @@ void drt::system::MemUsage::getMemUsage(std::pair<int, int> &mem, std::pair<int,
 			swap.second = toMo(value, unit);
 		else if (name == "SwapFree:")
 			swap.first = toMo(value, unit);
+		if (mem.first != -1 && mem.second != -1 && swap.first != -1 && swap.second != -1)
+			break;
 	}
 	mem.first = mem.second - mem.first;
 	swap.first = swap.second - swap.first;
