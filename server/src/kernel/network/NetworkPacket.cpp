@@ -6,6 +6,7 @@
 #include "Socket.hpp"
 #include "worker/NetworkWorker.hpp"
 #include "worker/WorkerManager.hpp"
+#include "render/Scene.hpp"
 
 using namespace drt::network;
 
@@ -58,7 +59,14 @@ NewJob::NewJob(
 		network::Socket *socket, 
 		unsigned short _id, 
 		size_t len  ):id( _id )
-{ }
+{
+	network::PeerInfo *client = nullptr;
+	render::Scene *scene = new render::Scene( socket, len );
+
+	client = drt::WorkerManager::getSingleton() -> getNetwork() -> getPeer( id );
+	client -> setScene( scene );
+	
+}
 
 Monitor::Monitor(unsigned short _src, std::list<float> &_cpus, const memInfo &_ram, const memInfo &_swap): src(_src), cpuStat(_cpus), ramLevel(_ram), swapLevel(_swap)
 { }
