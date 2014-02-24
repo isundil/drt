@@ -240,7 +240,7 @@ CAuth::doMagic(
 		drt::WorkerManager &m,
 		drt::network::PeerInfo *peer )
 {
-	if( id == -1 )
+	if( (short) id == -1 )
 	{
 		peer -> setClient();
 		peer -> setId( m.getNetwork() -> incBiggerId() );
