@@ -1,0 +1,15 @@
+
+#comment2
+
+[peers]
+Server localhost:8142
+
+[server]
+Listen 8141
+MaxClient unlimited
+
+#NoListen
+
+[worker]
+MaxThreads 2
+

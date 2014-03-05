@@ -15,7 +15,7 @@ PeerInfo::PeerInfo(const std::string &_ip, unsigned short _port): PeerInfo(new S
 	port = _port;
 }
 
-PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): ip(""), port(0), closing(true), socket(s), id(_id), oldId(_id), direct(_direct), procInfo(nullptr), isClient(false)
+PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): ip(""), port(0), closing(true), socket(s), id(_id), oldId(_id), direct(_direct), procInfo(nullptr), isClient(false), confirmed(0)
 { }
 
 PeerInfo::~PeerInfo()
@@ -51,6 +51,13 @@ void PeerInfo::read(WorkerManager &manager)
 		manager.log(std::cerr, *(manager.getNetwork()), ss.str());
 		throw std::runtime_error("Invalid packet type");
 	}
+	if (dynamic_cast<SAuth *> (packet) == nullptr && dynamic_cast<Welcome *> (packet) == nullptr && dynamic_cast<IdCh *> (packet) == nullptr && dynamic_cast<Confirm *> (packet) == nullptr && getConfirmed())
+	{
+		std::cerr << "Packet " << packet->getName() << "dropped" << std::endl;
+		delete packet;
+		return;
+	}
+	std::cerr << "Packet in (" << manager.getNetwork()->getMe()->getId() << "): " << packet->getName() << std::endl;
 	packet->doMagic(manager, this);
 	delete packet;
 }
@@ -105,6 +112,15 @@ unsigned short PeerInfo::getId() const
 
 PeerInfo *PeerInfo::getMe()
 { return new PeerInfo((Socket *)nullptr, false, 1); }
+
+int PeerInfo::getConfirmed() const
+{ return confirmed; }
+
+void PeerInfo::setConfirmed(int value)
+{ confirmed = value < 0 ? 0 : value; }
+
+bool PeerInfo::decConfirm()
+{ return (--confirmed) <= 0; }
 
 void PeerInfo::stats::copy(const PeerInfo::stats &o)
 {

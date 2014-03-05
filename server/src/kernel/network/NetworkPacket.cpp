@@ -196,16 +196,19 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 	{
 		std::cout << "DEBUG client handshake detected (peer->" << peer->getId() << "), (id->" << id << ")" << std::endl;
 
+		peer->setConfirmed(manager.getNetwork()->nbClient() -1);
 		peer->setId(manager.getNetwork()->incBiggerId());
 		manager.send(peer, new Welcome(peer->getId()));
-		manager.broadcast(new SAuth(peer->getId(), 0), peer);
-		manager.send(peer, new SAuth(manager.getNetwork()->getMe()->getId(), 0));
-		if (manager.getNetwork()->nbClient() == 1)
-			manager.send(peer, new Confirm(peer->getId()));
-		//TODO will need to wait
-		manager.getNetwork()->sendConnected(peer);
+		//manager.broadcast(new SAuth(peer->getId(), 0), peer);
 		for (size_t i = 0; i < nbServer; i++)
 			manager.getNetwork()->addServer(peer->getSocket());
+		if (!peer->getConfirmed())
+		{
+			manager.send(peer, new Confirm(peer->getId()));
+			manager.send(peer, new IdCh(-1, manager.getNetwork()->getMe()->getId()));
+		}
+		else
+			manager.broadcast(new IdCh(peer->getId(), -1), peer);
 	}
 	else
 	{
@@ -221,7 +224,7 @@ CAuth::doMagic(
 		drt::WorkerManager &m,
 		drt::network::PeerInfo *peer )
 {
-	if( id == -1 )
+	if( (short)id == -1 )
 		peer -> setClient();
 	else
 	{
@@ -247,13 +250,28 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 {
 	if (oldId == newId)
 		return;
-	if (m.getNetwork()->getMe()->getId() == oldId)
-		m.getNetwork()->getMe()->setId(newId);
+	else if (newId == 0xFFFF && oldId != m.getNetwork()->getMe()->getId())
+	{
+		network::PeerInfo *pi = m.getNetwork()->addServer(p->getSocket(), oldId);
+		unsigned int children = m.getNetwork()->nbSocket(p->getSocket());
+
+		pi->setConfirmed(children);
+		//TODO boucle inf ICI (cas circle loop)
+		m.broadcast(new IdCh(*this), p);
+		if (children == 0)
+			m.send(p, new Confirm(oldId));
+	}
 	else if (newId == 0xFFFF)
-		m.getNetwork()->addServer(p->getSocket(), oldId);
+		m.getNetwork()->removeLastPeer();
+	else if (m.getNetwork()->getMe()->getId() == oldId)
+	{
+		m.getNetwork()->getMe()->setId(newId);
+		m.broadcast(new IdCh(*this), p);
+	}
 	else
 	{
 		PeerInfo *pi = m.getNetwork()->getPeer(oldId);
+
 		if (pi == nullptr)
 		{
 			m.getNetwork()->addServer(p->getSocket(), newId);
@@ -273,9 +291,22 @@ void Relog::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 {
 	if (id != m.getNetwork()->getMe()->getId())
-		m.send(m.getNetwork()->getPeer(id), new Confirm(*this));
+	{
+		network::PeerInfo *newServ = m.getNetwork()->getPeer(id);
+
+		if (!newServ)
+		{
+			m.log(std::cerr, *(m.getNetwork()), "Invalid Confirm id packet");
+			return;
+		}
+		if (!newServ->decConfirm())
+			return;
+		m.send(newServ, new Confirm(*this));
+	}
 	else
 	{
+		//Our server is now confirmed
+		pi->setConfirmed(0);
 		m.broadcast(new IdCh(m.getNetwork()->getMe()->getOldId(), id), pi);
 		auto clientList = m.getNetwork()->getPeers();
 		for (auto i = clientList.cbegin(); i != clientList.cend(); i++)
@@ -454,4 +485,68 @@ std::stringstream * CompilFail::getStream(size_t *buflen) const
 	std::stringstream *ss = nullptr;
 	return ss;
 }
+
+const std::string SAuth::getName() const
+{
+	std::stringstream ss;
+	ss << "SAuth " << id;
+	return ss.str();
+}
+
+const std::string CAuth::getName() const
+{ return "Cauth"; }
+
+const std::string Welcome::getName() const
+{
+	std::stringstream ss;
+	ss << "Welcome " << id;
+	return ss.str();
+}
+
+const std::string IdCh::getName() const
+{
+	std::stringstream ss;
+	ss << "Idch " << oldId << " -> " << newId;
+	return ss.str();
+}
+
+const std::string Relog::getName() const
+{ return "Relog"; }
+
+const std::string Confirm::getName() const
+{
+	std::stringstream ss;
+	ss << "Cfn " << id;
+	return ss.str();
+}
+
+const std::string Quit::getName() const
+{ return "Quit"; }
+
+const std::string Netsplit::getName() const
+{ return "Netsplit"; }
+
+const std::string NewJob::getName() const
+{ return "New job"; }
+
+const std::string EndJob::getName() const
+{ return "End job"; }
+
+const std::string Ready::getName() const
+{ return "Ready"; }
+
+const std::string Monitor::getName() const
+{ return "Monitor"; }
+
+const std::string Proc::getName() const
+{ return "Proc"; }
+
+const std::string Calc::getName() const
+{ return "Calc"; }
+
+const std::string Result::getName() const
+{ return "Result"; }
+
+const std::string CompilFail::getName() const
+{ return "CompilFail"; }
 

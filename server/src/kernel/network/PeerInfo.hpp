@@ -48,6 +48,10 @@ namespace network
 
 			bool isDirect() const;
 
+			int getConfirmed() const;
+			void setConfirmed(int);
+			bool decConfirm();
+
 		private:
 			std::string ip;
 			unsigned short port;
@@ -59,6 +63,7 @@ namespace network
 			const bool direct;
 			stats *procInfo;
 			bool isClient;
+			int confirmed;
 	};
 }
 }
