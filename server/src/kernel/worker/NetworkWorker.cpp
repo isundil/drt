@@ -201,7 +201,7 @@ void NetworkWorker::readAll()
 				manager.log(std::cout, *this, "client disconnected");
 			}
 		}
-		else
+		else if (discon.find((*i)->getSocket()) == discon.cend() && this->discon.find(*i) == this->discon.cend())
 		{
 			try
 			{
@@ -302,6 +302,8 @@ void NetworkWorker::sendUnique()
 		size_t packet_len;
 
 		manager.getNextSend(&packet, &peer);
+		if (clients.find(peer) == clients.end())
+			continue;
 		ss = packet->getStream(&packet_len);
 	std::cerr << "Packet out: " << packet->getName() << std::endl;
 		peer->sendData(*ss, packet_len);

@@ -323,7 +323,10 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 {
 	m.getNetwork()->releasePeer(m.getNetwork()->getPeer(id));
-	m.broadcast(new Netsplit(*this), pi);
+	if (pi->getId() == id)
+		m.broadcast(new Netsplit(*this));
+	else
+		m.broadcast(new Netsplit(*this), pi);
 }
 
 void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
