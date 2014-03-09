@@ -3,7 +3,7 @@
 
 using namespace drt::render;
 
-Scene::Scene( drt::network::Socket * s, size_t size)
+Scene::Scene( ifstream s )
 {
   // header
   char			nbModules;

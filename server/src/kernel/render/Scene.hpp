@@ -15,7 +15,7 @@ namespace drt
 		class Scene
 		{
 			public:
-				Scene(network::Socket *, size_t );
+				Scene( std::ifstream & );
 
 			private:
 		};
