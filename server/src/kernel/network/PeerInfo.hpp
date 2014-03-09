@@ -6,6 +6,11 @@ namespace drt
 {
 class WorkerManager;
 
+namespace render
+{
+	class Scene;
+}
+
 namespace network
 {
 	class Socket;
@@ -48,6 +53,9 @@ namespace network
 
 			bool isDirect() const;
 
+			void setScene( render::Scene* );
+			render::Scene* getScene();
+
 		private:
 			std::string ip;
 			unsigned short port;
@@ -59,6 +67,7 @@ namespace network
 			const bool direct;
 			stats *procInfo;
 			bool isClient;
+			render::Scene* scene;
 	};
 }
 }

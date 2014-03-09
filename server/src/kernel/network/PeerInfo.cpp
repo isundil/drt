@@ -15,7 +15,7 @@ PeerInfo::PeerInfo(const std::string &_ip, unsigned short _port): PeerInfo(new S
 	port = _port;
 }
 
-PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): ip(""), port(0), closing(true), socket(s), id(_id), oldId(_id), direct(_direct), procInfo(nullptr), isClient(false)
+PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): ip(""), port(0), closing(true), socket(s), id(_id), oldId(_id), direct(_direct), procInfo(nullptr), isClient(false), scene(nullptr)
 { }
 
 PeerInfo::~PeerInfo()
@@ -24,6 +24,8 @@ PeerInfo::~PeerInfo()
 		delete socket;
 	if (procInfo)
 		delete procInfo;
+	if( scene )
+		delete scene;
 }
 
 Socket *PeerInfo::getSocket() const
@@ -128,3 +130,14 @@ std::string PeerInfo::stats::debug() const
 	return ss.str();
 }
 
+void
+PeerInfo::setScene( render::Scene *s )
+{
+	this -> scene = s;
+}
+
+drt::render::Scene*
+PeerInfo::getScene( )
+{
+	return this -> scene;
+}
