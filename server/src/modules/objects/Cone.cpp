@@ -2,7 +2,7 @@
 
 Cone::Cone() : AMathObject()
 {
-  _props.addProerty("r", new PropertyValue<double>(10));
+  _props.addProerty(3, new PropertyValue<double>(10));
 }
 
 double		Cone::computeEquation(Camera *camera, Ray *ray)
