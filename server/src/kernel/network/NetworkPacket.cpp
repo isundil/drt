@@ -1,4 +1,8 @@
 #include <iostream>
+#include <fstream>
+#include <ostream>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <map>
 #include "NetworkPacket.hpp"
@@ -56,16 +60,43 @@ Netsplit::Netsplit(unsigned short _id): id(_id)
 { }
 
 NewJob::NewJob(
-		network::Socket *socket, 
-		unsigned short _id, 
+		network::Socket *socket,
+		unsigned short _id,
 		size_t len  ):id( _id )
 {
+	char* filename = tempnam( nullptr, nullptr );
 	network::PeerInfo *client = nullptr;
-	render::Scene *scene = new render::Scene( socket, len );
+	std::ofstream file( filename );
+	std::ifstream filein;
+
+	size_t length = 0;
+
+	while( length < len )
+	{
+		char buff[512];
+		if( len-length < 512 )
+		{
+			size_t limit = len-length;
+			length += socket -> read( buff, len-length );
+			file.write( buff, limit );
+		}
+		else
+		{
+			length += socket -> read( buff, 512 );
+			file.write( buff, 512 );
+		}
+
+	}
+
+	file.close();
+	filein.open( filename );
+
+	render::Scene *scene = new render::Scene( filein );
+	filein.close();
 
 	client = drt::WorkerManager::getSingleton() -> getNetwork() -> getPeer( id );
 	client -> setScene( scene );
-	
+
 }
 
 Monitor::Monitor(unsigned short _src, std::list<float> &_cpus, const memInfo &_ram, const memInfo &_swap): src(_src), cpuStat(_cpus), ramLevel(_ram), swapLevel(_swap)

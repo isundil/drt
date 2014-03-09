@@ -3,7 +3,7 @@
 
 using namespace drt::render;
 
-Scene::Scene( drt::network::Socket *, size_t )
+Scene::Scene( std::ifstream & file )
 {
-	
+
 }
