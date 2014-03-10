@@ -12,11 +12,9 @@ double		Cone::computeEquation(Camera *camera, Ray *ray)
   double	c;
   std::pair<double, double> res;
 
-  // cone equ: (x * x) + (y * y) - ((z * z) / (tan(r) * tan(r))) = 0
-  // TO DO: implement this 
-  a = 0;
-  b = 0;
-  c = 0;
+  a = SQ(ray->at<double>(0)) + SQ(ray->at<double>(1)) + SQ(ray->at<double>(2));
+  b = 2 * (camera->at<double>(0) * ray->at<double>(0) + camera->at<double>(1) * ray->at<double>(1) - camera->at<double>(2) * ray->at<double>(2) * this->at<double>(3));
+  c = SQ(camera->at<double>(0)) + SQ(camera->at<double>(1)) - SQ(camera->at<double>(2)) * this->at<double>(3);
 
   res = UtilSdeg::getRoots(a, b, c);
 
