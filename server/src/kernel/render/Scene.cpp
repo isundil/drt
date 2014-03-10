@@ -32,32 +32,32 @@ Scene::Scene( std::ifstream &s )
   std::cout << "the image size is " << x << ":" << y << std::endl;
   std::cout << "there is " << nbObjects << " objects" << std::endl;
 
-  // objects
-  // std::list<T>	objectList;
   for (short i = 0; i < nbObjects; i++)
     {
-      char		moduleID;
-      s.read(&moduleID, sizeof(moduleID));
-      std::cout << "  Module #" << (int) moduleID << std::endl;
-      char		subModule;
-      s.read(&subModule, sizeof(subModule));
-      std::cout << "  There is " << (int) subModule << " sub-modules" << std::endl;
-      short		headerSize;
-      s.read((char *) &headerSize, sizeof(headerSize));
-      std::cout << "  Header size : " << (int) headerSize << std::endl;
-      int		nbSubItem;
-      s.read((char *) &nbSubItem, sizeof(nbSubItem));
-      std::cout << "  There is " << (int) nbSubItem << " sub-items" << std::endl;
-
-      char	tmp[128];
-      for (int a = 0; a < nbSubItem; a++)
-      	{
-	  s.read(tmp, headerSize);
-	  std::cout << "  [" << tmp << "]" << std::endl;
-      	  // have to change this, need to instanciate an Object.
-      	  // here I need to implement the structure. 
-	  // But what structure ? I don't know... That's kinda fun... I'm still looking for the rest of the code to try to know what is sent... Maybe I'll figure it out one day...
-      	}
-      // objectList.pushback(obj);
+      this->objects.push_back(parseItem(s));
     }
+}
+
+
+t_Item	*Scene::parseItem( std::ifstream &s )
+{
+  // objects
+  t_Item	*obj = new t_Item;
+  t_Item	*tmp;
+
+  s.read((char *) obj, sizeof(*obj));
+  std::cout << "  Module #" << (int) obj->moduleID << std::endl;
+  std::cout << "  There is " << (int) obj->subModule << " sub-modules" << std::endl;
+  std::cout << "  Header size : " << (int) obj->headerSize << std::endl;
+  std::cout << "  There is " << (int) obj->nbSubItem << " sub-items" << std::endl;
+
+  std::cout << std::endl;
+  if (obj->nbSubItem > 0)
+    obj->subItems = new std::list<t_Item *>;
+  for (int a = 0; a < obj->nbSubItem; a++)
+    {
+      obj->subItems->push_back(parseItem(s));
+      // Is that what they want ? I'm not really sure but I think so...
+    }
+  return (obj);
 }
