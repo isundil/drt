@@ -18,12 +18,12 @@ private :
 
 class ObjectProperties {
 public:
-  void addProperty(std::string name, APropertyValue * property);
-  APropertyValue *operator[](std::string name) { return properties[name]; }
+  void addProperty(int name, APropertyValue * property);
+  APropertyValue *operator[](int name) { return properties[name]; }
 
 private :
 
-  std::map<std::string, APropertyValue *> properties;
+  std::map<int, APropertyValue *> properties;
 
 };
 
