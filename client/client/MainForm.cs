@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace client
@@ -13,13 +7,14 @@ namespace client
     public partial class MainForm : Form
     {
         Viewport vp = new Viewport();
-        ObjectsList ol = new ObjectsList();
+        ObjectsList ol;
 
         public MainForm()
         {
             InitializeComponent();
 
             this.Cursor = new Cursor(Properties.Resources.pointer_ptr.GetHicon());
+            ol = new ObjectsList(this);
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -73,7 +68,7 @@ namespace client
                     for (int x = dw + vp.oy.X; x < bm.Width; x += vp.GridLevel) g.DrawLine(p, new Point(x, 0), new Point(x, bm.Height - 1));
                     for (int x = dw + vp.oy.X; x > 0; x -= vp.GridLevel) g.DrawLine(p, new Point(x, 0), new Point(x, bm.Height - 1));
                     for (int y = dh + vp.oy.Z; y < bm.Height; y += vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
-                    for (int y = dh + vp.oy.Z; y > 0; y -= vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
+                    for (int y = dh + vp.oy.Z; y > 0 ; y -= vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
                 }
 
                 using (var p = new Pen(Color.FromArgb(35, 35, 35)))
@@ -110,20 +105,20 @@ namespace client
 
         private void redraw()
         {
-            var bm_x = new System.Drawing.Bitmap(view_x.InitialImage, new Size(view_x.Width, view_x.Height));
+            var bm_x = new System.Drawing.Bitmap(view_x.InitialImage, view_x.Size);
             draw_grid_x(bm_x);
 
-            var bm_y = new System.Drawing.Bitmap(view_x.InitialImage, new Size(view_y.Width, view_y.Height));
+            var bm_y = new System.Drawing.Bitmap(view_x.InitialImage, view_y.Size);
             draw_grid_y(bm_y);
 
-            var bm_z = new System.Drawing.Bitmap(view_x.InitialImage, new Size(view_z.Width, view_z.Height));
+            var bm_z = new System.Drawing.Bitmap(view_x.InitialImage, view_z.Size);
             draw_grid_z(bm_z);
 
             foreach (var o in ol)
             {
-                o.draw_x(bm_x, vp, (o == ol.selected ? Color.White : Color.SteelBlue));
-                o.draw_y(bm_y, vp, (o == ol.selected ? Color.White : Color.SteelBlue));
-                o.draw_z(bm_z, vp, (o == ol.selected ? Color.White : Color.SteelBlue));
+                o.draw_x(bm_x, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
+                o.draw_y(bm_y, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
+                o.draw_z(bm_z, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
             }
 
             view_x.Image = bm_x;
@@ -201,7 +196,7 @@ namespace client
                 {
                     if (o.solve_equation_x(p1))
                     {
-                        ol.selected = o;
+                        ol.Selected = o;
                         redraw();
                     }
                 }
@@ -224,7 +219,7 @@ namespace client
                 {
                     if (o.solve_equation_y(p1))
                     {
-                        ol.selected = o;
+                        ol.Selected = o;
                         redraw();
                     }
                 }
@@ -245,7 +240,7 @@ namespace client
                 {
                     if (o.solve_equation_z(p1))
                     {
-                        ol.selected = o;
+                        ol.Selected = o;
                         redraw();
                     }
                 }
@@ -268,7 +263,7 @@ namespace client
                 case eDrawMode.SPHERE:
                     var s = Sphere.create_x((Points)p1.Clone(), (Points)p2.Clone());
                     ol.Add(s);
-                    ol.selected = s;
+                    ol.Selected = s;
                     break;
             }
 
@@ -313,7 +308,7 @@ namespace client
 
         enum eView {x, y, z};
 
-        private void drawTmpObject(MouseEventArgs e, Points p3, eView v)
+        private bool drawTmpObject(MouseEventArgs e, Points p3, eView v)
         {
             draw_status.Text = "Coords { X : " + p3.X + ", Y : " + p3.Y + ", Z : " + p3.Z + " }";
 
@@ -344,7 +339,11 @@ namespace client
                 view_x.Image = vx;
                 view_y.Image = vy;
                 view_z.Image = vz;
+
+                return true;
             }
+
+            return false;
         }
 
         private void view_x_MouseMove(object sender, MouseEventArgs e)
@@ -363,18 +362,18 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.GRAB)
             {
-                if (ol.selected == null) return;
+                if (ol.Selected == null) return;
 
-                ol.selected.centerPoint.Y = p4.Y - p1.Y - view_x.Width / 2;
-                ol.selected.centerPoint.Z = p4.Z - p1.Z - view_x.Height / 2;
+                ol.Selected.centerPoint.Y = p3.Y;
+                ol.Selected.centerPoint.Z = p3.Z;
 
                 redraw();
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
             {
-                if (ol.selected == null) return;
+                if (ol.Selected == null) return;
 
-                ol.selected.radius = (int)Math.Sqrt(Math.Pow(p3.Y - ol.selected.centerPoint.Y, 2) + Math.Pow(p3.Z - ol.selected.centerPoint.Z, 2));
+                ol.Selected.radius = (int)Math.Sqrt(Math.Pow(p3.Y - ol.Selected.centerPoint.Y, 2) + Math.Pow(p3.Z - ol.Selected.centerPoint.Z, 2));
 
                 redraw();
             }
@@ -395,18 +394,18 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.GRAB)
             {
-                if (ol.selected == null) return;
+                if (ol.Selected == null) return;
 
-                ol.selected.centerPoint.X = p4.X - p1.X - view_y.Width / 2;
-                ol.selected.centerPoint.Z = p4.Z - p1.Z - view_y.Height / 2;
+                ol.Selected.centerPoint.X = p3.X;
+                ol.Selected.centerPoint.Z = p3.Z;
 
                 redraw();
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
             {
-                if (ol.selected == null) return;
+                if (ol.Selected == null) return;
 
-                ol.selected.radius = (int)Math.Sqrt(Math.Pow(p3.X - ol.selected.centerPoint.X, 2) + Math.Pow(p3.Z - ol.selected.centerPoint.Z, 2));
+                ol.Selected.radius = (int)Math.Sqrt(Math.Pow(p3.X - ol.Selected.centerPoint.X, 2) + Math.Pow(p3.Z - ol.Selected.centerPoint.Z, 2));
 
                 redraw();
             }
@@ -427,18 +426,18 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.GRAB)
             {
-                if (ol.selected == null) return;
+                if (ol.Selected == null) return;
 
-                ol.selected.centerPoint.X = p4.X - p1.X - view_z.Width / 2;
-                ol.selected.centerPoint.Y = p4.Y - p1.Y - view_z.Height / 2;
+                ol.Selected.centerPoint.X = p3.X;
+                ol.Selected.centerPoint.Y = p3.Y;
 
                 redraw();
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
             {
-                if (ol.selected == null) return;
+                if (ol.Selected == null) return;
 
-                ol.selected.radius = (int)Math.Sqrt(Math.Pow(p3.X - ol.selected.centerPoint.X, 2) + Math.Pow(p3.Y - ol.selected.centerPoint.Y, 2));
+                ol.Selected.radius = (int)Math.Sqrt(Math.Pow(p3.X - ol.Selected.centerPoint.X, 2) + Math.Pow(p3.Y - ol.Selected.centerPoint.Y, 2));
 
                 redraw();
             }
@@ -447,5 +446,18 @@ namespace client
         private Image view_x_cp { get; set; }
         private Image view_y_cp { get; set; }
         private Image view_z_cp { get; set; }
+
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+            {
+                if (ol.Selected != null)
+                {
+                    ol.Remove(ol.Selected);
+                    ol.Selected = null;
+                    redraw();
+                }
+            }
+        }
     }
 }

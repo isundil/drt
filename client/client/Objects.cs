@@ -9,7 +9,35 @@ namespace client
 {
     public class ObjectsList : List<AObjects>
     {
-        public AObjects selected { get; set; }
+        MainForm f;
+
+        public ObjectsList(MainForm f) : base()
+        {
+            this.f = f;
+        }
+
+        private AObjects selected;
+        public AObjects Selected
+        {
+            get
+            {
+                return selected;
+            }
+            set
+            {
+                selected = value;
+                if (value != null)
+                {
+                    f.move_toolstrip.Enabled = true;
+                    f.resize_toolstrip.Enabled = true;
+                }
+                else
+                {
+                    f.move_toolstrip.Enabled = false;
+                    f.resize_toolstrip.Enabled = false;
+                }
+            }
+        }
     }
 
     public class Points : ICloneable {
