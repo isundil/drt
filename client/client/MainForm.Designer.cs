@@ -53,7 +53,7 @@
             this.view_z = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel9 = new System.Windows.Forms.Panel();
-            this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
+            this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
@@ -309,20 +309,20 @@
             // 
             // panel9
             // 
-            this.panel9.Controls.Add(this.propertyGrid1);
+            this.panel9.Controls.Add(this.propertyGrid);
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(0, 21);
             this.panel9.Name = "panel9";
             this.panel9.Size = new System.Drawing.Size(200, 324);
             this.panel9.TabIndex = 1;
             // 
-            // propertyGrid1
+            // propertyGrid
             // 
-            this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid1.Location = new System.Drawing.Point(0, 0);
-            this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(200, 324);
-            this.propertyGrid1.TabIndex = 0;
+            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGrid.Location = new System.Drawing.Point(0, 0);
+            this.propertyGrid.Name = "propertyGrid";
+            this.propertyGrid.Size = new System.Drawing.Size(200, 324);
+            this.propertyGrid.TabIndex = 0;
             // 
             // panel8
             // 
@@ -406,12 +406,12 @@
         private System.Windows.Forms.PictureBox view_z;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel9;
-        private System.Windows.Forms.PropertyGrid propertyGrid1;
         private System.Windows.Forms.Panel panel8;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         public System.Windows.Forms.ToolStripButton move_toolstrip;
         public System.Windows.Forms.ToolStripButton resize_toolstrip;
         private System.Windows.Forms.ComboBox comboBox1;
+        public System.Windows.Forms.PropertyGrid propertyGrid;
     }
 }
 

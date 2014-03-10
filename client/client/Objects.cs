@@ -26,6 +26,9 @@ namespace client
             set
             {
                 selected = value;
+
+                f.propertyGrid.SelectedObject = selected;
+
                 if (value != null)
                 {
                     f.move_toolstrip.Enabled = true;
@@ -95,7 +98,7 @@ namespace client
             var g = System.Drawing.Graphics.FromImage(b);
 
             g.DrawEllipse(new Pen(c), new Rectangle(
-                    new Point(this.centerPoint.Y - this.radius + vp.ox.Y + b.Width / 2, this.centerPoint.Z - this.radius + vp.ox.Z + b.Height / 2),
+                    new Point(this.centerPoint.Y - this.radius + vp.ox.Y + b.Width / 2, -this.centerPoint.Z - this.radius + vp.ox.Z + b.Height / 2),
                     new Size(this.radius * 2, this.radius * 2)
                 ));
         }
@@ -104,7 +107,7 @@ namespace client
             var g = System.Drawing.Graphics.FromImage(b);
 
             g.DrawEllipse(new Pen(c), new Rectangle(
-                    new Point(this.centerPoint.X - this.radius + vp.oy.X + b.Width / 2, this.centerPoint.Z - this.radius + vp.oy.Z + b.Height / 2),
+                    new Point(this.centerPoint.X - this.radius + vp.oy.X + b.Width / 2, -this.centerPoint.Z - this.radius + vp.oy.Z + b.Height / 2),
                     new Size(this.radius * 2, this.radius * 2)
                 ));
         }
@@ -113,7 +116,7 @@ namespace client
             var g = System.Drawing.Graphics.FromImage(b);
 
             g.DrawEllipse(new Pen(c), new Rectangle(
-                    new Point(this.centerPoint.X - this.radius + vp.oz.X + b.Width / 2, this.centerPoint.Y - this.radius + vp.oz.Y + b.Height / 2),
+                    new Point(this.centerPoint.X - this.radius + vp.oz.X + b.Width / 2, -this.centerPoint.Y - this.radius + vp.oz.Y + b.Height / 2),
                     new Size(this.radius * 2, this.radius * 2)
                 ));
         }
