@@ -83,6 +83,26 @@ namespace client.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap drag_btn {
+            get {
+                object obj = ResourceManager.GetObject("drag_btn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap drag_ptr {
+            get {
+                object obj = ResourceManager.GetObject("drag_ptr", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap pointer_btn {
             get {
                 object obj = ResourceManager.GetObject("pointer_btn", resourceCulture);
@@ -96,6 +116,26 @@ namespace client.Properties {
         internal static System.Drawing.Bitmap pointer_ptr {
             get {
                 object obj = ResourceManager.GetObject("pointer_ptr", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap resize_btn {
+            get {
+                object obj = ResourceManager.GetObject("resize_btn", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap resize_ptr {
+            get {
+                object obj = ResourceManager.GetObject("resize_ptr", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

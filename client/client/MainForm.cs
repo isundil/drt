@@ -35,7 +35,7 @@ namespace client
             }
         }
 
-        private void draw_grid(System.Drawing.Bitmap bm)
+        private void draw_grid_x(System.Drawing.Bitmap bm)
         {
             empty_bitmap(bm);
 
@@ -46,17 +46,64 @@ namespace client
                     var dw = bm.Width / 2;
                     var dh = bm.Height / 2;
 
-                    for (int x = 0; x < dw; x += vp.GridLevel) g.DrawLine(p, new Point(x + dw, 0), new Point(x + dw, bm.Height - 1));
-                    for (int x = 0; x > -dw; x -= vp.GridLevel) g.DrawLine(p, new Point(x + dw, 0), new Point(x + dw, bm.Height - 1));
-                    
-                    for (int y = 0; y < dh; y += vp.GridLevel) g.DrawLine(p, new Point(0, y + dh), new Point(bm.Width - 1, y + dh));
-                    for (int y = 0; y > -dh; y -= vp.GridLevel) g.DrawLine(p, new Point(0, y + dh), new Point(bm.Width - 1, y + dh));
+                    for (int x = dw + vp.ox.Y; x < bm.Width; x += vp.GridLevel) g.DrawLine(p, new Point(x, 0), new Point(x, bm.Height - 1));
+                    for (int x = dw + vp.ox.Y; x > 0; x -= vp.GridLevel) g.DrawLine(p, new Point(x, 0), new Point(x, bm.Height - 1));
+                    for (int y = dh + vp.ox.Z; y < bm.Height; y += vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
+                    for (int y = dh + vp.ox.Z; y > 0; y -= vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
                 }
 
                 using (var p = new Pen(Color.FromArgb(35, 35, 35)))
                 {
-                    g.DrawLine(p, new Point(0, bm.Height / 2), new Point(bm.Width, bm.Height / 2));
-                    g.DrawLine(p, new Point(bm.Width / 2, 0), new Point(bm.Width / 2, bm.Height));
+                    g.DrawLine(p, new Point(bm.Width / 2 + vp.ox.Y, 0), new Point(bm.Width / 2 + vp.ox.Y, bm.Height));
+                    g.DrawLine(p, new Point(0, bm.Height / 2 + vp.ox.Z), new Point(bm.Width, bm.Height / 2 + vp.ox.Z));
+                }
+            }
+        }
+        private void draw_grid_y(System.Drawing.Bitmap bm)
+        {
+            empty_bitmap(bm);
+
+            using (var g = System.Drawing.Graphics.FromImage(bm))
+            {
+                using (var p = new Pen(Color.FromArgb(25, 25, 25)))
+                {
+                    var dw = bm.Width / 2;
+                    var dh = bm.Height / 2;
+
+                    for (int x = dw + vp.oy.X; x < bm.Width; x += vp.GridLevel) g.DrawLine(p, new Point(x, 0), new Point(x, bm.Height - 1));
+                    for (int x = dw + vp.oy.X; x > 0; x -= vp.GridLevel) g.DrawLine(p, new Point(x, 0), new Point(x, bm.Height - 1));
+                    for (int y = dh + vp.oy.Z; y < bm.Height; y += vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
+                    for (int y = dh + vp.oy.Z; y > 0; y -= vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
+                }
+
+                using (var p = new Pen(Color.FromArgb(35, 35, 35)))
+                {
+                    g.DrawLine(p, new Point(bm.Width / 2 + vp.oy.X, 0), new Point(bm.Width / 2 + vp.oy.X, bm.Height));
+                    g.DrawLine(p, new Point(0, bm.Height / 2 + vp.oy.Z), new Point(bm.Width, bm.Height / 2 + vp.oy.Z));
+                }
+            }
+        }
+        private void draw_grid_z(System.Drawing.Bitmap bm)
+        {
+            empty_bitmap(bm);
+
+            using (var g = System.Drawing.Graphics.FromImage(bm))
+            {
+                using (var p = new Pen(Color.FromArgb(25, 25, 25)))
+                {
+                    var dw = bm.Width / 2;
+                    var dh = bm.Height / 2;
+
+                    for (int x = dw + vp.oz.X; x < bm.Width; x += vp.GridLevel) g.DrawLine(p, new Point(x, 0), new Point(x, bm.Height - 1));
+                    for (int x = dw + vp.oz.X; x > 0; x -= vp.GridLevel) g.DrawLine(p, new Point(x, 0), new Point(x, bm.Height - 1));
+                    for (int y = dh + vp.oz.Y; y < bm.Height; y += vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
+                    for (int y = dh + vp.oz.Y; y > 0; y -= vp.GridLevel) g.DrawLine(p, new Point(0, y), new Point(bm.Width - 1, y));
+                }
+
+                using (var p = new Pen(Color.FromArgb(35, 35, 35)))
+                {
+                    g.DrawLine(p, new Point(bm.Width / 2 + vp.oz.X, 0), new Point(bm.Width / 2 + vp.oz.X, bm.Height));
+                    g.DrawLine(p, new Point(0, bm.Height / 2 + vp.oz.Y), new Point(bm.Width, bm.Height / 2 + vp.oz.Y));
                 }
             }
         }
@@ -64,19 +111,19 @@ namespace client
         private void redraw()
         {
             var bm_x = new System.Drawing.Bitmap(view_x.InitialImage, new Size(view_x.Width, view_x.Height));
-            draw_grid(bm_x);
+            draw_grid_x(bm_x);
 
             var bm_y = new System.Drawing.Bitmap(view_x.InitialImage, new Size(view_y.Width, view_y.Height));
-            draw_grid(bm_y);
+            draw_grid_y(bm_y);
 
             var bm_z = new System.Drawing.Bitmap(view_x.InitialImage, new Size(view_z.Width, view_z.Height));
-            draw_grid(bm_z);
+            draw_grid_z(bm_z);
 
             foreach (var o in ol)
             {
-                o.draw_x(bm_x, Color.SteelBlue);
-                o.draw_y(bm_y, Color.SteelBlue);
-                o.draw_z(bm_z, Color.SteelBlue);
+                o.draw_x(bm_x, vp, (o == ol.selected ? Color.White : Color.SteelBlue));
+                o.draw_y(bm_y, vp, (o == ol.selected ? Color.White : Color.SteelBlue));
+                o.draw_z(bm_z, vp, (o == ol.selected ? Color.White : Color.SteelBlue));
             }
 
             view_x.Image = bm_x;
@@ -87,9 +134,6 @@ namespace client
         private void MainForm_Load(object sender, EventArgs e)
         {
             vp.GridLevel = 5;
-            vp.X = 0;
-            vp.Y = 0;
-            vp.Z = 0;
 
             redraw();
         }
@@ -102,6 +146,8 @@ namespace client
         enum eDrawMode
         {
             SPHERE,
+            GRAB,
+            RESIZE,
             NONE
         };
         eDrawMode drawMode = eDrawMode.NONE;
@@ -120,6 +166,20 @@ namespace client
             this.Cursor = new Cursor(Properties.Resources.pointer_ptr.GetHicon());
         }
 
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            this.drawMode = eDrawMode.GRAB;
+
+            this.Cursor = new Cursor(Properties.Resources.drag_ptr.GetHicon());
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            this.drawMode = eDrawMode.RESIZE;
+
+            this.Cursor = new Cursor(Properties.Resources.resize_ptr.GetHicon());
+        }
+
         Points p1 = new Points(), p2 = new Points();
 
         private void save_views()
@@ -131,29 +191,67 @@ namespace client
 
         private void view_x_MouseDown(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            p1.X = 0;
+            p1.Y = e.X - vp.ox.Y - view_x.Width / 2;
+            p1.Z = e.Y - vp.ox.Z - view_x.Height / 2;
 
-            p1.Y = e.X;
-            p1.Z = e.Y;
+            if (this.drawMode == eDrawMode.NONE)
+            {
+                foreach (var o in ol)
+                {
+                    if (o.solve_equation_x(p1))
+                    {
+                        ol.selected = o;
+                        redraw();
+                    }
+                }
+
+                return;
+            }
+            if (this.drawMode == eDrawMode.GRAB) return;
 
             save_views();
         }
         private void view_y_MouseDown(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            p1.X = e.X - vp.oy.X - view_y.Width / 2;
+            p1.Y = 0;
+            p1.Z = e.Y - vp.oy.Z - view_y.Height / 2;
 
-            p1.X = e.X;
-            p1.Z = e.Y;
+            if (this.drawMode == eDrawMode.NONE)
+            {
+                foreach (var o in ol)
+                {
+                    if (o.solve_equation_y(p1))
+                    {
+                        ol.selected = o;
+                        redraw();
+                    }
+                }
 
+                return;
+            }
             save_views();
         }
         private void view_z_MouseDown(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            p1.X = e.X - vp.oz.X - view_z.Width / 2;
+            p1.Y = e.Y - vp.oz.Y - view_z.Height / 2;
+            p1.Z = 0;
 
-            p1.X = e.X;
-            p1.Y = e.Y;
+            if (this.drawMode == eDrawMode.NONE)
+            {
+                foreach (var o in ol)
+                {
+                    if (o.solve_equation_z(p1))
+                    {
+                        ol.selected = o;
+                        redraw();
+                    }
+                }
 
+                return;
+            }
             save_views();
         }
 
@@ -161,14 +259,16 @@ namespace client
         {
             if (this.drawMode == eDrawMode.NONE) return;
 
-            p2.Y = e.X;
-            p2.Z = e.Y;
+            p2.X = 0;
+            p2.Y = e.X - vp.ox.Y - view_x.Width / 2;
+            p2.Z = e.Y - vp.ox.Z - view_x.Height / 2;
 
             switch (this.drawMode)
             {
                 case eDrawMode.SPHERE:
                     var s = Sphere.create_x((Points)p1.Clone(), (Points)p2.Clone());
                     ol.Add(s);
+                    ol.selected = s;
                     break;
             }
 
@@ -178,8 +278,9 @@ namespace client
         {
             if (this.drawMode == eDrawMode.NONE) return;
 
-            p2.X = e.X;
-            p2.Z = e.Y;
+            p2.X = e.X - vp.oy.X - view_y.Width / 2;
+            p2.Y = 0;
+            p2.Z = e.Y - vp.oy.Z - view_y.Height / 2;
 
             switch (this.drawMode)
             {
@@ -195,8 +296,9 @@ namespace client
         {
             if (this.drawMode == eDrawMode.NONE) return;
 
-            p2.X = e.X;
-            p2.Y = e.Y;
+            p2.X = e.X - vp.oz.X - view_z.Width / 2;
+            p2.Y = e.Y - vp.oz.Y - view_z.Height / 2;
+            p2.Z = 0;
 
             switch (this.drawMode)
             {
@@ -215,7 +317,10 @@ namespace client
         {
             draw_status.Text = "Coords { X : " + p3.X + ", Y : " + p3.Y + ", Z : " + p3.Z + " }";
 
-            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode != eDrawMode.NONE)
+            if (e.Button == System.Windows.Forms.MouseButtons.Left
+                && this.drawMode != eDrawMode.NONE
+                && this.drawMode != eDrawMode.GRAB
+                && this.drawMode != eDrawMode.RESIZE)
             {
                 var vx = new System.Drawing.Bitmap(view_x_cp, view_x_cp.Size);
                 var vy = new System.Drawing.Bitmap(view_y_cp, view_y_cp.Size);
@@ -229,11 +334,11 @@ namespace client
                         if (v == eView.y) s = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone());
                         if (v == eView.z) s = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone());
 
-                        draw_status.Text += ", Sphere { Cy : " + s.centerPoint.Y + ", Cz : " + s.centerPoint.Z + ", R : " + ((Sphere)s).rayon + " }";
+                        draw_status.Text += ", Sphere { Cx : " + s.centerPoint.X + ", Cy : " + s.centerPoint.Y + ", Cz : " + s.centerPoint.Z + ", R : " + ((Sphere)s).radius + " }";
 
-                        s.draw_x(vx, Color.White);
-                        s.draw_y(vy, Color.White);
-                        s.draw_z(vz, Color.White);
+                        s.draw_x(vx, vp, Color.White);
+                        s.draw_y(vy, vp, Color.White);
+                        s.draw_z(vz, vp, Color.White);
                         break;
                 }
                 view_x.Image = vx;
@@ -244,21 +349,99 @@ namespace client
 
         private void view_x_MouseMove(object sender, MouseEventArgs e)
         {
-            Points p3 = new Points() { Y = e.X, Z = e.Y };
+            Points p3 = new Points() { Y = e.X - vp.ox.Y - view_x.Width / 2, Z = e.Y - vp.ox.Z - view_x.Height / 2 };
+            Points p4 = new Points() { Y = e.X , Z = e.Y };
 
             drawTmpObject(e, p3, eView.x);
+
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
+            {
+                vp.ox.Y = p4.Y - p1.Y - view_x.Width / 2;
+                vp.ox.Z = p4.Z - p1.Z - view_x.Height / 2;
+
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.GRAB)
+            {
+                if (ol.selected == null) return;
+
+                ol.selected.centerPoint.Y = p4.Y - p1.Y - view_x.Width / 2;
+                ol.selected.centerPoint.Z = p4.Z - p1.Z - view_x.Height / 2;
+
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
+            {
+                if (ol.selected == null) return;
+
+                ol.selected.radius = (int)Math.Sqrt(Math.Pow(p3.Y - ol.selected.centerPoint.Y, 2) + Math.Pow(p3.Z - ol.selected.centerPoint.Z, 2));
+
+                redraw();
+            }
         }
         private void view_y_MouseMove(object sender, MouseEventArgs e)
         {
-            Points p3 = new Points() { X = e.X, Z = e.Y };
+            Points p3 = new Points() { X = e.X - vp.oy.X - view_y.Width / 2, Z = e.Y - vp.oy.Z - view_y.Height / 2 };
+            Points p4 = new Points() { X = e.X, Z = e.Y };
 
             drawTmpObject(e, p3, eView.y);
+
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
+            {
+                vp.oy.X = p4.X - p1.X - view_y.Width / 2;
+                vp.oy.Z = p4.Z - p1.Z - view_y.Height / 2;
+
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.GRAB)
+            {
+                if (ol.selected == null) return;
+
+                ol.selected.centerPoint.X = p4.X - p1.X - view_y.Width / 2;
+                ol.selected.centerPoint.Z = p4.Z - p1.Z - view_y.Height / 2;
+
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
+            {
+                if (ol.selected == null) return;
+
+                ol.selected.radius = (int)Math.Sqrt(Math.Pow(p3.X - ol.selected.centerPoint.X, 2) + Math.Pow(p3.Z - ol.selected.centerPoint.Z, 2));
+
+                redraw();
+            }
         }
         private void view_z_MouseMove(object sender, MouseEventArgs e)
         {
-            Points p3 = new Points() { X = e.X, Y = e.Y };
+            Points p3 = new Points() { X = e.X - vp.oz.X - view_z.Width / 2, Y = e.Y - vp.oz.Y - view_z.Height / 2 };
+            Points p4 = new Points() { X = e.X, Y = e.Y };
 
             drawTmpObject(e, p3, eView.z);
+
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
+            {
+                vp.oz.X = p4.X - p1.X - view_z.Width / 2;
+                vp.oz.Y = p4.Y - p1.Y - view_z.Height / 2;
+
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.GRAB)
+            {
+                if (ol.selected == null) return;
+
+                ol.selected.centerPoint.X = p4.X - p1.X - view_z.Width / 2;
+                ol.selected.centerPoint.Y = p4.Y - p1.Y - view_z.Height / 2;
+
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
+            {
+                if (ol.selected == null) return;
+
+                ol.selected.radius = (int)Math.Sqrt(Math.Pow(p3.X - ol.selected.centerPoint.X, 2) + Math.Pow(p3.Y - ol.selected.centerPoint.Y, 2));
+
+                redraw();
+            }
         }
 
         private Image view_x_cp { get; set; }

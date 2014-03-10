@@ -8,9 +8,17 @@ namespace client
 {
     public class Viewport
     {
+        public Viewport()
+        {
+            ox = new Points();
+            oy = new Points();
+            oz = new Points();
+        }
+
         public int GridLevel { get; set; }
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Z { get; set; }
+
+        public Points ox { get; set; }
+        public Points oy { get; set; }
+        public Points oz { get; set; }
     }
 }
