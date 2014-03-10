@@ -188,7 +188,7 @@ namespace client
         {
             p1.X = 0;
             p1.Y = e.X - vp.ox.Y - view_x.Width / 2;
-            p1.Z = e.Y - vp.ox.Z - view_x.Height / 2;
+            p1.Z = -(e.Y - vp.ox.Z - view_x.Height / 2);
 
             if (this.drawMode == eDrawMode.NONE)
             {
@@ -211,7 +211,7 @@ namespace client
         {
             p1.X = e.X - vp.oy.X - view_y.Width / 2;
             p1.Y = 0;
-            p1.Z = e.Y - vp.oy.Z - view_y.Height / 2;
+            p1.Z = -(e.Y - vp.oy.Z - view_y.Height / 2);
 
             if (this.drawMode == eDrawMode.NONE)
             {
@@ -231,7 +231,7 @@ namespace client
         private void view_z_MouseDown(object sender, MouseEventArgs e)
         {
             p1.X = e.X - vp.oz.X - view_z.Width / 2;
-            p1.Y = e.Y - vp.oz.Y - view_z.Height / 2;
+            p1.Y = -(e.Y - vp.oz.Y - view_z.Height / 2);
             p1.Z = 0;
 
             if (this.drawMode == eDrawMode.NONE)
@@ -256,7 +256,7 @@ namespace client
 
             p2.X = 0;
             p2.Y = e.X - vp.ox.Y - view_x.Width / 2;
-            p2.Z = e.Y - vp.ox.Z - view_x.Height / 2;
+            p2.Z = -(e.Y - vp.ox.Z - view_x.Height / 2);
 
             switch (this.drawMode)
             {
@@ -275,7 +275,7 @@ namespace client
 
             p2.X = e.X - vp.oy.X - view_y.Width / 2;
             p2.Y = 0;
-            p2.Z = e.Y - vp.oy.Z - view_y.Height / 2;
+            p2.Z = -(e.Y - vp.oy.Z - view_y.Height / 2);
 
             switch (this.drawMode)
             {
@@ -292,7 +292,7 @@ namespace client
             if (this.drawMode == eDrawMode.NONE) return;
 
             p2.X = e.X - vp.oz.X - view_z.Width / 2;
-            p2.Y = e.Y - vp.oz.Y - view_z.Height / 2;
+            p2.Y = -(e.Y - vp.oz.Y - view_z.Height / 2);
             p2.Z = 0;
 
             switch (this.drawMode)
@@ -348,15 +348,15 @@ namespace client
 
         private void view_x_MouseMove(object sender, MouseEventArgs e)
         {
-            Points p3 = new Points() { Y = e.X - vp.ox.Y - view_x.Width / 2, Z = e.Y - vp.ox.Z - view_x.Height / 2 };
-            Points p4 = new Points() { Y = e.X , Z = e.Y };
+            Points p3 = new Points() { Y = e.X - vp.ox.Y - view_x.Width / 2, Z = -(e.Y - vp.ox.Z - view_x.Height / 2) };
+            Points p4 = new Points() { Y = e.X , Z = -e.Y };
 
             drawTmpObject(e, p3, eView.x);
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
             {
                 vp.ox.Y = p4.Y - p1.Y - view_x.Width / 2;
-                vp.ox.Z = p4.Z - p1.Z - view_x.Height / 2;
+                vp.ox.Z = -p4.Z + p1.Z - view_x.Height / 2;
 
                 redraw();
             }
@@ -380,15 +380,15 @@ namespace client
         }
         private void view_y_MouseMove(object sender, MouseEventArgs e)
         {
-            Points p3 = new Points() { X = e.X - vp.oy.X - view_y.Width / 2, Z = e.Y - vp.oy.Z - view_y.Height / 2 };
-            Points p4 = new Points() { X = e.X, Z = e.Y };
+            Points p3 = new Points() { X = e.X - vp.oy.X - view_y.Width / 2, Z = -(e.Y - vp.oy.Z - view_y.Height / 2) };
+            Points p4 = new Points() { X = e.X, Z = -e.Y };
 
             drawTmpObject(e, p3, eView.y);
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
             {
                 vp.oy.X = p4.X - p1.X - view_y.Width / 2;
-                vp.oy.Z = p4.Z - p1.Z - view_y.Height / 2;
+                vp.oy.Z = -p4.Z + p1.Z - view_y.Height / 2;
 
                 redraw();
             }
@@ -412,15 +412,15 @@ namespace client
         }
         private void view_z_MouseMove(object sender, MouseEventArgs e)
         {
-            Points p3 = new Points() { X = e.X - vp.oz.X - view_z.Width / 2, Y = e.Y - vp.oz.Y - view_z.Height / 2 };
-            Points p4 = new Points() { X = e.X, Y = e.Y };
+            Points p3 = new Points() { X = e.X - vp.oz.X - view_z.Width / 2, Y = -(e.Y - vp.oz.Y - view_z.Height / 2) };
+            Points p4 = new Points() { X = e.X, Y = -e.Y };
 
             drawTmpObject(e, p3, eView.z);
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
             {
                 vp.oz.X = p4.X - p1.X - view_z.Width / 2;
-                vp.oz.Y = p4.Y - p1.Y - view_z.Height / 2;
+                vp.oz.Y = -p4.Y + p1.Y - view_z.Height / 2;
 
                 redraw();
             }
