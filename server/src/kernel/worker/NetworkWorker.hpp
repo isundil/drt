@@ -38,17 +38,22 @@ class NetworkWorker: public AWorker
 			unsigned int nbSocket(network::Socket *avoid =nullptr) const;
 			drt::network::PeerInfo *addServer(network::Socket *sock, unsigned short id =0);
 
-			void releasePeer(network::PeerInfo *i);
+			void rmPeer(network::PeerInfo *peer);
+			void confirm();
 
 		private:
 			drt::network::ServerSocket * server;
 			std::list<std::pair<std::string, unsigned short> >connectedPeers;
+			std::list<std::pair<std::string, unsigned short> >blackListedPeers;
 			std::list <drt::network::PeerInfo *> clients;
+			network::PeerInfo * connectingTo;
 			std::set<drt::network::PeerInfo *> discon;
 			drt::network::PeerInfo *myself;
 			unsigned short biggerId;
 
 			time_t lastConnectAtempt;
+
+			void releasePeer(network::PeerInfo *i);
 
 			void sendCpuUsage();
 			void acceptNew();

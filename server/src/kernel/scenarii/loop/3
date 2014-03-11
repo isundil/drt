@@ -2,7 +2,7 @@
 #comment2
 
 [peers]
-#Server localhost:8140
+Server localhost:8140
 
 [server]
 Listen 8142

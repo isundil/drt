@@ -311,6 +311,7 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 	{
 		//Our server is now confirmed
 		pi->setConfirmed(0);
+		m.getNetwork()->confirm();
 		m.broadcast(new IdCh(m.getNetwork()->getMe()->getOldId(), id), pi);
 		auto clientList = m.getNetwork()->getPeers();
 		for (auto i = clientList.cbegin(); i != clientList.cend(); i++)
@@ -326,7 +327,7 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 
 void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 {
-	m.getNetwork()->releasePeer(m.getNetwork()->getPeer(id));
+	m.getNetwork()->rmPeer(m.getNetwork()->getPeer(id));
 	if (pi->getId() == id)
 		m.broadcast(new Netsplit(*this));
 	else
@@ -531,7 +532,11 @@ const std::string Quit::getName() const
 { return "Quit"; }
 
 const std::string Netsplit::getName() const
-{ return "Netsplit"; }
+{
+	std::stringstream ss;
+	ss << "Netsplit " << id;
+	return ss.str();
+}
 
 const std::string NewJob::getName() const
 { return "New job"; }

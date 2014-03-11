@@ -20,8 +20,11 @@ using namespace drt::worker;
 class is_connected
 {
 	public:
-		is_connected(std::list<std::pair<std::string, unsigned short> >e): list(e)
-		{ }
+		is_connected(const std::list<std::pair<std::string, unsigned short> >&e, const std::list<std::pair<std::string, unsigned short> >&f): list(e)
+		{
+			for (auto i =f.cbegin(); i != f.cend(); i++)
+				list.push_back(*i);
+		}
 
 		bool operator()(const std::pair<std::string, unsigned short> item)
 		{
@@ -35,7 +38,7 @@ class is_connected
 		std::list<std::pair<std::string, unsigned short> >list;
 };
 
-NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AWorker(_manager, _id), myself(drt::network::PeerInfo::getMe()), biggerId(1)
+NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AWorker(_manager, _id), connectingTo(nullptr), myself(drt::network::PeerInfo::getMe()), biggerId(1)
 {
 	const drt::parser::ServerSection *config;
 
@@ -104,11 +107,13 @@ void NetworkWorker::sendCpuUsage()
 void NetworkWorker::connectToPeers()
 {
 	std::list<std::pair<std::string, unsigned short> >clients = manager.config()->getSection<drt::parser::PeerSection>()->getPeerlist();
-	is_connected d(connectedPeers);
+	is_connected d(connectedPeers, blackListedPeers);
 
 	if (time(nullptr) - lastConnectAtempt < 5)
 		return;
-	//TODO DEBUG/sendCpuUsage();
+	sendCpuUsage();
+	if (connectingTo)
+		return;
 	lastConnectAtempt = time(nullptr);
 	clients.remove_if(d);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
@@ -126,6 +131,7 @@ void NetworkWorker::connectToPeers()
 			continue;
 		}
 
+		connectingTo = pi;
 		manager.send(pi, new network::SAuth(-1, this->clients.size()));
 		connectedPeers.push_back(std::pair<std::string, unsigned short> (*i));
 		this->clients.push_back(pi);
@@ -151,7 +157,7 @@ void NetworkWorker::connectToPeers()
 			ss << "[D]";
 		else
 			ss << "   ";
-		//ss << " - " << (*i)->getStats()->debug();
+		ss << " - " << (*i)->getStats()->debug();
 		ss << std::endl;
 	}
 	manager.log(std::cout, *this, ss.str());
@@ -164,6 +170,7 @@ void NetworkWorker::releasePeer(network::PeerInfo *peer)
 
 	if (!peer)
 		return;
+	std::cout << "Release Peer " << peer->getId() << std::endl;
 	sock = peer->getSocket();
 	clients.remove(peer);
 	ss << "Lost connection to " << peer->getConInfo().first << ":" << peer->getConInfo().second;
@@ -227,6 +234,10 @@ void NetworkWorker::readAll()
 			}
 		}
 	}
+	for (auto i = this->discon.cbegin(); i != this->discon.cend(); i++)
+	{
+		releasePeer(*i);
+	}
 	for (auto i = discon.cbegin(); i != discon.cend(); i++)
 	{
 		network::PeerInfo * dd = nullptr;
@@ -237,14 +248,11 @@ void NetworkWorker::readAll()
 		if (dd)
 		{
 			manager.broadcast(new network::Netsplit(dd->getId()));
-			releasePeer(dd);
+			if (this->discon.find(dd) == this->discon.end())
+				releasePeer(dd);
 		}
 	}
-	for (auto i = this->discon.cbegin(); i != this->discon.cend(); i++)
-	{
-		manager.broadcast(new network::Netsplit((*i)->getId()));
-		releasePeer(*i);
-	}
+	this->discon.clear();
 }
 
 void NetworkWorker::readPeer(network::PeerInfo *peer)
@@ -278,7 +286,6 @@ void NetworkWorker::sendBroadcast()
 		std::set<network::Socket *> alreadySent;
 
 		manager.getNextBroadcast(&packet, &avoid);
-	std::cerr << "Packet out: " << packet->getName() << std::endl;
 		alreadySent.insert(avoid);
 		for (auto i = clients.begin(); i != clients.end(); i++)
 		{
@@ -318,7 +325,6 @@ void NetworkWorker::sendUnique()
 		if (!isInList(peer, clients))
 			continue;
 		ss = packet->getStream(&packet_len);
-	std::cerr << "Packet out: " << packet->getName() << std::endl;
 		peer->sendData(*ss, packet_len);
 		delete ss;
 		delete packet;
@@ -389,7 +395,19 @@ const std::list<drt::network::PeerInfo *> &NetworkWorker::getPeers() const
 
 void NetworkWorker::removeLastPeer()
 {
-	discon.insert((*(clients.cbegin())));
+	network::PeerInfo * peer = connectingTo;
+	if (peer->isDirect())
+	{
+		std::pair<std::string, unsigned short> inf = peer->getConInfo();
+		this->blackListedPeers.push_back(inf);
+	}
+	discon.insert(peer);
+	connectingTo = nullptr;
+}
+
+void NetworkWorker::confirm()
+{
+	connectingTo = nullptr;
 }
 
 void NetworkWorker::nextOp(Operation *)
@@ -397,4 +415,7 @@ void NetworkWorker::nextOp(Operation *)
 
 unsigned short NetworkWorker::incBiggerId()
 { return ++biggerId; }
+
+void NetworkWorker::rmPeer(network::PeerInfo *p)
+{ discon.insert(p); }
 

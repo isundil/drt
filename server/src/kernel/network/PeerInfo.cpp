@@ -53,7 +53,7 @@ void PeerInfo::read(WorkerManager &manager)
 		delete packet;
 		return;
 	}
-	std::cerr << "Packet in (" << manager.getNetwork()->getMe() << "): " << packet->getName() << std::endl;
+	std::cerr << "Packet in (" << manager.getNetwork()->getMe()->getId() << "): " << packet->getName() << std::endl;
 	packet->doMagic(manager, this);
 	delete packet;
 }
