@@ -156,14 +156,26 @@ void NetworkWorker::connectToPeers()
 void NetworkWorker::releasePeer(network::PeerInfo *peer)
 {
 	std::stringstream ss;
+	network::Socket *sock;
 
 	if (!peer)
 		return;
+	sock = peer->getSocket();
 	clients.remove(peer);
 	ss << "Lost connection to " << peer->getConInfo().first << ":" << peer->getConInfo().second;
 	manager.log(std::cout, *this, ss.str());
 	if (peer->isDirect())
 		connectedPeers.remove(peer->getConInfo());
+	if (peer->isDirect())
+	{
+		std::list<network::PeerInfo *> n;
+
+		for (auto i = clients.cbegin(); i != clients.cend(); i++)
+			if ((*i)->getSocket() == sock)
+				n.push_back(*i);
+		for (auto i = n.cbegin(); i != n.cend(); i++)
+			releasePeer(*i);
+	}
 	delete peer;
 }
 
@@ -187,8 +199,6 @@ void NetworkWorker::readAll()
 		return;
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{
-		if (this->discon.find(*i) != this->discon.cend() || discon.find((*i)->getSocket()) != discon.cend())
-			continue;
 		if (!(*i)->getSocket()->isInSet(&fdset) || !(*i)->isDirect())
 			continue;
 		if ((*i)->getSocket()->isClosed())
@@ -215,31 +225,21 @@ void NetworkWorker::readAll()
 	}
 	for (auto i = discon.cbegin(); i != discon.cend(); i++)
 	{
-		std::queue<network::PeerInfo *>dd;
+		network::PeerInfo * dd = nullptr;
 
-		for (auto j = clients.cbegin(); j != clients.cend(); j++)
-			if ((*j)->getSocket() == *i)
-				dd.push(*j);
-		while (dd.size())
+		for (auto j = clients.cbegin(); j != clients.cend() && dd == nullptr; j++)
+			if ((*j)->getSocket() == *i && (*j)->isDirect())
+				dd = (*j);
+		if (dd)
 		{
-			manager.broadcast(new network::Netsplit(dd.front()->getId()));
-			releasePeer(dd.front());
-			dd.pop();
+			manager.broadcast(new network::Netsplit(dd->getId()));
+			releasePeer(dd);
 		}
 	}
 	for (auto i = this->discon.cbegin(); i != this->discon.cend(); i++)
 	{
-		std::queue<network::PeerInfo *>dd;
-
-		for (auto j = clients.cbegin(); j != clients.cend(); j++)
-			if (*j == *i)
-				dd.push(*j);
-		while (dd.size())
-		{
-			manager.broadcast(new network::Netsplit(dd.front()->getId()));
-			releasePeer(dd.front());
-			dd.pop();
-		}
+		manager.broadcast(new network::Netsplit((*i)->getId()));
+		releasePeer(*i);
 	}
 }
 
@@ -292,6 +292,15 @@ void NetworkWorker::sendBroadcast()
 	}
 }
 
+template <class T>
+static bool isInList(T elem, std::list<T> list)
+{
+	for (auto i = list.cbegin(); i != list.cend(); i++)
+		if ((*i) == elem)
+			return true;
+	return false;
+}
+
 void NetworkWorker::sendUnique()
 {
 	while (!manager.sendQueueEmpty())
@@ -302,7 +311,7 @@ void NetworkWorker::sendUnique()
 		size_t packet_len;
 
 		manager.getNextSend(&packet, &peer);
-		if (clients.find(peer) == clients.end())
+		if (!isInList(peer, clients))
 			continue;
 		ss = packet->getStream(&packet_len);
 	std::cerr << "Packet out: " << packet->getName() << std::endl;

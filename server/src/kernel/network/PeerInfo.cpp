@@ -27,14 +27,10 @@ PeerInfo::~PeerInfo()
 }
 
 Socket *PeerInfo::getSocket() const
-{
-	return socket;
-}
+{ return socket; }
 
 bool PeerInfo::isClosing() const
-{
-	return closing;
-}
+{ return closing; }
 
 void PeerInfo::read(WorkerManager &manager)
 {
@@ -57,7 +53,7 @@ void PeerInfo::read(WorkerManager &manager)
 		delete packet;
 		return;
 	}
-	std::cerr << "Packet in (" << manager.getNetwork()->getMe()->getId() << "): " << packet->getName() << std::endl;
+	std::cerr << "Packet in (" << manager.getNetwork()->getMe() << "): " << packet->getName() << std::endl;
 	packet->doMagic(manager, this);
 	delete packet;
 }
