@@ -50,14 +50,17 @@ t_Item	*Scene::parseItem( std::ifstream &s )
   std::cout << "  There is " << (int) obj->subModule << " sub-modules" << std::endl;
   std::cout << "  Header size : " << (int) obj->headerSize << std::endl;
   std::cout << "  There is " << (int) obj->nbSubItem << " sub-items" << std::endl;
-
+  if (obj->headerSize > 0)
+    {
+      std::cout << "+--";
+      obj->data = new char[obj->headerSize];
+      if (s.read(obj->data, obj->headerSize))
+	std::cout << "  data contain [" << (char *) obj->data << "]" << std::endl;
+    }
   std::cout << std::endl;
   if (obj->nbSubItem > 0)
     obj->subItems = new std::list<t_Item *>;
   for (int a = 0; a < obj->nbSubItem; a++)
-    {
-      obj->subItems->push_back(parseItem(s));
-      // Is that what they want ? I'm not really sure but I think so...
-    }
+    obj->subItems->push_back(parseItem(s));
   return (obj);
 }
