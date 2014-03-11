@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace client
 {
@@ -8,6 +10,7 @@ namespace client
     {
         Viewport vp = new Viewport();
         ObjectsList ol;
+        public ConClient client;
 
         public MainForm()
         {
@@ -17,7 +20,7 @@ namespace client
 
             ol = new ObjectsList(this);
 
-            comboBox1.DataSource = ol;
+            comboBox1.DataSource = ol.Collection;
             comboBox1.DisplayMember = "Name";
             comboBox1.ValueMember = "Id";
         }
@@ -125,7 +128,7 @@ namespace client
             var bm_z = new System.Drawing.Bitmap(view_x.InitialImage, view_z.Size);
             draw_grid_z(bm_z);
 
-            foreach (var o in ol)
+            foreach (var o in ol.Collection)
             {
                 o.draw_x(bm_x, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
                 o.draw_y(bm_y, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
@@ -140,7 +143,14 @@ namespace client
         private void MainForm_Load(object sender, EventArgs e)
         {
             vp.GridLevel = 10;
+            this.Show();
 
+            this.client = new ConClient();
+            var con = new Connection();
+            con.ShowDialog(this);
+
+            toolStripStatusLabel1.Text = "Connected with id : " + con.Id;
+            toolStripStatusLabel1.Image = Properties.Resources.green;
             redraw();
         }
 
@@ -219,11 +229,11 @@ namespace client
             p1.Y = e.X;
             p1.Z = e.Y;
 
-            Util.convertToMy(p1, vp, view_x.Image, client.Util.eView.x);
+            Util.convertToMy(p1, vp, view_x.Image, Util.eView.x);
 
             if (this.drawMode == eDrawMode.NONE)
             {
-                foreach (var o in ol)
+                foreach (var o in ol.Collection)
                 {
                     if (o.solve_equation_x(p1))
                     {
@@ -246,11 +256,11 @@ namespace client
             p1.Y = 0;
             p1.Z = e.Y;
 
-            Util.convertToMy(p1, vp, view_y.Image, client.Util.eView.y);
+            Util.convertToMy(p1, vp, view_y.Image, Util.eView.y);
 
             if (this.drawMode == eDrawMode.NONE)
             {
-                foreach (var o in ol)
+                foreach (var o in ol.Collection)
                 {
                     if (o.solve_equation_y(p1))
                     {
@@ -271,11 +281,11 @@ namespace client
             p1.Y = e.Y;
             p1.Z = 0;
 
-            Util.convertToMy(p1, vp, view_z.Image, client.Util.eView.z);
+            Util.convertToMy(p1, vp, view_z.Image, Util.eView.z);
 
             if (this.drawMode == eDrawMode.NONE)
             {
-                foreach (var o in ol)
+                foreach (var o in ol.Collection)
                 {
                     if (o.solve_equation_z(p1))
                     {
@@ -360,7 +370,7 @@ namespace client
             propertyGrid.Refresh();
         }
 
-        private bool drawTmpObject(MouseEventArgs e, Points p3, client.Util.eView v)
+        private bool drawTmpObject(MouseEventArgs e, Points p3, Util.eView v)
         {
             draw_status.Text = "Coords { X : " + p3.X + ", Y : " + p3.Y + ", Z : " + p3.Z + " }";
 
@@ -374,9 +384,9 @@ namespace client
                 {
                     case eDrawMode.SPHERE:
                         AObjects s = null;
-                        if (v == client.Util.eView.x) s = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        if (v == client.Util.eView.y) s = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        if (v == client.Util.eView.z) s = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        if (v == Util.eView.x) s = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        if (v == Util.eView.y) s = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        if (v == Util.eView.z) s = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
 
                         draw_status.Text += ", Sphere { Cx : " + s.centerPoint.X + ", Cy : " + s.centerPoint.Y + ", Cz : " + s.centerPoint.Z + ", R : " + ((Sphere)s).Radius + " }";
 
@@ -401,7 +411,7 @@ namespace client
 
             Util.convertToMy(p3, vp, view_x.Image, Util.eView.x);
 
-            drawTmpObject(e, p3, client.Util.eView.x);
+            drawTmpObject(e, p3, Util.eView.x);
             if (p1 == null) return;
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
@@ -435,7 +445,7 @@ namespace client
 
             Util.convertToMy(p3, vp, view_y.Image, Util.eView.y);
 
-            drawTmpObject(e, p3, client.Util.eView.y);
+            drawTmpObject(e, p3, Util.eView.y);
             if (p1 == null) return;
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
@@ -469,7 +479,7 @@ namespace client
 
             Util.convertToMy(p3, vp, view_z.Image, Util.eView.z);
 
-            drawTmpObject(e, p3, client.Util.eView.z);
+            drawTmpObject(e, p3, Util.eView.z);
             if (p1 == null) return;
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
@@ -571,9 +581,31 @@ namespace client
             var c = sender as ComboBox;
             if (c.SelectedIndex >= 0)
             {
-                ol.Selected = ol[c.SelectedIndex];
+                ol.Selected = ol.Collection[c.SelectedIndex];
                 redraw();
             }
+        }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var x = new XmlSerializer(ol.GetType());
+            TextWriter tw = new StreamWriter("test.xml");
+            x.Serialize(tw, ol);
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var x = new XmlSerializer(ol.GetType());
+            TextReader tr = new StreamReader("test.xml");
+
+            AObjects.Reinit();
+
+            ol = x.Deserialize(tr) as ObjectsList;
+
+            ol.Collection.form = this;
+            comboBox1.DataSource = ol.Collection;
+            
+            redraw();
         }
     }
 }
