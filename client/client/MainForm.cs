@@ -397,6 +397,7 @@ namespace client
             Util.convertToMy(p3, vp, view_x.Image, Util.eView.x);
 
             drawTmpObject(e, p3, client.Util.eView.x);
+            if (p1 == null) return;
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
             {
@@ -430,6 +431,7 @@ namespace client
             Util.convertToMy(p3, vp, view_y.Image, Util.eView.y);
 
             drawTmpObject(e, p3, client.Util.eView.y);
+            if (p1 == null) return;
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
             {
@@ -463,6 +465,7 @@ namespace client
             Util.convertToMy(p3, vp, view_z.Image, Util.eView.z);
 
             drawTmpObject(e, p3, client.Util.eView.z);
+            if (p1 == null) return;
 
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.NONE)
             {
