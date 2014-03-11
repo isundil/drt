@@ -137,16 +137,20 @@ void NetworkWorker::connectToPeers()
 	std::stringstream ss;
 	ss << std::endl << "I'm ";
 	ss.width(9);
-	ss << this->getMe()->getId() << " [C] - " << this->getMe()->getStats()->debug() << std::endl;
+	ss << this->getMe()->getId() << "[C][D] - " << this->getMe()->getStats()->debug() << std::endl;
 	for (auto i = this->clients.cbegin(); i != this->clients.cend(); i++)
 	{
 		ss << "Client ";
 		ss.width(6);
 		ss << (*i)->getId();
 		if (!(*i)->getConfirmed())
-			ss << " [C]";
-		//else
-		//	ss << "    ";
+			ss << "[C]";
+		else
+			ss << "   ";
+		if ((*i)->isDirect())
+			ss << "[D]";
+		else
+			ss << "   ";
 		//ss << " - " << (*i)->getStats()->debug();
 		ss << std::endl;
 	}
