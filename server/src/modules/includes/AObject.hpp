@@ -31,10 +31,10 @@ class AObject : public IObject {
 public:
   AObject();
 
-  APropertyValue	*getProperty(std::string name);
+  APropertyValue	*getProperty(int name);
 
   template <class T>
-  T at(std::string name) {
+  T at(int name) {
     return ((PropertyValue<T> *) this->getProperty(name))->getValue();
   }
 

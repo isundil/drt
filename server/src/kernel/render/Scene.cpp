@@ -1,50 +1,63 @@
+#include <iostream>
+#include <fstream>
 #include "Scene.hpp"
-#include "network/Socket.hpp"
+// #include "network/Socket.hpp"
 
 using namespace drt::render;
 
-Scene::Scene( ifstream s )
+Scene::Scene( std::ifstream &s )
 {
   // header
   char			nbModules;
-  read(*s, &nbModules, sizeof(char));
-  char			**plop = new char[nbModules][24];
-  for (char n = 0; n < nbModules; n++)
+  s.read(&nbModules, sizeof(char));
+  char			moduleList[nbModules][20];
+   for (char n = 0; n < nbModules; n++)
     {
-      read(*s, plop[n], 24 * sizeof(*plop[n]));
+      s.read(moduleList[n], 20 * sizeof(char));
     }
   short			x;
   short			y;
-  read(*s, &x, sizeof(x));
-  read(*s, &y, sizeof(y));
-  short			nbObjects;
-  read(*s, &nbObjects, sizeof(nbObjects));
+  s.read((char *)&x, sizeof(x));
+  s.read((char *)&y, sizeof(y));
+  int			nbObjects;
+  s.read((char *)&nbObjects, sizeof(nbObjects));
 
   // affichage
   std::cout << "header :" << std::endl;
-  std::cout << "there is " << nbModules << " modules" << std::endl;
-  for (char n = 0; n < nbModules; n++)
+  std::cout << "there is " << (int) nbModules << " modules" << std::endl;
+  for (int n = 0; n < nbModules; n++)
     {
-      std::cout << plop[n] << std::endl;
+      std::cout << "[" << n << "]:" << moduleList[n] << std::endl;
     }
   std::cout << "the image size is " << x << ":" << y << std::endl;
   std::cout << "there is " << nbObjects << " objects" << std::endl;
 
-  // objects
   for (short i = 0; i < nbObjects; i++)
     {
-      char		objType;
-      read(*s, &objType, sizeof(objType));
-      short		objSize;
-      read(*s, &objSize, sizeof(objSize));
-      char		nbObjMod;
-      read(*s, &nbObjMod, sizeof(nbObjMod));
-      void		**plip = new void[nbObjMod]*;
-      for (short a = 0; a < nbObjMod; a++)
-	{
-	  // here I need to implement the structure.
-	  //	  plip[a] = new T;
-	  //	  read(*s, plip[a], objSize);
-	}
+      this->objects.push_back(parseItem(s));
     }
+}
+
+
+t_Item	*Scene::parseItem( std::ifstream &s )
+{
+  // objects
+  t_Item	*obj = new t_Item;
+  t_Item	*tmp;
+
+  s.read((char *) obj, sizeof(*obj));
+  std::cout << "  Module #" << (int) obj->moduleID << std::endl;
+  std::cout << "  There is " << (int) obj->subModule << " sub-modules" << std::endl;
+  std::cout << "  Header size : " << (int) obj->headerSize << std::endl;
+  std::cout << "  There is " << (int) obj->nbSubItem << " sub-items" << std::endl;
+
+  std::cout << std::endl;
+  if (obj->nbSubItem > 0)
+    obj->subItems = new std::list<t_Item *>;
+  for (int a = 0; a < obj->nbSubItem; a++)
+    {
+      obj->subItems->push_back(parseItem(s));
+      // Is that what they want ? I'm not really sure but I think so...
+    }
+  return (obj);
 }
