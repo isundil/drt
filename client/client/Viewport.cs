@@ -13,6 +13,10 @@ namespace client
             ox = new Points();
             oy = new Points();
             oz = new Points();
+
+            fx = 1;
+            fy = 1;
+            fz = 1;
         }
 
         public int GridLevel { get; set; }
@@ -20,5 +24,9 @@ namespace client
         public Points ox { get; set; }
         public Points oy { get; set; }
         public Points oz { get; set; }
+
+        public float fx { get; set; }
+        public float fy { get; set; }
+        public float fz { get; set; }
     }
 }
