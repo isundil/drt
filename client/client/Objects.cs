@@ -31,11 +31,11 @@ namespace client
             {
                 selected = value;
 
-                form.propertyGrid.SelectedObject = selected;
-                form.comboBox1.SelectedValue = selected.Id;
-
                 if (value != null)
                 {
+                    form.propertyGrid.SelectedObject = selected;
+                    form.comboBox1.SelectedValue = selected.Id;
+
                     form.move_toolstrip.Enabled = true;
                     form.resize_toolstrip.Enabled = true;
                 }

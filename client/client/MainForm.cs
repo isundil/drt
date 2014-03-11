@@ -586,26 +586,94 @@ namespace client
             }
         }
 
+        class Nfile
+        {
+            public string Nshort { get; set; }
+            public string Nlong { get; set; }
+        }
+        Nfile currentfile = new Nfile();
+
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var x = new XmlSerializer(ol.GetType());
-            TextWriter tw = new StreamWriter("test.xml");
-            x.Serialize(tw, ol);
+            if (currentfile.Nlong.Length > 0)
+            {
+                var x = new XmlSerializer(ol.GetType());
+                TextWriter tw = new StreamWriter(currentfile.Nlong);
+                try { x.Serialize(tw, ol); }
+                catch { MessageBox.Show("An error occured saving the file"); }
+
+                saveAsToolStripMenuItem.Enabled = true;
+            }
+            else
+            {
+                loadToolStripMenuItem_Click(sender, e);
+            }
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var x = new XmlSerializer(ol.GetType());
-            TextReader tr = new StreamReader("test.xml");
 
-            AObjects.Reinit();
+            var f = new OpenFileDialog();
+            f.Filter = "DRT Save file|*.drt";
+            f.InitialDirectory = Environment.CurrentDirectory;
+            f.CustomPlaces.Add(new FileDialogCustomPlace(Environment.CurrentDirectory));
+            if (f.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                TextReader tr = new StreamReader(f.FileName);
+                AObjects.Reinit();
 
-            ol = x.Deserialize(tr) as ObjectsList;
+                try
+                {
+                    ol = x.Deserialize(tr) as ObjectsList;
 
-            ol.Collection.form = this;
-            comboBox1.DataSource = ol.Collection;
-            
-            redraw();
+                    currentfile.Nlong = f.FileName;
+                    FileInfo ff = new FileInfo(currentfile.Nlong);
+                    currentfile.Nshort = ff.Name;
+                    this.Text = currentfile.Nshort;
+
+                    saveAsToolStripMenuItem.Enabled = true;
+
+                    ol.Collection.form = this;
+                    comboBox1.DataSource = ol.Collection;
+
+                    redraw();
+                }
+                catch (System.InvalidOperationException)
+                {
+                    MessageBox.Show("Error, the file you specified is invalid");
+                }
+            }
+        }
+
+        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var x = new XmlSerializer(ol.GetType());
+
+            var f = new SaveFileDialog();
+            f.AddExtension = true;
+
+            f.Filter = "DRT Save file|*.drt";
+            f.InitialDirectory = Environment.CurrentDirectory;
+            f.CustomPlaces.Add(new FileDialogCustomPlace(Environment.CurrentDirectory));
+
+            if (f.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                TextWriter tw = new StreamWriter(f.FileName);
+                try
+                {
+                    x.Serialize(tw, ol);
+
+                    currentfile.Nlong = f.FileName;
+                    FileInfo ff = new FileInfo(currentfile.Nlong);
+                    currentfile.Nshort = ff.Name;
+                    this.Text = currentfile.Nshort;
+                }
+                catch
+                {
+                    MessageBox.Show("An error occured saving the file");
+                }
+            }
         }
     }
 }
