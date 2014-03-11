@@ -40,6 +40,9 @@
             this.move_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.resize_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.zoomin_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.zoomout_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.sphere_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -134,6 +137,9 @@
             this.move_toolstrip,
             this.resize_toolstrip,
             this.toolStripSeparator1,
+            this.zoomin_toolstrip,
+            this.zoomout_toolstrip,
+            this.toolStripSeparator2,
             this.sphere_toolstrip});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
@@ -178,6 +184,31 @@
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // zoomin_toolstrip
+            // 
+            this.zoomin_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomin_toolstrip.Image = global::client.Properties.Resources.zoomin_btn;
+            this.zoomin_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomin_toolstrip.Name = "zoomin_toolstrip";
+            this.zoomin_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.zoomin_toolstrip.Text = "Zoom In";
+            this.zoomin_toolstrip.Click += new System.EventHandler(this.zoomin_toolstrip_Click);
+            // 
+            // zoomout_toolstrip
+            // 
+            this.zoomout_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomout_toolstrip.Image = global::client.Properties.Resources.zoomout_btn;
+            this.zoomout_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomout_toolstrip.Name = "zoomout_toolstrip";
+            this.zoomout_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.zoomout_toolstrip.Text = "Zoom Out";
+            this.zoomout_toolstrip.Click += new System.EventHandler(this.zoomout_toolstrip_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // sphere_toolstrip
             // 
@@ -243,6 +274,7 @@
             this.view_x.Size = new System.Drawing.Size(269, 166);
             this.view_x.TabIndex = 0;
             this.view_x.TabStop = false;
+            this.view_x.Click += new System.EventHandler(this.view_x_Click);
             this.view_x.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseDown);
             this.view_x.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseMove);
             this.view_x.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseUp);
@@ -264,6 +296,7 @@
             this.view_y.Size = new System.Drawing.Size(269, 166);
             this.view_y.TabIndex = 0;
             this.view_y.TabStop = false;
+            this.view_y.Click += new System.EventHandler(this.view_y_Click);
             this.view_y.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseDown);
             this.view_y.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseMove);
             this.view_y.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseUp);
@@ -293,6 +326,7 @@
             this.view_z.Size = new System.Drawing.Size(269, 167);
             this.view_z.TabIndex = 0;
             this.view_z.TabStop = false;
+            this.view_z.Click += new System.EventHandler(this.view_z_Click);
             this.view_z.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseDown);
             this.view_z.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseMove);
             this.view_z.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseUp);
@@ -323,6 +357,7 @@
             this.propertyGrid.Name = "propertyGrid";
             this.propertyGrid.Size = new System.Drawing.Size(200, 324);
             this.propertyGrid.TabIndex = 0;
+            this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
             // 
             // panel8
             // 
@@ -412,6 +447,9 @@
         public System.Windows.Forms.ToolStripButton resize_toolstrip;
         private System.Windows.Forms.ComboBox comboBox1;
         public System.Windows.Forms.PropertyGrid propertyGrid;
+        private System.Windows.Forms.ToolStripButton zoomin_toolstrip;
+        private System.Windows.Forms.ToolStripButton zoomout_toolstrip;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
     }
 }
 
