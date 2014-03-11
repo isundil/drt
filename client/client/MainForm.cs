@@ -14,7 +14,12 @@ namespace client
             InitializeComponent();
 
             this.Cursor = new Cursor(Properties.Resources.pointer_ptr.GetHicon());
+
             ol = new ObjectsList(this);
+
+            comboBox1.DataSource = ol;
+            comboBox1.DisplayMember = "Name";
+            comboBox1.ValueMember = "Id";
         }
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -369,9 +374,9 @@ namespace client
                 {
                     case eDrawMode.SPHERE:
                         AObjects s = null;
-                        if (v == client.Util.eView.x) s = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp);
-                        if (v == client.Util.eView.y) s = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp);
-                        if (v == client.Util.eView.z) s = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp);
+                        if (v == client.Util.eView.x) s = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        if (v == client.Util.eView.y) s = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        if (v == client.Util.eView.z) s = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
 
                         draw_status.Text += ", Sphere { Cx : " + s.centerPoint.X + ", Cy : " + s.centerPoint.Y + ", Cz : " + s.centerPoint.Z + ", R : " + ((Sphere)s).Radius + " }";
 
@@ -559,6 +564,16 @@ namespace client
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             redraw();
+        }
+
+        private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
+        {
+            var c = sender as ComboBox;
+            if (c.SelectedIndex >= 0)
+            {
+                ol.Selected = ol[c.SelectedIndex];
+                redraw();
+            }
         }
     }
 }

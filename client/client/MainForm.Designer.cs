@@ -371,12 +371,14 @@
             // comboBox1
             // 
             this.comboBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(0, 0);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(200, 21);
             this.comboBox1.TabIndex = 42;
             this.comboBox1.TabStop = false;
+            this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
             // 
             // MainForm
             // 
@@ -445,11 +447,11 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         public System.Windows.Forms.ToolStripButton move_toolstrip;
         public System.Windows.Forms.ToolStripButton resize_toolstrip;
-        private System.Windows.Forms.ComboBox comboBox1;
         public System.Windows.Forms.PropertyGrid propertyGrid;
         private System.Windows.Forms.ToolStripButton zoomin_toolstrip;
         private System.Windows.Forms.ToolStripButton zoomout_toolstrip;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        public System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace client
 {
-    public class ObjectsList : List<AObjects>
+    public class ObjectsList : BindingList<AObjects>
     {
         MainForm f;
 
@@ -28,6 +29,7 @@ namespace client
                 selected = value;
 
                 f.propertyGrid.SelectedObject = selected;
+                f.comboBox1.SelectedValue = selected.Id;
 
                 if (value != null)
                 {
@@ -56,7 +58,16 @@ namespace client
 
     abstract public class AObjects
     {
-
+        protected AObjects(bool tmp) {
+            if (!tmp)
+            {
+                total++;
+                Id = total;
+            }
+        }
+        public string Name { get; set; }
+        static private int total = 0;
+        public int Id { get; private set; }
 
         public int Radius { get; set; }
         public int X
@@ -94,9 +105,9 @@ namespace client
         }
         internal Points centerPoint { get; set; }
 
-        static public AObjects create_x(Points p1, Points p2, Viewport vp) { return null; }
-        static public AObjects create_y(Points p1, Points p2, Viewport vp) { return null; }
-        static public AObjects create_z(Points p1, Points p2, Viewport vp) { return null; }
+        static public AObjects create_x(Points p1, Points p2, Viewport vp, bool tmp = false) { return null; }
+        static public AObjects create_y(Points p1, Points p2, Viewport vp, bool tmp = false) { return null; }
+        static public AObjects create_z(Points p1, Points p2, Viewport vp, bool tmp = false) { return null; }
 
         abstract public void draw_x(Image b, Viewport vp, Color c);
         abstract public void draw_y(Image b, Viewport vp, Color c);
@@ -109,22 +120,22 @@ namespace client
 
     public class Sphere : AObjects
     {
-        new static public AObjects create_x(Points p1, Points p2, Viewport vp)
+        new static public AObjects create_x(Points p1, Points p2, Viewport vp, bool tmp = false)
         {
             var d = (int)Math.Sqrt(Math.Pow(p2.Y - p1.Y, 2) + Math.Pow(p2.Z - p1.Z, 2));
-            return new Sphere(p1, d);
+            return new Sphere(p1, d, tmp);
         }
-        new static public AObjects create_y(Points p1, Points p2, Viewport vp)
+        new static public AObjects create_y(Points p1, Points p2, Viewport vp, bool tmp = false)
         {
             var d = (int)Math.Sqrt(Math.Pow(p1.Z - p2.Z, 2) + Math.Pow(p1.X - p2.X, 2));
 
-            return new Sphere(p1, d);
+            return new Sphere(p1, d, tmp);
         }
-        new static public AObjects create_z(Points p1, Points p2, Viewport vp)
+        new static public AObjects create_z(Points p1, Points p2, Viewport vp, bool tmp = false)
         {
             var d = (int)Math.Sqrt(Math.Pow(p1.Y - p2.Y, 2) + Math.Pow(p1.X - p2.X, 2));
 
-            return new Sphere(p1, d);
+            return new Sphere(p1, d, tmp);
         }
 
         override public void draw_x(Image b, Viewport vp, Color c)
@@ -193,11 +204,17 @@ namespace client
             return false;
         }
 
-        private Sphere() { }
-        private Sphere(Points c, int d)
+        static protected int count = 0;
+
+        private Sphere(Points c, int d, bool tmp) : base(tmp)
         {
             this.centerPoint = c;
             this.Radius = d;
+
+            if (! tmp)
+            {
+                this.Name = "Sphere" + ++count;
+            }
         }
     }
 }
