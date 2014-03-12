@@ -78,6 +78,7 @@ namespace client
         public new string ToString() { return R + " " + G + " " + B; }
         public byte[] GetRGB() { return new byte[] { R, G, B }; }
         public int GetARGB() { return BitConverter.ToInt32(new byte[] { B, G, R, 255 }, 0); }
+        public Color toColor() { return Color.FromArgb(R, G, B); }
     }
 
     public enum eSubModules
@@ -242,9 +243,9 @@ namespace client
         static public AObjects create_y(Points p1, Points p2, Viewport vp, bool tmp = false) { return null; }
         static public AObjects create_z(Points p1, Points p2, Viewport vp, bool tmp = false) { return null; }
 
-        abstract public void draw_x(Image b, Viewport vp, Color c);
-        abstract public void draw_y(Image b, Viewport vp, Color c);
-        abstract public void draw_z(Image b, Viewport vp, Color c);
+        abstract public void draw_x(Image b, Viewport vp, bool selected);
+        abstract public void draw_y(Image b, Viewport vp, bool selected);
+        abstract public void draw_z(Image b, Viewport vp, bool selected);
 
         abstract public bool solve_equation_x(Points p);
         abstract public bool solve_equation_y(Points p);
@@ -285,7 +286,7 @@ namespace client
             return new Sphere(p1, d, tmp);
         }
 
-        override public void draw_x(Image b, Viewport vp, Color c)
+        override public void draw_x(Image b, Viewport vp, bool selected)
         {
             var g = System.Drawing.Graphics.FromImage(b);
 
@@ -294,12 +295,12 @@ namespace client
             p.Z += this.Radius;
             Util.convertToGe(p, vp, b, Util.eView.x);
 
-            g.DrawEllipse(new Pen(c), new Rectangle(
+            g.DrawEllipse(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), new Rectangle(
                     new Point(p.Y, p.Z),
                     new Size((int)(this.Radius * 2 * vp.fx), (int)(this.Radius * 2 * vp.fx))
                 ));
         }
-        override public void draw_y(Image b, Viewport vp, Color c)
+        override public void draw_y(Image b, Viewport vp, bool selected)
         {
             var g = System.Drawing.Graphics.FromImage(b);
 
@@ -308,12 +309,12 @@ namespace client
             p.Z += this.Radius;
             Util.convertToGe(p, vp, b, Util.eView.y);
 
-            g.DrawEllipse(new Pen(c), new Rectangle(
+            g.DrawEllipse(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), new Rectangle(
                     new Point(p.X, p.Z),
                     new Size((int)(this.Radius * 2 * vp.fy), (int)(this.Radius * 2 * vp.fy))
                 ));
         }
-        override public void draw_z(Image b, Viewport vp, Color c)
+        override public void draw_z(Image b, Viewport vp, bool selected)
         {
             var g = System.Drawing.Graphics.FromImage(b);
 
@@ -322,7 +323,7 @@ namespace client
             p.Y += this.Radius;
             Util.convertToGe(p, vp, b, Util.eView.z);
 
-            g.DrawEllipse(new Pen(c), new Rectangle(
+            g.DrawEllipse(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), new Rectangle(
                     new Point(p.X, p.Y),
                     new Size((int)(this.Radius * 2 * vp.fz), (int)(this.Radius * 2 * vp.fz))
                 ));
@@ -362,6 +363,7 @@ namespace client
         {
             this.centerPoint = c;
             this.Radius = d;
+            this.Color = new MyColor(System.Drawing.Color.SteelBlue.ToArgb());
 
             if (! tmp)
             {

@@ -16,6 +16,7 @@ namespace client
         {
             InitializeComponent();
 
+            this.Icon = Properties.Resources.icon;
             this.Cursor = new Cursor(Properties.Resources.pointer_ptr.GetHicon());
 
             ol = new ObjectsList(this);
@@ -130,9 +131,9 @@ namespace client
 
             foreach (var o in ol.Collection)
             {
-                o.draw_x(bm_x, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
-                o.draw_y(bm_y, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
-                o.draw_z(bm_z, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
+                o.draw_x(bm_x, vp, (o == ol.Selected));
+                o.draw_y(bm_y, vp, (o == ol.Selected));
+                o.draw_z(bm_z, vp, (o == ol.Selected));
             }
 
             view_x.Image = bm_x;
@@ -307,6 +308,7 @@ namespace client
         private void view_x_MouseUp(object sender, MouseEventArgs e)
         {
             if (this.drawMode == eDrawMode.NONE || p1 == null) return;
+            _tmpObject = null;
 
             p2 = new Points();
 
@@ -331,6 +333,7 @@ namespace client
         private void view_y_MouseUp(object sender, MouseEventArgs e)
         {
             if (this.drawMode == eDrawMode.NONE || p1 == null) return;
+            _tmpObject = null;
 
             p2 = new Points();
 
@@ -354,6 +357,7 @@ namespace client
         private void view_z_MouseUp(object sender, MouseEventArgs e)
         {
             if (this.drawMode == eDrawMode.NONE || p1 == null) return;
+            _tmpObject = null;
 
             p2 = new Points();
 
@@ -375,6 +379,7 @@ namespace client
             propertyGrid.Refresh();
         }
 
+        AObjects _tmpObject = null;
         private bool drawTmpObject(MouseEventArgs e, Points p3, Util.eView v)
         {
             draw_status.Text = "Coords { X : " + p3.X + ", Y : " + p3.Y + ", Z : " + p3.Z + " }";
@@ -388,16 +393,22 @@ namespace client
                 switch (this.drawMode)
                 {
                     case eDrawMode.SPHERE:
-                        AObjects s = null;
-                        if (v == Util.eView.x) s = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        if (v == Util.eView.y) s = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        if (v == Util.eView.z) s = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        if (_tmpObject == null)
+                        {
+                            if (v == Util.eView.x) _tmpObject = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                            if (v == Util.eView.y) _tmpObject = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                            if (v == Util.eView.z) _tmpObject = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        }
+                        else
+                        {
+                            _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                        }
 
-                        draw_status.Text += ", Sphere { Cx : " + s.centerPoint.X + ", Cy : " + s.centerPoint.Y + ", Cz : " + s.centerPoint.Z + ", R : " + ((Sphere)s).Radius + " }";
+                        draw_status.Text += ", Sphere { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + ((Sphere)_tmpObject).Radius + " }";
 
-                        s.draw_x(vx, vp, Color.White);
-                        s.draw_y(vy, vp, Color.White);
-                        s.draw_z(vz, vp, Color.White);
+                        _tmpObject.draw_x(vx, vp, true);
+                        _tmpObject.draw_y(vy, vp, true);
+                        _tmpObject.draw_z(vz, vp, true);
                         break;
                 }
                 view_x.Image = vx;
