@@ -1,0 +1,16 @@
+
+#comment2
+
+[peers]
+Server localhost:8242
+Server localhost:8243
+Server localhost:8244
+
+[server]
+#Listen 8241
+NoListen
+MaxClient unlimited
+
+[worker]
+MaxThreads 2
+
