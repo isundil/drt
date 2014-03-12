@@ -6,7 +6,7 @@
 class Cone : public AMathObject {
 public:
 
-  Cone();
+  Cone(double r);
 
   virtual double computeEquation(Camera * camera, Ray * ray);
 };

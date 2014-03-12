@@ -34,7 +34,7 @@ public:
   APropertyValue	*getProperty(int name);
 
   template <class T>
-  T at(int name) {
+  T at(std::string name) {
     return ((PropertyValue<T> *) this->getProperty(name))->getValue();
   }
 

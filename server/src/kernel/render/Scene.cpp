@@ -33,9 +33,9 @@ Scene::Scene( std::ifstream &s )
   std::cout << "there is " << nbObjects << " objects" << std::endl;
 
   for (short i = 0; i < nbObjects; i++)
-    {
-      this->objects.push_back(parseItem(s));
-    }
+    this->objects.push_back(parseItem(s));
+
+  // here need convert parsed Item to modules. how ?
 }
 
 
