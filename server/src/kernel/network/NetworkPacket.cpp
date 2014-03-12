@@ -69,6 +69,7 @@ NewJob::NewJob(
 	std::ofstream file( filename );
 	std::ifstream filein;
 
+	std::cout << "New scene detected for user " << id << " in file " << filename <<std::endl;
 	size_t length = 0;
 
 	while( length < len )
