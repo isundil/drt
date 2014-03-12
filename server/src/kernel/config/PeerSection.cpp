@@ -51,6 +51,11 @@ bool PeerSection::exists(const std::string &name) const
 const std::list<std::pair<std::string, unsigned short> >PeerSection::getPeerlist() const
 { return peerList; }
 
+void PeerSection::remPeerlist(const std::pair<std::string, unsigned short> &inf)
+{
+	peerList.remove(inf);
+}
+
 ISection *PeerSection::clone() const
 {
 	return new PeerSection(*this);

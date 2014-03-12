@@ -55,6 +55,9 @@ namespace network
 
 			void setScene( render::Scene* );
 			render::Scene* getScene();
+			int getConfirmed() const;
+			void setConfirmed(int);
+			bool decConfirm();
 
 		private:
 			std::string ip;
@@ -68,6 +71,7 @@ namespace network
 			stats *procInfo;
 			bool isClient;
 			render::Scene* scene;
+			int confirmed;
 	};
 }
 }

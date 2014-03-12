@@ -24,6 +24,7 @@ class ANetworkPacket
 		virtual std::stringstream *getStream(size_t *buflen) const =0;
 
 		virtual void doMagic(drt::WorkerManager &, network::PeerInfo *) { };
+		virtual const std::string getName() const =0;
 
 	protected:
 };
@@ -39,6 +40,7 @@ class SAuth: public ANetworkPacket
 		std::stringstream *getStream(size_t *buflen) const;
 
 		void doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *);
+		const std::string getName() const;
 
 	private:
 		SAuth();
@@ -58,6 +60,8 @@ class CAuth: public ANetworkPacket
 		void 
 		doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *);
 
+		const std::string getName() const;
+
 	private:
 		unsigned short id;
 };
@@ -69,6 +73,8 @@ class Welcome: public ANetworkPacket
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		void doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *);
+
+		const std::string getName() const;
 
 	private:
 		unsigned short id;
@@ -84,6 +90,8 @@ class IdCh: public ANetworkPacket
 
 		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
 
+		const std::string getName() const;
+
 	private:
 		IdCh();
 
@@ -98,6 +106,7 @@ class Relog: public ANetworkPacket
 		std::stringstream *getStream(size_t *buflen) const;
 
 		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+		const std::string getName() const;
 };
 
 class Confirm: public ANetworkPacket
@@ -109,6 +118,7 @@ class Confirm: public ANetworkPacket
 		std::stringstream *getStream(size_t *buflen) const;
 
 		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+		const std::string getName() const;
 
 	private:
 		unsigned short id;
@@ -119,6 +129,7 @@ class Quit: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		const std::string getName() const;
 };
 
 class Netsplit: public ANetworkPacket
@@ -128,6 +139,7 @@ class Netsplit: public ANetworkPacket
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+		const std::string getName() const;
 
 	private:
 		Netsplit();
@@ -144,6 +156,7 @@ class NewJob: public ANetworkPacket
 		void doMagic(
 				drt::WorkerManager &, 
 				drt::network::PeerInfo *);
+		const std::string getName() const;
 
 	private:
 		unsigned short id;
@@ -154,6 +167,7 @@ class EndJob: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		const std::string getName() const;
 };
 
 class Ready: public ANetworkPacket
@@ -161,6 +175,7 @@ class Ready: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		const std::string getName() const;
 };
 
 class Monitor: public ANetworkPacket
@@ -175,6 +190,7 @@ class Monitor: public ANetworkPacket
 		std::stringstream *getStream(size_t *buflen) const;
 
 		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+		const std::string getName() const;
 
 	private:
 		Monitor();
@@ -190,6 +206,7 @@ class Proc: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		const std::string getName() const;
 };
 
 class Calc: public ANetworkPacket
@@ -197,6 +214,7 @@ class Calc: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		const std::string getName() const;
 };
 
 class Result: public ANetworkPacket
@@ -204,6 +222,7 @@ class Result: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		const std::string getName() const;
 };
 
 class CompilFail: public ANetworkPacket
@@ -211,6 +230,7 @@ class CompilFail: public ANetworkPacket
 	public:
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
+		const std::string getName() const;
 };
 }
 }

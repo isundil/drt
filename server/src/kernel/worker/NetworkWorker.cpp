@@ -20,8 +20,11 @@ using namespace drt::worker;
 class is_connected
 {
 	public:
-		is_connected(std::list<std::pair<std::string, unsigned short> >e): list(e)
-		{ }
+		is_connected(const std::list<std::pair<std::string, unsigned short> >&e, const std::list<std::pair<std::string, unsigned short> >&f): list(e)
+		{
+			for (auto i =f.cbegin(); i != f.cend(); i++)
+				list.push_back(*i);
+		}
 
 		bool operator()(const std::pair<std::string, unsigned short> item)
 		{
@@ -35,7 +38,7 @@ class is_connected
 		std::list<std::pair<std::string, unsigned short> >list;
 };
 
-NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AWorker(_manager, _id), myself(drt::network::PeerInfo::getMe()), biggerId(1)
+NetworkWorker::NetworkWorker(drt::WorkerManager &_manager, unsigned int _id): AWorker(_manager, _id), connectingTo(nullptr), myself(drt::network::PeerInfo::getMe()), biggerId(1)
 {
 	const drt::parser::ServerSection *config;
 
@@ -104,11 +107,13 @@ void NetworkWorker::sendCpuUsage()
 void NetworkWorker::connectToPeers()
 {
 	std::list<std::pair<std::string, unsigned short> >clients = manager.config()->getSection<drt::parser::PeerSection>()->getPeerlist();
-	is_connected d(connectedPeers);
+	is_connected d(connectedPeers, blackListedPeers);
 
 	if (time(nullptr) - lastConnectAtempt < 5)
 		return;
 	sendCpuUsage();
+	if (connectingTo)
+		return;
 	lastConnectAtempt = time(nullptr);
 	clients.remove_if(d);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
@@ -126,6 +131,7 @@ void NetworkWorker::connectToPeers()
 			continue;
 		}
 
+		connectingTo = pi;
 		manager.send(pi, new network::SAuth(-1, this->clients.size()));
 		connectedPeers.push_back(std::pair<std::string, unsigned short> (*i));
 		this->clients.push_back(pi);
@@ -133,22 +139,54 @@ void NetworkWorker::connectToPeers()
 		ss << "Successfull connection to " << addr.first << ":" << addr.second;
 		manager.log(std::cout, *this, ss.str());
 	}
+
 	std::stringstream ss;
-	ss << "I'm " << this->getMe()->getId() << " - " << this->getMe()->getStats()->debug() << std::endl;
+	ss << std::endl << "I'm ";
+	ss.width(9);
+	ss << this->getMe()->getId() << "[C][D] - " << this->getMe()->getStats()->debug() << std::endl;
 	for (auto i = this->clients.cbegin(); i != this->clients.cend(); i++)
-		ss << "Client " << (*i)->getId() << " - " << (*i)->getStats()->debug() << std::endl;
+	{
+		ss << "Client ";
+		ss.width(6);
+		ss << (*i)->getId();
+		if (!(*i)->getConfirmed())
+			ss << "[C]";
+		else
+			ss << "   ";
+		if ((*i)->isDirect())
+			ss << "[D]";
+		else
+			ss << "   ";
+		ss << " - " << (*i)->getStats()->debug();
+		ss << std::endl;
+	}
 	manager.log(std::cout, *this, ss.str());
 }
 
 void NetworkWorker::releasePeer(network::PeerInfo *peer)
 {
 	std::stringstream ss;
+	network::Socket *sock;
 
-	ss << "Lost connection to " << peer->getConInfo().first << ":" << peer->getConInfo().second;
+	if (!peer)
+		return;
+	std::cout << "Release Peer " << peer->getId() << std::endl;
+	sock = peer->getSocket();
 	clients.remove(peer);
+	ss << "Lost connection to " << peer->getConInfo().first << ":" << peer->getConInfo().second;
+	manager.log(std::cout, *this, ss.str());
 	if (peer->isDirect())
 		connectedPeers.remove(peer->getConInfo());
-	manager.log(std::cout, *this, ss.str());
+	if (peer->isDirect())
+	{
+		std::list<network::PeerInfo *> n;
+
+		for (auto i = clients.cbegin(); i != clients.cend(); i++)
+			if ((*i)->getSocket() == sock)
+				n.push_back(*i);
+		for (auto i = n.cbegin(); i != n.cend(); i++)
+			releasePeer(*i);
+	}
 	delete peer;
 }
 
@@ -156,7 +194,7 @@ void NetworkWorker::readAll()
 {
 	fd_set fdset;
 	const network::Socket *biggerFd =nullptr;
-	std::list<network::Socket *> discon;
+	std::set<network::Socket *> discon;
 
 	if (clients.size() == 0)
 		return;
@@ -177,14 +215,14 @@ void NetworkWorker::readAll()
 		if ((*i)->getSocket()->isClosed())
 		{
 			if ((*i)->isClosing())
-				discon.push_back((*i)->getSocket());
+				discon.insert((*i)->getSocket());
 			else
 			{
-				discon.push_back((*i)->getSocket());
+				discon.insert((*i)->getSocket());
 				manager.log(std::cout, *this, "client disconnected");
 			}
 		}
-		else
+		else if (discon.find((*i)->getSocket()) == discon.cend() && this->discon.find(*i) == this->discon.cend())
 		{
 			try
 			{
@@ -192,24 +230,29 @@ void NetworkWorker::readAll()
 			}
 			catch (std::exception &e)
 			{
-				discon.push_back((*i)->getSocket());
+				discon.insert((*i)->getSocket());
 			}
 		}
 	}
+	for (auto i = this->discon.cbegin(); i != this->discon.cend(); i++)
+	{
+		releasePeer(*i);
+	}
 	for (auto i = discon.cbegin(); i != discon.cend(); i++)
 	{
-		std::queue<network::PeerInfo *>dd;
+		network::PeerInfo * dd = nullptr;
 
-		for (auto j = clients.cbegin(); j != clients.cend(); j++)
-			if ((*j)->getSocket() == *i)
-				dd.push(*j);
-		while (dd.size())
+		for (auto j = clients.cbegin(); j != clients.cend() && dd == nullptr; j++)
+			if ((*j)->getSocket() == *i && (*j)->isDirect())
+				dd = (*j);
+		if (dd)
 		{
-			manager.broadcast(new network::Netsplit(dd.front()->getId()));
-			releasePeer(dd.front());
-			dd.pop();
+			manager.broadcast(new network::Netsplit(dd->getId()));
+			if (this->discon.find(dd) == this->discon.end())
+				releasePeer(dd);
 		}
 	}
+	this->discon.clear();
 }
 
 void NetworkWorker::readPeer(network::PeerInfo *peer)
@@ -230,6 +273,12 @@ void NetworkWorker::stop()
 
 void NetworkWorker::sendAll()
 {
+	sendUnique();
+	sendBroadcast();
+}
+
+void NetworkWorker::sendBroadcast()
+{
 	while (!manager.broadcastQueueEmpty())
 	{
 		network::Socket *avoid;
@@ -243,7 +292,7 @@ void NetworkWorker::sendAll()
 			std::stringstream *ss;
 			size_t packet_len;
 
-			if (alreadySent.find((*i)->getSocket()) != alreadySent.end())
+			if (!*i || (*i)->getConfirmed() || (alreadySent.find((*i)->getSocket()) != alreadySent.end()))
 				continue;
 			ss = packet->getStream(&packet_len);
 			(*i)->sendData(*ss, packet_len);
@@ -252,6 +301,19 @@ void NetworkWorker::sendAll()
 		}
 		delete packet;
 	}
+}
+
+template <class T>
+static bool isInList(T elem, std::list<T> list)
+{
+	for (auto i = list.cbegin(); i != list.cend(); i++)
+		if ((*i) == elem)
+			return true;
+	return false;
+}
+
+void NetworkWorker::sendUnique()
+{
 	while (!manager.sendQueueEmpty())
 	{
 		network::PeerInfo *peer;
@@ -260,6 +322,8 @@ void NetworkWorker::sendAll()
 		size_t packet_len;
 
 		manager.getNextSend(&packet, &peer);
+		if (!isInList(peer, clients))
+			continue;
 		ss = packet->getStream(&packet_len);
 		peer->sendData(*ss, packet_len);
 		delete ss;
@@ -290,6 +354,7 @@ void NetworkWorker::sendConnected(drt::network::PeerInfo *p)
 
 drt::network::PeerInfo *NetworkWorker::addServer(drt::network::Socket *s, unsigned short id)
 {
+	std::cerr << "new server" << std::endl;
 	if (id <= 0)
 		id = incBiggerId();
 	drt::network::PeerInfo *pi = new network::PeerInfo(s, false, id);
@@ -303,6 +368,21 @@ void NetworkWorker::setMax(unsigned short newMax)
 		biggerId = newMax;
 }
 
+unsigned int NetworkWorker::nbSocket(network::Socket *avoid) const
+{
+	std::set<network::Socket *> used;
+	unsigned int result =0;
+
+	used.insert(avoid);
+	for (auto i = clients.cbegin(); i != clients.cend(); i++)
+	{
+		if (used.find((*i)->getSocket()) != used.end())
+			continue;
+		used.insert((*i)->getSocket());
+		result++;
+	}
+	return result;
+}
 
 unsigned int NetworkWorker::nbClient() const
 { return clients.size(); }
@@ -313,9 +393,30 @@ drt::network::PeerInfo *NetworkWorker::getMe()
 const std::list<drt::network::PeerInfo *> &NetworkWorker::getPeers() const
 { return clients; }
 
+void NetworkWorker::removeLastPeer()
+{
+	network::PeerInfo * peer = connectingTo;
+	if (peer->isDirect())
+	{
+		std::pair<std::string, unsigned short> inf = peer->getConInfo();
+		this->blackListedPeers.push_back(inf);
+	}
+	discon.insert(peer);
+	connectingTo = nullptr;
+	getMe()->setId(getMe()->getOldId());
+}
+
+void NetworkWorker::confirm()
+{
+	connectingTo = nullptr;
+}
+
 void NetworkWorker::nextOp(Operation *)
 { }
 
 unsigned short NetworkWorker::incBiggerId()
 { return ++biggerId; }
+
+void NetworkWorker::rmPeer(network::PeerInfo *p)
+{ discon.insert(p); }
 

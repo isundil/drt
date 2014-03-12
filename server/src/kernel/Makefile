@@ -37,7 +37,7 @@ CXXFLAGS=	-W -Wall -Wextra $(DEBUG) -I./
 
 LDFLAGS=	-lpthread -ldl
 
-$(NAME):	$(OBJ)
+$(NAME):	$(OBJ) tags
 	$(CXX) $(OBJ) -o $(NAME) $(LDFLAGS)
 
 all:	$(NAME)
@@ -46,7 +46,10 @@ clean:
 	$(RM) $(OBJ)
 
 fclean:	clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) tags
+
+tags:
+	ctags -R --sort=1 --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -f tags `find . -name '*.hpp'`
 
 re:	fclean all
 
