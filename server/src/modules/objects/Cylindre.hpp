@@ -6,7 +6,7 @@
 class Cylindre : public AMathObject {
 public:
 
-  Cylindre(double r);
+  Cylindre(char color[3], double r);
 
   virtual double computeEquation(Camera * camera, Ray * ray);
 };

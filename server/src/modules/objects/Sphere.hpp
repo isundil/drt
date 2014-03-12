@@ -6,7 +6,7 @@
 class Sphere : public AMathObject {
 public:
 
-  Sphere(double r);
+  Sphere(char color[3], double r);
 
   virtual double	computeEquation(Camera * camera, Ray * ray);
 };

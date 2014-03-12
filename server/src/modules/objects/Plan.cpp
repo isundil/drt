@@ -1,7 +1,8 @@
 #include "Plan.hpp"
 
-Plan::Plan(): AMathObject()
+Plan::Plan(char color[3]): AMathObject()
 {
+  _props.addProperty("color", new PropertyValue<char[3]>(color));
 }
 
 double		Plan::computeEquation(Camera *camer, Ray *ray)

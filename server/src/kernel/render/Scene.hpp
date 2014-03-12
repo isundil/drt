@@ -2,6 +2,7 @@
 
 #include <list>
 #include <string>
+#include "../../modules/includes/IObject.hh"
 
 namespace drt
 {
@@ -12,7 +13,7 @@ namespace drt
 
   namespace render
   {
-    typedef	struct			s_Item {
+     typedef	struct __attribute__ ((packed))			s_Item {
       char				moduleID;
       char				subModule;
       short				headerSize;

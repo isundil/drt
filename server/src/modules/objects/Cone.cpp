@@ -1,7 +1,8 @@
 #include "Cone.hpp"
 
-Cone::Cone(double r) : AMathObject()
+Cone::Cone(char color[3],double r) : AMathObject()
 {
+  _props.addProerty("color", new PropertyValue<char[3]>(color));
   _props.addProerty("r", new PropertyValue<double>(r));
 }
 

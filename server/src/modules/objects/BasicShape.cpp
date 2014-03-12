@@ -7,22 +7,24 @@ basicShape::basicShape()
 
 IObject		*basicShape::getInstance(unsigned short subModule, char *data)
 {
-  IObject	*ret;
-  int		*r = (int *) data;
+  IObject	*ret;  
 
   switch (subModule)
     {
     case SPHERE:
-      ret = new Sphere((double) *r);
+      t_rayon	*d = data;
+      ret = new Sphere(d->color, d->r);
       break;
     case CYLINDRE:
-      ret = new Cylindre((double) *r);
+      t_rayon	*d = data;
+      ret = new Cylindre(d->color, d->r);
       break;
     case CONE:
-      ret = new Cone((double) *r);
+      t_angle	*d = data;
+      ret = new Cone(d->color, d->a);
       break;
     case PLAN:
-      ret = new Plan();
+      ret = new Plan((char[3])data);
       break;
     default:
       break;

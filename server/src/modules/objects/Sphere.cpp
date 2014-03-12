@@ -1,8 +1,9 @@
 
 #include "Sphere.hpp"
 
-Sphere::Sphere(double r) : AMathObject()
+Sphere::Sphere(char color[3], double r) : AMathObject()
 {
+  _props.addProperty("color", new PropertyValue<char[3]>(color));
   _props.addProperty("r", new PropertyValue<double>(r));
 }
 

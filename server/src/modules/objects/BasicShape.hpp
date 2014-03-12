@@ -13,6 +13,16 @@
 #define CONE		3
 #define PLAN		4
 
+typedef	struct		s_rayon {
+  char			color[3];
+  int			r;
+}			t_rayon;
+
+typedef	struct		s_angle {
+  char			color[3];
+  double		a;
+}			t_angle;
+
 class		basicShape : public AModule {
 public:
   basicShape();
