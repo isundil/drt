@@ -9,6 +9,11 @@ using System.Xml.Serialization;
 
 namespace client
 {
+    public enum eSubModules
+    {
+        SPHERE = 1
+    }
+
     public class ObjectsListB : BindingList<AObjects>
     {
         public MainForm form { get; set; }
@@ -167,6 +172,9 @@ namespace client
         abstract public bool solve_equation_y(Points p);
         abstract public bool solve_equation_z(Points p);
 
+        public eModules getModule() { return eModules.BASIC_SHAPE; }
+        public abstract int getSubModule();
+
         protected int AddOneToCount(Type type)
         {
             if (counts.ContainsKey(type))
@@ -279,6 +287,11 @@ namespace client
             {
                 this.Name = "Sphere" + base.AddOneToCount(typeof(Sphere));
             }
+        }
+
+        override public int getSubModule()
+        {
+            return (int)eSubModules.SPHERE;
         }
     }
 }

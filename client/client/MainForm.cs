@@ -595,7 +595,7 @@ namespace client
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (currentfile.Nlong.Length > 0)
+            if (currentfile.Nlong != null)
             {
                 var x = new XmlSerializer(ol.GetType());
                 TextWriter tw = new StreamWriter(currentfile.Nlong);
