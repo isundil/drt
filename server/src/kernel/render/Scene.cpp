@@ -20,7 +20,7 @@ Scene::Scene( std::ifstream &s )
   short			y;
   s.read((char *)&x, sizeof(x));
   s.read((char *)&y, sizeof(y));
-  int			nbObjects;
+  unsigned int		nbObjects;
   s.read((char *)&nbObjects, sizeof(nbObjects));
 
   // affichage

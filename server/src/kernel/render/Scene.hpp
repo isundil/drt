@@ -16,7 +16,7 @@ namespace drt
       char				moduleID;
       char				subModule;
       short				headerSize;
-      int				nbSubItem;
+      unsigned int			nbSubItem;
       char				*data;
       std::list<struct s_Item *>	*subItems;
     }					t_Item;
