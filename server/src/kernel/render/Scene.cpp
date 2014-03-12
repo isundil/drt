@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "Scene.hpp"
+#include "worker/WorkerManager.hpp"
 // #include "network/Socket.hpp"
 
 using namespace drt::render;
@@ -35,7 +36,10 @@ Scene::Scene( std::ifstream &s )
   for (short i = 0; i < nbObjects; i++)
     this->objects.push_back(parseItem(s));
 
-  // here need convert parsed Item to modules. how ?
+  module::ModuleManager *modules = WorkerManager::getSingleton()->getModuleManager();
+  // this is not finished, it needs to do the same for sub-items;
+  for (auto a = this->objects->cbegin(); a != this->objects->cend(); a++)
+    this->_objects.push_back(modules->getModule(moduleList[(*a).moduleID])->getInstance((*a).data));
 }
 
 

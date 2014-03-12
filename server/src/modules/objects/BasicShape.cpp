@@ -1,6 +1,11 @@
 #include "BasicShape.hpp"
 
-IObject		*getInstance(unsigned short subModule, char *data)
+basicShape::basicShape()
+{
+  name = "basic_shape";
+}
+
+IObject		*basicShape::getInstance(unsigned short subModule, char *data)
 {
   IObject	*ret;
   int		*r = (int *) data;
@@ -25,4 +30,3 @@ IObject		*getInstance(unsigned short subModule, char *data)
 
   return ret;
 }
-

@@ -12,6 +12,7 @@ namespace module
 		public:
 			ModuleManager();
 			virtual ~ModuleManager();
+	  AModule	*getModule(std::string &name);
 
 		private:
 			std::list<std::string> getFiles(const std::string &) const;

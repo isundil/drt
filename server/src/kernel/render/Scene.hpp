@@ -28,6 +28,8 @@ namespace drt
 
     private:
       std::list<t_Item *>		objects;
+      std::list<IObject *>		_objects;
+
       t_Item				*parseItem( std::ifstream & );
     };
   }
