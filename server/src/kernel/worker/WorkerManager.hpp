@@ -55,6 +55,8 @@ class WorkerManager
 
 		worker::NetworkWorker *getNetwork();
 
+  module::ModuleManager	*getModuleManager();
+
 	private:
 		WorkerManager(drt::Config * const);
 		WorkerManager(const WorkerManager &);

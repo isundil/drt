@@ -191,3 +191,7 @@ worker::NetworkWorker *WorkerManager::getNetwork()
 
 WorkerManager *WorkerManager::instance;
 
+module::ModuleManager	*WorkerManager::getModuleManager()
+{
+  return modules;
+}
