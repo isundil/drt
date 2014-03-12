@@ -11,9 +11,11 @@ namespace client
         public Scene()
         {
             Items = new List<SceneItem>();
+            RequestedModules = new List<eModules>();
         }
 
         public List<SceneItem> Items;
+        public List<eModules> RequestedModules;
     }
 
     public class SceneItem
@@ -38,10 +40,16 @@ namespace client
 
     public static class SceneTransform
     {
-        public static Dictionary<eModules, string> Modules = new Dictionary<eModules, string>()
+        static private byte[] to20Bytes(string s)
         {
-            { eModules.BASIC_SHAPE, "basic_shape" },
-            { eModules.BASIC_TRANSFORM, "basic_transform" }
+            byte[] r = new byte[20];
+            for (var i = 0; i < s.Length; ++i) r[i] = (byte)s[i];
+            return r;
+        }
+        public static Dictionary<eModules, byte[]> Modules = new Dictionary<eModules, byte[]>()
+        {
+            { eModules.BASIC_SHAPE, to20Bytes("basic_shape") },
+            { eModules.BASIC_TRANSFORM, to20Bytes("basic_transform") }
         };
 
         public static Scene TransformPreview(ObjectsList ol)
@@ -57,11 +65,15 @@ namespace client
             foreach (var o in ol.Collection)
             {
                 var i = new SceneItem();
+
+                if (!auth.Contains(i.Module)) continue;
+
                 i.Module = o.getModule();
                 i.SubModule = o.getSubModule();
                 i.refObject = o;
 
                 s.Items.Add(i);
+                if (! s.RequestedModules.Contains(i.Module)) s.RequestedModules.Add(i.Module);
             }
 
             return s;

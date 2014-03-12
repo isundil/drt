@@ -145,7 +145,12 @@ namespace client
             vp.GridLevel = 10;
             this.Show();
 
+            view_3d.Image = new Bitmap(view_3d.Width, view_3d.Height);
+
             this.client = new ConClient();
+            calculusWorker.Connection = client;
+            calculusWorker.DestinationImage = view_3d.Image;
+
             var con = new Connection();
             con.ShowDialog(this);
 
@@ -301,7 +306,7 @@ namespace client
 
         private void view_x_MouseUp(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            if (this.drawMode == eDrawMode.NONE || p1 == null) return;
 
             p2 = new Points();
 
@@ -325,7 +330,7 @@ namespace client
         }
         private void view_y_MouseUp(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            if (this.drawMode == eDrawMode.NONE || p1 == null) return;
 
             p2 = new Points();
 
@@ -348,7 +353,7 @@ namespace client
         }
         private void view_z_MouseUp(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            if (this.drawMode == eDrawMode.NONE || p1 == null) return;
 
             p2 = new Points();
 
@@ -679,6 +684,11 @@ namespace client
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new About().Show();
+        }
+
+        private void toolStripButton1_Click_1(object sender, EventArgs e)
+        {
+            calculusWorker.DoScenePreviewCalculus(ol);
         }
     }
 }
