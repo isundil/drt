@@ -2,7 +2,7 @@
 
 #include <list>
 #include <string>
-#include "../../modules/includes/IObject.hh"
+#include "../modules/includes/IObject.hh"
 
 namespace drt
 {
