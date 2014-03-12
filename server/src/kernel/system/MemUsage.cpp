@@ -30,7 +30,6 @@ void drt::system::MemUsage::getMemUsage(std::pair<int, int> &mem, std::pair<int,
 	{
 		if (!(s >> name >> value >> unit))
 			break;
-		toMo(value, unit);
 		if (name == "MemTotal:")
 			mem.second = toMo(value, unit);
 		else if (name == "MemFree:")
