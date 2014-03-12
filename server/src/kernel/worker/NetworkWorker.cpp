@@ -403,6 +403,7 @@ void NetworkWorker::removeLastPeer()
 	}
 	discon.insert(peer);
 	connectingTo = nullptr;
+	getMe()->setId(getMe()->getOldId());
 }
 
 void NetworkWorker::confirm()
