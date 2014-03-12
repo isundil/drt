@@ -1,0 +1,11 @@
+#comment3
+
+[server]
+Listen 8244
+MaxClient unlimited
+
+#NoListen
+
+[worker]
+MaxThreads 2
+

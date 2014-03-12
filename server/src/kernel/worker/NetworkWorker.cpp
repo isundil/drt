@@ -121,6 +121,7 @@ void NetworkWorker::connectToPeers()
 		std::pair<std::string, unsigned short> addr = (*i);
 		network::PeerInfo *pi;
 
+		std::cerr << "DEBUG trying to connect to next server" << std::endl;
 		try
 		{
 			pi = new network::PeerInfo(addr.first, addr.second);
@@ -138,6 +139,7 @@ void NetworkWorker::connectToPeers()
 		std::stringstream ss;
 		ss << "Successfull connection to " << addr.first << ":" << addr.second;
 		manager.log(std::cout, *this, ss.str());
+		break;
 	}
 
 	std::stringstream ss;

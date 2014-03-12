@@ -2,11 +2,10 @@
 #comment2
 
 [peers]
-Server localhost:8140
-#Server 192.168.1.172:8042
+#Server localhost:8142
 
 [server]
-Listen 8142
+Listen 8242
 MaxClient unlimited
 
 #NoListen
