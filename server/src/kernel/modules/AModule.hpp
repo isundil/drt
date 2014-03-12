@@ -13,6 +13,7 @@ namespace module
 		public:
 			AModule(void *dlHandler, const std::string &name, createFncPtr fnc);
 			virtual ~AModule();
+	  const std::string	&getName() const;
 
 		private:
 			AModule();

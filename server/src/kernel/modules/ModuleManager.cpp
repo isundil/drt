@@ -82,9 +82,9 @@ void ModuleManager::loadFile(const std::string &filename)
 
 AModule	*ModuleManager::getModule(std::string &name)
 {
-  for (auto i = this->modules->cbegin(); i != this->modules->cend(); i++)
+  for (auto i = this->modules.cbegin(); i != this->modules.cend(); i++)
     {
-      if ((*i).name == name)
-	return i;
+      if ((*i)->getName() == name)
+	return *i;
     }
 }
