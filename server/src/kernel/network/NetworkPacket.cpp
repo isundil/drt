@@ -366,7 +366,6 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 		//Our server is now confirmed
 		pi->setConfirmed(0);
 		m.getNetwork()->confirm();
-		m.broadcast(new IdCh(m.getNetwork()->getMe()->getOldId(), id), pi);
 		auto clientList = m.getNetwork()->getPeers();
 		for (auto i = clientList.cbegin(); i != clientList.cend(); i++)
 		{
@@ -376,6 +375,7 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 			m.broadcast(new IdCh((*i)->getId(), newId), pi);
 			(*i)->setId(newId);
 		}
+		m.broadcast(new IdCh(m.getNetwork()->getMe()->getOldId(), id), pi);
 	}
 }
 
