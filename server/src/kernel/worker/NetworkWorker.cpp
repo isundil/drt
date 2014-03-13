@@ -296,6 +296,8 @@ void NetworkWorker::sendBroadcast()
 
 			if (!*i || (*i)->getConfirmed() || (alreadySent.find((*i)->getSocket()) != alreadySent.end()))
 				continue;
+			if ((*i)->isAClient() && !packet->sendToClient(*i))
+				continue;
 			ss = packet->getStream(&packet_len);
 			(*i)->sendData(*ss, packet_len);
 			alreadySent.insert((*i)->getSocket());
@@ -325,6 +327,8 @@ void NetworkWorker::sendUnique()
 
 		manager.getNextSend(&packet, &peer);
 		if (!isInList(peer, clients))
+			continue;
+		if (peer->isAClient() && !packet->sendToClient(peer))
 			continue;
 		ss = packet->getStream(&packet_len);
 		peer->sendData(*ss, packet_len);

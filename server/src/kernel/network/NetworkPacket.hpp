@@ -25,6 +25,7 @@ class ANetworkPacket
 
 		virtual void doMagic(drt::WorkerManager &, network::PeerInfo *) { };
 		virtual const std::string getName() const =0;
+		virtual bool sendToClient(network::PeerInfo *) const;
 
 	protected:
 };
@@ -76,6 +77,8 @@ class Welcome: public ANetworkPacket
 
 		const std::string getName() const;
 
+		bool sendToClient(PeerInfo *) const;
+
 	private:
 		unsigned short id;
 };
@@ -91,6 +94,7 @@ class IdCh: public ANetworkPacket
 		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
 
 		const std::string getName() const;
+		bool sendToClient(PeerInfo *) const;
 
 	private:
 		IdCh();
@@ -223,6 +227,7 @@ class Result: public ANetworkPacket
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;
+		bool sendToClient(PeerInfo *) const;
 };
 
 class CompilFail: public ANetworkPacket
@@ -231,6 +236,7 @@ class CompilFail: public ANetworkPacket
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;
+		bool sendToClient(PeerInfo *) const;
 };
 }
 }

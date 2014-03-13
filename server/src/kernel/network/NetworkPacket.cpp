@@ -14,6 +14,9 @@
 
 using namespace drt::network;
 
+bool ANetworkPacket::sendToClient(PeerInfo *) const
+{ return false; }
+
 ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 {
 	std::map<short, constructorFnc> ctors;
@@ -50,8 +53,14 @@ CAuth::CAuth(unsigned short _id): id(_id)
 Welcome::Welcome(unsigned short _id): id(_id)
 { }
 
+bool Welcome::sendToClient(PeerInfo *) const
+{ return true; }
+
 IdCh::IdCh(unsigned short o, unsigned short n): oldId(o), newId(n)
 { }
+
+bool IdCh::sendToClient(PeerInfo *pi) const
+{ return pi->getOldId() == oldId; }
 
 Confirm::Confirm(unsigned short _id): id(_id)
 { }
@@ -113,6 +122,14 @@ Monitor::Monitor(const PeerInfo &peer)
 		cpuStat.push_back(*i);
 	ramLevel = std::make_pair(peer.getStats()->ram, peer.getStats()->maxRam);
 	swapLevel = std::make_pair(peer.getStats()->swap, peer.getStats()->maxSwap);
+}
+
+bool Result::sendToClient(PeerInfo *) const
+{ return true; //id == pi->getId();
+}
+
+bool CompilFail::sendToClient(PeerInfo *) const
+{ return true; //id == pi->getId();
 }
 
 ANetworkPacket * SAuth::create(network::Socket * socket)

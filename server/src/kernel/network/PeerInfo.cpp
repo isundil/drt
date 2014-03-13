@@ -93,6 +93,9 @@ PeerInfo::setClient()
 	isClient = true;
 }
 
+bool PeerInfo::isAClient() const
+{ return isClient; }
+
 void PeerInfo::setStats(const PeerInfo::stats &stats)
 {
 	if (procInfo == nullptr)
