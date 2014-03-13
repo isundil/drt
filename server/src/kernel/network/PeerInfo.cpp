@@ -6,6 +6,7 @@
 #include "network/NetworkPacket.hpp"
 #include "worker/WorkerManager.hpp"
 #include "worker/NetworkWorker.hpp"
+#include "render/Scene.hpp"
 
 using namespace drt::network;
 

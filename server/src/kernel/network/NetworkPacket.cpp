@@ -101,7 +101,7 @@ NewJob::NewJob(
 	file.close();
 	filein.open( filename );
 
-	render::Scene *scene = new render::Scene( filein );
+	render::Scene *scene = new render::Scene( filein, filename );
 	filein.close();
 
 	client = drt::WorkerManager::getSingleton() -> getNetwork() -> getPeer( id );
@@ -413,9 +413,11 @@ void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 }
 
 void 
-NewJob::doMagic( drt::WorkerManager &, 
-		drt::network::PeerInfo * )
-{ }
+NewJob::doMagic( drt::WorkerManager &m,
+		drt::network::PeerInfo * pi)
+{
+	m.addScene(pi->getScene());
+}
 
 
 void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)

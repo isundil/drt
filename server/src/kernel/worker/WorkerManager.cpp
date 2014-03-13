@@ -9,6 +9,7 @@
 #include "network/NetworkPacket.hpp"
 #include "network/PeerInfo.hpp"
 #include "network/Socket.hpp"
+#include "render/Scene.hpp"
 
 using namespace drt;
 
@@ -86,7 +87,7 @@ WorkerManager *WorkerManager::createInstance(Config * const infos)
 bool WorkerManager::isDone() const
 { return done; }
 
-void WorkerManager::addOperation(Operation *next)
+void WorkerManager::addOperation(worker::AWorker::Operation *next)
 {
 	pthread_mutex_lock(&queueMutex);
 	operationList.push(next);
@@ -94,7 +95,7 @@ void WorkerManager::addOperation(Operation *next)
 	pthread_mutex_unlock(&queueMutex);
 }
 
-Operation *WorkerManager::pickNext()
+worker::AWorker::Operation *WorkerManager::pickNext()
 {
 	pthread_mutex_lock(&queueMutex);
 	if (operationList.size() == 0)
@@ -103,7 +104,7 @@ Operation *WorkerManager::pickNext()
 		pthread_mutex_unlock(&queueMutex);
 		return nullptr;
 	}
-	Operation *next = operationList.front();
+	worker::AWorker::Operation *next = operationList.front();
 	operationList.pop();
 	pthread_mutex_unlock(&queueMutex);
 	return next;
@@ -184,6 +185,20 @@ bool WorkerManager::sendQueueEmpty()
 	r = sendQueue.size() == 0;
 	pthread_mutex_unlock(&netMutex);
 	return r;
+}
+
+void WorkerManager::removeScene(render::Scene *s)
+{
+	scenes.remove(s);
+}
+
+void WorkerManager::addScene(render::Scene *s)
+{
+	scenes.push_back(s);
+
+	for (unsigned int x =0; x < s->getWidth(); x++)
+		for (unsigned int y =0; y < s->getHeight(); y++)
+			operationList.push(new worker::AWorker::Operation(s, x, y));
 }
 
 worker::NetworkWorker *WorkerManager::getNetwork()

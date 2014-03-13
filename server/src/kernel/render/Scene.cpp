@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <iostream>
 #include <fstream>
 #include "Scene.hpp"
@@ -5,7 +6,7 @@
 
 using namespace drt::render;
 
-Scene::Scene( std::ifstream &s )
+Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scenePath)
 {
   // header
   char			nbModules;
@@ -45,8 +46,14 @@ Scene::Scene( std::ifstream &s )
 	  tmp->addProperty(tmpStr, (*b)->data);
 	}
     }
+	width = y;
+	height = x;
 }
 
+Scene::~Scene()
+{
+	::unlink(scenePath.c_str());
+}
 
 t_Item	*Scene::parseItem( std::ifstream &s )
 {
@@ -77,3 +84,10 @@ t_Item	*Scene::parseItem( std::ifstream &s )
   //   obj->subItems->push_back(parseItem(s));
   return (obj);
 }
+
+unsigned int Scene::getHeight() const
+{ return height; }
+
+unsigned int Scene::getWidth() const
+{ return width; }
+

@@ -173,6 +173,8 @@ void NetworkWorker::releasePeer(network::PeerInfo *peer)
 	if (!peer)
 		return;
 	std::cout << "Release Peer " << peer->getId() << std::endl;
+	if (peer->isAClient() && peer->getScene())
+		drt::WorkerManager::getSingleton()->removeScene(peer->getScene());
 	sock = peer->getSocket();
 	clients.remove(peer);
 	ss << "Lost connection to " << peer->getConInfo().first << ":" << peer->getConInfo().second;

@@ -4,18 +4,21 @@
 #include <ostream>
 #include <queue>
 #include <list>
+#include "worker/AWorker.hpp"
 
 namespace drt
 {
 class Config;
-class Operation;
+namespace render
+{
+class Scene;
+}
 namespace module
 {
 class ModuleManager;
 }
 namespace worker
 {
-class AWorker;
 class NetworkWorker;
 }
 namespace network
@@ -35,19 +38,21 @@ class WorkerManager
 		virtual ~WorkerManager();
 
 		bool isDone() const;
-		Operation *pickNext();
-		void addOperation(Operation *);
+		worker::AWorker::Operation *pickNext();
+		void addOperation(worker::AWorker::Operation *);
 		void start();
 		void stop();
 		const drt::Config * config() const;
 
 		// socket stuff
 		void send(network::PeerInfo *peer, network::ANetworkPacket *packet);
-  void broadcast(network::ANetworkPacket *packet, network::Socket *avoid = NULL); // change nullptr to NULL because of a compilation error
+		void broadcast(network::ANetworkPacket *packet, network::Socket *avoid = NULL); // change nullptr to NULL because of a compilation error
 		void broadcast(network::ANetworkPacket *packet, network::PeerInfo *avoid);
 
 		void log(std::ostream &channel, const worker::AWorker &sender, const std::string &msg);
 
+		void removeScene(render::Scene *);
+		void addScene(render::Scene *);
 		bool getNextBroadcast(network::ANetworkPacket **packet, network::Socket **avoid);
 		bool getNextSend(network::ANetworkPacket **packet, network::PeerInfo **dst);
 		bool broadcastQueueEmpty();
@@ -63,9 +68,10 @@ class WorkerManager
 
 	private:
 		std::list<worker::AWorker *> workers;
+		std::list<render::Scene *> scenes;
 		worker::AWorker *networkWorker;
 
-		std::queue<Operation *>operationList;
+		std::queue<worker::AWorker::Operation *>operationList;
 		std::queue<std::pair<network::Socket *, network::ANetworkPacket *> >broadcastQueue;
 		std::queue<std::pair<network::PeerInfo *, network::ANetworkPacket *> >sendQueue;
 		drt::Config * const info;

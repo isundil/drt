@@ -29,13 +29,20 @@ namespace drt
     class Scene
     {
     public:
-      Scene( std::ifstream & );
+      Scene( std::ifstream &, const std::string &path );
+	  virtual ~Scene();
+
+	  unsigned int getWidth() const;
+	  unsigned int getHeight() const;
 
     private:
+	  unsigned int height, width;
+
       std::list<t_Item *>		objects;
       std::list<AObject *>		_objects;
 
       t_Item				*parseItem( std::ifstream & );
+	  const std::string scenePath;
     };
   }
 }
