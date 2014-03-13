@@ -25,6 +25,7 @@ class NetworkWorker: public AWorker
 			virtual void start(); // Do network listen
 			virtual void stop(); //close sockets
 
+			void changeBiggerId(unsigned short);
 			unsigned short incBiggerId();
 			void setMax(unsigned short max);
 			drt::network::PeerInfo *getMe();
