@@ -142,23 +142,28 @@ namespace client
         }
 
         private ListenerWorker listenerWorker = null;
+        public delegate void ConnectDelegate();
+        public ConnectDelegate Connect;
+
+        private void ShowConnection()
+        {
+            var con = new Connection();
+            con.ShowDialog(this);
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             vp.GridLevel = 10;
-            this.Show();
+            this.Connect = new ConnectDelegate(ShowConnection);
 
             view_3d.Image = new Bitmap(view_3d.Width, view_3d.Height);
 
             this.client = new ConClient();
-            this.listenerWorker = new ListenerWorker(client);
+            this.listenerWorker = new ListenerWorker(client, this);
+            this.listenerWorker.RunWorkerAsync();
             calculusWorker.Connection = client;
             calculusWorker.DestinationImage = view_3d.Image;
 
-            var con = new Connection();
-            con.ShowDialog(this);
-
-            toolStripStatusLabel1.Text = "Connected with id : " + con.Id;
-            toolStripStatusLabel1.Image = Properties.Resources.green;
             redraw();
         }
 

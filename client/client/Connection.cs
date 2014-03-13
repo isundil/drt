@@ -24,17 +24,8 @@ namespace client
 
         private void ok_btn_Click(object sender, EventArgs e)
         {
-            var r = (this.Owner as MainForm).client.NewConnection(ip.Text, (int) port.Value);
-
-            if (r == false)
-            {
-                MessageBox.Show("Connection refused.");
-            }
-            else
-            {
-                this.Id = (this.Owner as MainForm).client.clientId;
-                this.Close();
-            }
+            (this.Owner as MainForm).client.NewConnection(ip.Text, (int) port.Value);
+            this.Close();
         }
 
         private void button1_Click(object sender, EventArgs e)

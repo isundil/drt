@@ -11,11 +11,20 @@ namespace client
     {
         TcpClient con = null;
 
-        enum eInstruction
+        public enum eInstruction
         {
-            CAUTH   = 1,
-            WELCOME = 2,
-            NEWJOB  = 8
+            CAUTH       = 1,
+            WELCOME     = 2,
+            IDCH        = 3,
+            NEWJOB      = 8,
+            RESULT      = 13,
+            COMPILFAIL  = 14
+        }
+
+        public void Disconnect()
+        {
+            if (con != null)
+            con.Close();
         }
 
         private void write_header(Scene s, System.Drawing.Size size, List<byte> buf)
@@ -79,35 +88,50 @@ namespace client
         public bool WELCOME()
         {
             var n = con.GetStream();
-            var buf = new byte[3];
-            n.Read(buf, 0, 3);
+            var buf = new byte[2];
+            n.Read(buf, 0, 2);
 
-            this.clientId = BitConverter.ToInt16(buf, 1);
-            if (buf[0] == (byte)eInstruction.WELCOME && clientId != -1) return true;
+            this.clientId = BitConverter.ToInt16(buf, 0);
+            if (clientId != -1) return true;
             return false;
         }
 
-        public bool NewConnection(string ip, int port)
+        public bool IDCH()
+        {
+            var n = con.GetStream();
+            var buf = new byte[4];
+            n.Read(buf, 0, 4);
+
+            this.clientId = BitConverter.ToInt16(buf, 2);
+            if (this.clientId != -1) return true;
+            return false;
+        }
+
+        public void NewConnection(string ip, int port)
         {
             try
             {
                 clientId = -1;
                 con = new TcpClient(ip, port);
+
+                CAUTH();
             }
             catch (System.Net.Sockets.SocketException e) {
                 System.Windows.Forms.MessageBox.Show(e.Message);
             }
             catch (Exception) { throw; }
-
-            if (con == null) return false;
-
-            CAUTH();
-            return WELCOME();
         }
 
-        public void ReadSync()
+        public byte ReadSync()
         {
+            var n = con.GetStream();
 
+            if (!n.CanRead) throw new Exception("Can't read dude");
+
+            var i = n.ReadByte();
+
+            if (i == -1) throw new Exception("End of stream");
+            return (byte)i;
         }
 
         public short clientId { get; set; }
