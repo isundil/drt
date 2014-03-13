@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include "Scene.hpp"
-// #include "worker/WorkerManager.hpp"
-// #include "../worker/WorkerManager.hpp"
 // #include "network/Socket.hpp"
 
 using namespace drt::render;
@@ -33,12 +31,20 @@ Scene::Scene( std::ifstream &s )
   for (short i = 0; i < nbObjects; i++)
     this->objects.push_back(parseItem(s));
 
-  // module::ModuleManager *modules = WorkerManager::getSingleton()->getModuleManager();
-  // this is not finished, it needs to do the same for sub-items;
-  // for (auto a = this->objects.cbegin(); a != this->objects.cend(); a++)
-  //   {
-  //     this->_objects.push_back(modules->getModule(moduleList[(*a).moduleID])->getInstance((*a).data));
-  //   }
+  module::ModuleManager *modules = WorkerManager::getSingleton()->getModuleManager();
+  for (auto a = this->objects.begin(); a != this->objects.end(); a++)
+    {
+      std::string tmpStr = moduleList[(*a)->moduleID];
+      AObject	*tmp = modules->getModule(tmpStr)->getInstance((*a)->subModule, (*a)->data);
+      std::cout << "getting instance of " << tmpStr << std::endl;
+      this->_objects.push_back(tmp);
+      for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
+	{
+	  tmpStr = moduleList[(*b)->moduleID];
+	  std::cout << " +-adding data for " << tmpStr << std::endl;
+	  tmp->addProperty(tmpStr, (*b)->data);
+	}
+    }
 }
 
 

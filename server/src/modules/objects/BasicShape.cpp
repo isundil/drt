@@ -5,9 +5,9 @@ basicShape::basicShape()
   name = "basic_shape";
 }
 
-IObject		*basicShape::getInstance(unsigned short subModule, char *data)
+AObject		*basicShape::getInstance(unsigned short subModule, char *data)
 {
-  IObject	*ret;  
+  AObject	*ret;  
 
   switch (subModule)
     {

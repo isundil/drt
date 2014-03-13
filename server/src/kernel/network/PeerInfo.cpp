@@ -16,7 +16,10 @@ PeerInfo::PeerInfo(const std::string &_ip, unsigned short _port): PeerInfo(new S
 }
 
 PeerInfo::PeerInfo(Socket *s, bool _direct, unsigned short _id): ip(""), port(0), closing(true), socket(s), id(_id), oldId(_id), direct(_direct), procInfo(nullptr), isClient(false), scene(nullptr), confirmed(0)
-{ }
+{
+	if (_id != 0xffff && s)
+		drt::WorkerManager::getSingleton()->getNetwork()->changeBiggerId(_id);
+}
 
 PeerInfo::~PeerInfo()
 {
@@ -81,6 +84,7 @@ void PeerInfo::setId(unsigned short _id)
 	std::cout << "New id: " << id << "->" << _id << std::endl;
 	oldId = id;
 	id = _id;
+	drt::WorkerManager::getSingleton()->getNetwork()->changeBiggerId(_id);
 }
 
 void
@@ -88,6 +92,9 @@ PeerInfo::setClient()
 {
 	isClient = true;
 }
+
+bool PeerInfo::isAClient() const
+{ return isClient; }
 
 void PeerInfo::setStats(const PeerInfo::stats &stats)
 {

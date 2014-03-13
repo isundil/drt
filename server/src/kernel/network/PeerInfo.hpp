@@ -41,6 +41,7 @@ namespace network
 			void read(WorkerManager&);
 			void setId(unsigned short id);
 			void setClient();
+			bool isAClient() const;
 			unsigned short getId() const;
 			unsigned short getOldId() const;
 
