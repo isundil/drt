@@ -1,0 +1,15 @@
+
+#comment2
+
+[peers]
+Server localhost:8010
+
+[server]
+Listen 8010
+MaxClient unlimited
+
+#NoListen
+
+[worker]
+MaxThreads 2
+
