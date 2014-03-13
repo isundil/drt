@@ -16,3 +16,8 @@ const std::string	&AModule::getName() const
 {
   return name;
 }
+
+AObject	*AModule::getInstance(unsigned short submodule, char *data)
+{
+  return NULL;
+}
