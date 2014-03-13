@@ -39,7 +39,7 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.draw_status = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.select_toolstrip = new System.Windows.Forms.ToolStripButton();
@@ -50,8 +50,8 @@
             this.zoomout_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.sphere_toolstrip = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.cylinder_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -156,7 +156,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripProgressBar1,
-            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel,
             this.draw_status});
             this.statusStrip1.Location = new System.Drawing.Point(0, 394);
             this.statusStrip1.Name = "statusStrip1";
@@ -169,13 +169,13 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
             // 
-            // toolStripStatusLabel1
+            // toolStripStatusLabel
             // 
-            this.toolStripStatusLabel1.Image = global::client.Properties.Resources.red;
-            this.toolStripStatusLabel1.Margin = new System.Windows.Forms.Padding(10, 3, 20, 2);
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(95, 17);
-            this.toolStripStatusLabel1.Text = "Disconnected";
+            this.toolStripStatusLabel.Image = global::client.Properties.Resources.red;
+            this.toolStripStatusLabel.Margin = new System.Windows.Forms.Padding(10, 3, 20, 2);
+            this.toolStripStatusLabel.Name = "toolStripStatusLabel";
+            this.toolStripStatusLabel.Size = new System.Drawing.Size(95, 17);
+            this.toolStripStatusLabel.Text = "Disconnected";
             // 
             // draw_status
             // 
@@ -275,16 +275,6 @@
             this.sphere_toolstrip.Text = "Sphere";
             this.sphere_toolstrip.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
-            // toolStripButton1
-            // 
-            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton1.Text = "toolStripButton1";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_1);
-            // 
             // cylinder_toolstrip
             // 
             this.cylinder_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -294,6 +284,16 @@
             this.cylinder_toolstrip.Size = new System.Drawing.Size(23, 22);
             this.cylinder_toolstrip.Text = "toolStripButton2";
             this.cylinder_toolstrip.Click += new System.EventHandler(this.cylinder_toolstrip_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_1);
             // 
             // panel1
             // 
@@ -520,7 +520,6 @@
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripProgressBar toolStripProgressBar1;
         private System.Windows.Forms.ToolStripButton sphere_toolstrip;
         private System.Windows.Forms.ToolStrip toolStrip1;
@@ -556,6 +555,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.PictureBox view_3d;
         private System.Windows.Forms.ToolStripButton cylinder_toolstrip;
+        public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
     }
 }
 
