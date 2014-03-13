@@ -51,6 +51,7 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.sphere_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.cylinder_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -59,6 +60,7 @@
             this.panel5 = new System.Windows.Forms.Panel();
             this.view_y = new System.Windows.Forms.PictureBox();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.view_3d = new System.Windows.Forms.PictureBox();
             this.panel7 = new System.Windows.Forms.Panel();
             this.view_z = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -67,7 +69,6 @@
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.calculusWorker = new client.CalculusWorker();
-            this.view_3d = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -79,12 +80,12 @@
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view_y)).BeginInit();
             this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).BeginInit();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view_z)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel9.SuspendLayout();
             this.panel8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -193,6 +194,7 @@
             this.zoomout_toolstrip,
             this.toolStripSeparator2,
             this.sphere_toolstrip,
+            this.cylinder_toolstrip,
             this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
@@ -282,6 +284,16 @@
             this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
             this.toolStripButton1.Text = "toolStripButton1";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_1);
+            // 
+            // cylinder_toolstrip
+            // 
+            this.cylinder_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cylinder_toolstrip.Image = global::client.Properties.Resources.cylinder_btn;
+            this.cylinder_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cylinder_toolstrip.Name = "cylinder_toolstrip";
+            this.cylinder_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.cylinder_toolstrip.Text = "toolStripButton2";
+            this.cylinder_toolstrip.Click += new System.EventHandler(this.cylinder_toolstrip_Click);
             // 
             // panel1
             // 
@@ -373,6 +385,16 @@
             this.panel6.Size = new System.Drawing.Size(269, 167);
             this.panel6.TabIndex = 2;
             // 
+            // view_3d
+            // 
+            this.view_3d.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.view_3d.InitialImage = null;
+            this.view_3d.Location = new System.Drawing.Point(0, 0);
+            this.view_3d.Name = "view_3d";
+            this.view_3d.Size = new System.Drawing.Size(269, 167);
+            this.view_3d.TabIndex = 0;
+            this.view_3d.TabStop = false;
+            // 
             // panel7
             // 
             this.panel7.Controls.Add(this.view_z);
@@ -447,18 +469,9 @@
             // calculusWorker
             // 
             this.calculusWorker.Connection = null;
+            this.calculusWorker.DestinationImage = null;
             this.calculusWorker.WorkerReportsProgress = true;
             this.calculusWorker.WorkerSupportsCancellation = true;
-            // 
-            // view_3d
-            // 
-            this.view_3d.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.view_3d.InitialImage = null;
-            this.view_3d.Location = new System.Drawing.Point(0, 0);
-            this.view_3d.Name = "view_3d";
-            this.view_3d.Size = new System.Drawing.Size(269, 167);
-            this.view_3d.TabIndex = 0;
-            this.view_3d.TabStop = false;
             // 
             // MainForm
             // 
@@ -490,12 +503,12 @@
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.view_y)).EndInit();
             this.panel6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).EndInit();
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.view_z)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             this.panel8.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -542,6 +555,7 @@
         private CalculusWorker calculusWorker;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.PictureBox view_3d;
+        private System.Windows.Forms.ToolStripButton cylinder_toolstrip;
     }
 }
 

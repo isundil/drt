@@ -141,6 +141,7 @@ namespace client
             view_z.Image = bm_z;
         }
 
+        private ListenerWorker listenerWorker = null;
         private void MainForm_Load(object sender, EventArgs e)
         {
             vp.GridLevel = 10;
@@ -149,6 +150,7 @@ namespace client
             view_3d.Image = new Bitmap(view_3d.Width, view_3d.Height);
 
             this.client = new ConClient();
+            this.listenerWorker = new ListenerWorker(client);
             calculusWorker.Connection = client;
             calculusWorker.DestinationImage = view_3d.Image;
 
@@ -168,6 +170,7 @@ namespace client
         enum eDrawMode
         {
             SPHERE,
+            CYLINDER,
             NONE,
             GRAB,
             RESIZE,
@@ -181,6 +184,13 @@ namespace client
             this.drawMode = eDrawMode.SPHERE;
 
             this.Cursor = new Cursor(Properties.Resources.circle_ptr.GetHicon());
+        }
+
+        private void cylinder_toolstrip_Click(object sender, EventArgs e)
+        {
+            this.drawMode = eDrawMode.CYLINDER;
+
+            this.Cursor = new Cursor(Properties.Resources.cylinder_ptr.GetHicon());
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -390,27 +400,32 @@ namespace client
                 var vy = new System.Drawing.Bitmap(view_y_cp, view_y_cp.Size);
                 var vz = new System.Drawing.Bitmap(view_z_cp, view_z_cp.Size);
 
+                if (_tmpObject == null)
+                {
+                    if (v == Util.eView.x) _tmpObject = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                    if (v == Util.eView.y) _tmpObject = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                    if (v == Util.eView.z) _tmpObject = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                }
+                else
+                {
+                    _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                }
+
+
+                _tmpObject.draw_x(vx, vp, true);
+                _tmpObject.draw_y(vy, vp, true);
+                _tmpObject.draw_z(vz, vp, true);
+
                 switch (this.drawMode)
                 {
                     case eDrawMode.SPHERE:
-                        if (_tmpObject == null)
-                        {
-                            if (v == Util.eView.x) _tmpObject = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                            if (v == Util.eView.y) _tmpObject = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                            if (v == Util.eView.z) _tmpObject = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        }
-                        else
-                        {
-                            _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
-                        }
-
-                        draw_status.Text += ", Sphere { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + ((Sphere)_tmpObject).Radius + " }";
-
-                        _tmpObject.draw_x(vx, vp, true);
-                        _tmpObject.draw_y(vy, vp, true);
-                        _tmpObject.draw_z(vz, vp, true);
+                        draw_status.Text += ", Sphere { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + _tmpObject.Radius + " }";
+                        break;
+                    case eDrawMode.CYLINDER:
+                        draw_status.Text += ", Cylinder { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " +_tmpObject.Radius + " }";
                         break;
                 }
+                        
                 view_x.Image = vx;
                 view_y.Image = vy;
                 view_z.Image = vz;
