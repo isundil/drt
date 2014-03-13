@@ -416,6 +416,9 @@ void NetworkWorker::confirm()
 void NetworkWorker::nextOp(Operation *)
 { }
 
+void NetworkWorker::changeBiggerId(unsigned short _id)
+{ biggerId = biggerId > _id ? biggerId : _id; }
+
 unsigned short NetworkWorker::incBiggerId()
 { return ++biggerId; }
 

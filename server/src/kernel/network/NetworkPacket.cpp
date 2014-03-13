@@ -249,8 +249,8 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 		peer->setConfirmed(manager.getNetwork()->nbClient() -1);
 		peer->setId(manager.getNetwork()->incBiggerId());
 		manager.send(peer, new Welcome(peer->getId()));
-		for (size_t i = 0; i < nbServer; i++)
-			manager.getNetwork()->addServer(peer->getSocket());
+		//for (size_t i = 0; i < nbServer; i++)
+		//	manager.getNetwork()->addServer(peer->getSocket());
 		if (!peer->getConfirmed())
 		{
 			manager.send(peer, new Confirm(peer->getId()));
@@ -291,11 +291,11 @@ CAuth::doMagic(
 
 void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 {
-	unsigned short oldId;
+	//unsigned short oldId;
 
-	oldId = m.getNetwork()->getMe()->getId();
-	if (oldId == id)
-		return;
+	//oldId = m.getNetwork()->getMe()->getId();
+	//if (oldId == id)
+	//	return;
 	m.getNetwork()->getMe()->setId(id);
 	m.getNetwork()->setMax(id);
 }
@@ -329,10 +329,12 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 		if (pi == nullptr)
 		{
 			m.getNetwork()->addServer(p->getSocket(), newId);
+			m.broadcast(new IdCh(*this), p);
 			return;
 		}
 		if (newId == 0xFFFF)
 			return;
+		m.broadcast(new IdCh(*this), p);
 		pi->setId(newId);
 	}
 }
@@ -366,14 +368,18 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 		//Our server is now confirmed
 		pi->setConfirmed(0);
 		m.getNetwork()->confirm();
-		auto clientList = m.getNetwork()->getPeers();
+		std::list<PeerInfo *> clientList = m.getNetwork()->getPeers();
 		for (auto i = clientList.cbegin(); i != clientList.cend(); i++)
 		{
 			if (pi == *i)
 				continue;
-			unsigned short newId = m.getNetwork()->incBiggerId();
-			m.broadcast(new IdCh((*i)->getId(), newId), pi);
-			(*i)->setId(newId);
+			if ((*i)->getId() < m.getNetwork()->getMe()->getId())
+			{
+				unsigned short newId = m.getNetwork()->incBiggerId();
+				(*i)->setId(newId);
+				m.broadcast(new IdCh((*i)->getOldId(), (*i)->getId()), pi);
+			}
+			m.send(pi, new IdCh(0xFFFF, (*i)->getId()));
 		}
 		m.broadcast(new IdCh(m.getNetwork()->getMe()->getOldId(), id), pi);
 	}
@@ -421,9 +427,14 @@ std::stringstream * SAuth::getStream(size_t *buflen) const
 	return ss;
 }
 
-std::stringstream * CAuth::getStream(size_t *) const
+std::stringstream * CAuth::getStream(size_t *s) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char c = 0x01;
+
+	ss->write(&c, sizeof(c));
+	ss->write((char *)&id, sizeof(id));
+	*s = sizeof(c) +sizeof(id);
 	return ss;
 }
 
