@@ -105,6 +105,11 @@ namespace client
             return WELCOME();
         }
 
+        public void ReadSync()
+        {
+
+        }
+
         public short clientId { get; set; }
     }
 }
