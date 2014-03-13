@@ -43,7 +43,7 @@ class WorkerManager
 
 		// socket stuff
 		void send(network::PeerInfo *peer, network::ANetworkPacket *packet);
-		void broadcast(network::ANetworkPacket *packet, network::Socket *avoid =nullptr);
+  void broadcast(network::ANetworkPacket *packet, network::Socket *avoid = NULL); // change nullptr to NULL because of a compilation error
 		void broadcast(network::ANetworkPacket *packet, network::PeerInfo *avoid);
 
 		void log(std::ostream &channel, const worker::AWorker &sender, const std::string &msg);

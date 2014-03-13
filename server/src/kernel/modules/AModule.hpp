@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+// #include "modules/AModule.hpp"
+#include "../modules/AModule.hpp"
 
 typedef void *(*createFncPtr)();
 
@@ -14,7 +16,7 @@ namespace module
 			AModule(void *dlHandler, const std::string &name, createFncPtr fnc);
 			virtual ~AModule();
 	  const std::string	&getName() const;
-
+	  AObject	*getInstance(unsigned short subModule, char *data);
 		private:
 			AModule();
 			AModule(const AModule &);

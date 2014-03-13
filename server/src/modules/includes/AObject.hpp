@@ -18,12 +18,12 @@ private :
 
 class ObjectProperties {
 public:
-  void addProperty(int name, APropertyValue * property);
-  APropertyValue *operator[](int name) { return properties[name]; }
+  void addProperty(std::string name, APropertyValue * property);
+  APropertyValue *operator[](std::string name) { return properties[name]; }
 
 private :
 
-  std::map<int, APropertyValue *> properties;
+  std::map<std::string, APropertyValue *> properties;
 
 };
 
@@ -31,7 +31,12 @@ class AObject : public IObject {
 public:
   AObject();
 
-  APropertyValue	*getProperty(int name);
+  APropertyValue	*getProperty(std::string name);
+
+  template <class T>
+  void			addProperty(std::string name, T data) {
+    _props.addProperty(name, new PropertyValue<T>(data));
+  }
 
   template <class T>
   T at(std::string name) {

@@ -2,7 +2,16 @@
 
 #include <list>
 #include <string>
-#include "../modules/includes/IObject.hh"
+// #include "../modules/includes/IObject.hh"
+#include "../../modules/includes/IObject.hh"
+// #include "../modules/includes/AObject.hpp"
+#include "../../modules/includes/AObject.hpp"
+// #include "worker/WorkerManager.hpp"
+#include "../worker/WorkerManager.hpp"
+// #include "modules/ModuleManager.hpp"
+#include "../modules/ModuleManager.hpp"
+// #include "modules/AModule.hpp"
+#include "../modules/AModule.hpp"
 
 namespace drt
 {
@@ -29,7 +38,7 @@ namespace drt
 
     private:
       std::list<t_Item *>		objects;
-      std::list<IObject *>		_objects;
+      std::list<AObject *>		_objects;
 
       t_Item				*parseItem( std::ifstream & );
     };

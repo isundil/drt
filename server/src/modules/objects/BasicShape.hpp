@@ -26,5 +26,5 @@ typedef	struct		s_angle {
 class		basicShape : public AModule {
 public:
   basicShape();
-  IObject	*getInstance(unsigned short subModule, char *data);
+  AObject	*getInstance(unsigned short subModule, char *data);
 };
