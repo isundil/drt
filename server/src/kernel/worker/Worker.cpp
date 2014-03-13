@@ -1,5 +1,6 @@
 #include "worker/Worker.hpp"
 #include "worker/WorkerManager.hpp"
+#include "render/Scene.hpp"
 
 using namespace drt::worker;
 
@@ -22,9 +23,12 @@ void Worker::stop()
 
 void Worker::nextOp(Operation *op)
 {
-#warning "Unimplemented"
-	//TODO op
-	(void) op;
+	render::Scene * const s = op->scene;
+	unsigned int color = 0xFFFFFF;
+
+	if (s)
+		color = s->calc(manager, op->x, op->y);
+	manager.send(op, color);
 }
 
 unsigned int Worker::getId() const

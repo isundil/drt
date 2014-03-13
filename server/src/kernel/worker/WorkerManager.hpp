@@ -46,13 +46,14 @@ class WorkerManager
 
 		// socket stuff
 		void send(network::PeerInfo *peer, network::ANetworkPacket *packet);
+		void send(worker::AWorker::Operation *op, unsigned int color);
 		void broadcast(network::ANetworkPacket *packet, network::Socket *avoid = NULL); // change nullptr to NULL because of a compilation error
 		void broadcast(network::ANetworkPacket *packet, network::PeerInfo *avoid);
 
 		void log(std::ostream &channel, const worker::AWorker &sender, const std::string &msg);
 
 		void removeScene(render::Scene *);
-		void addScene(render::Scene *);
+		void addScene(network::PeerInfo *, render::Scene *);
 		bool getNextBroadcast(network::ANetworkPacket **packet, network::Socket **avoid);
 		bool getNextSend(network::ANetworkPacket **packet, network::PeerInfo **dst);
 		bool broadcastQueueEmpty();

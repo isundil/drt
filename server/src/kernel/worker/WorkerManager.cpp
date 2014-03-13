@@ -141,6 +141,11 @@ void WorkerManager::send(network::PeerInfo *peer, network::ANetworkPacket *packe
 	pthread_mutex_unlock(&netMutex);
 }
 
+void WorkerManager::send(worker::AWorker::Operation *op, unsigned int result)
+{
+	return this->send(op->client, new network::Result(op->client->getId(), op->x, op->y, result));
+}
+
 bool WorkerManager::getNextBroadcast(network::ANetworkPacket **packet, network::Socket **avoid)
 {
 	if (broadcastQueueEmpty())
@@ -192,13 +197,13 @@ void WorkerManager::removeScene(render::Scene *s)
 	scenes.remove(s);
 }
 
-void WorkerManager::addScene(render::Scene *s)
+void WorkerManager::addScene(network::PeerInfo *pi, render::Scene *s)
 {
 	scenes.push_back(s);
 
 	for (unsigned int x =0; x < s->getWidth(); x++)
 		for (unsigned int y =0; y < s->getHeight(); y++)
-			operationList.push(new worker::AWorker::Operation(s, x, y));
+			operationList.push(new worker::AWorker::Operation(pi, s, x, y));
 }
 
 worker::NetworkWorker *WorkerManager::getNetwork()

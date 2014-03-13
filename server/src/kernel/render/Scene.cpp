@@ -91,3 +91,8 @@ unsigned int Scene::getHeight() const
 unsigned int Scene::getWidth() const
 { return width; }
 
+unsigned int Scene::calc(WorkerManager &, unsigned int , unsigned int )
+{
+	return 0;
+}
+

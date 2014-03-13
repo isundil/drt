@@ -65,6 +65,12 @@ bool IdCh::sendToClient(PeerInfo *pi) const
 Confirm::Confirm(unsigned short _id): id(_id)
 { }
 
+Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigned int c): id(_id), x(px), y(py), color(c)
+{ }
+
+Result::Result(const Result &o): id(o.id), x(o.x), y(o.y), color(o.color)
+{ }
+
 Netsplit::Netsplit(unsigned short _id): id(_id)
 { }
 
@@ -124,9 +130,8 @@ Monitor::Monitor(const PeerInfo &peer)
 	swapLevel = std::make_pair(peer.getStats()->swap, peer.getStats()->maxSwap);
 }
 
-bool Result::sendToClient(PeerInfo *) const
-{ return true; //id == pi->getId();
-}
+bool Result::sendToClient(PeerInfo *pi) const
+{ return id == pi->getId(); }
 
 bool CompilFail::sendToClient(PeerInfo *) const
 { return true; //id == pi->getId();
@@ -250,7 +255,14 @@ ANetworkPacket * Calc::create(network::Socket * socket)
 
 ANetworkPacket * Result::create(network::Socket * socket)
 {
-	return new Result();
+	unsigned short id;
+	unsigned short pos[2];
+	unsigned int color;
+
+	socket->read(&id, sizeof(id));
+	socket->read(&pos, sizeof(pos));
+	socket->read(&color, sizeof(color));
+	return new Result(id, pos[0], pos[1], color);
 }
 
 ANetworkPacket * CompilFail::create(network::Socket * socket)
@@ -416,7 +428,7 @@ void
 NewJob::doMagic( drt::WorkerManager &m,
 		drt::network::PeerInfo * pi)
 {
-	m.addScene(pi->getScene());
+	m.addScene(pi, pi->getScene());
 }
 
 

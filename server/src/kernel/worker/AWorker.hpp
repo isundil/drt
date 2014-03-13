@@ -7,6 +7,10 @@ namespace render
 {
 class Scene;
 }
+namespace network
+{
+class PeerInfo;
+}
 
 namespace worker
 {
@@ -15,12 +19,13 @@ namespace worker
 		public:
 			struct Operation
 			{
+				network::PeerInfo *client;
 				render::Scene *scene;
 				unsigned int x;
 				unsigned int y;
 
 			public:
-				Operation(render::Scene *s, unsigned int _x, unsigned int _y): scene(s), x(_x), y(_y)
+				Operation(network::PeerInfo *pi, render::Scene *s, unsigned int _x, unsigned int _y): client(pi), scene(s), x(_x), y(_y)
 				{ };
 			};
 

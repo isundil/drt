@@ -32,6 +32,7 @@ namespace drt
       Scene( std::ifstream &, const std::string &path );
 	  virtual ~Scene();
 
+	  unsigned int calc(WorkerManager &, unsigned int x, unsigned int y);
 	  unsigned int getWidth() const;
 	  unsigned int getHeight() const;
 

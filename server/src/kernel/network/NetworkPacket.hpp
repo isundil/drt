@@ -228,6 +228,15 @@ class Result: public ANetworkPacket
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;
 		bool sendToClient(PeerInfo *) const;
+
+		Result(unsigned short id, unsigned short x, unsigned short y, unsigned int color);
+		Result(const Result &);
+
+	private:
+		unsigned short id;
+		unsigned short x;
+		unsigned short y;
+		unsigned int color;
 };
 
 class CompilFail: public ANetworkPacket
