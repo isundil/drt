@@ -28,42 +28,47 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripProgressBar1 = new System.Windows.Forms.ToolStripProgressBar();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.draw_status = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.select_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.move_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.resize_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.zoomin_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.zoomout_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.sphere_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
+            this.cylinder_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.view_x = new System.Windows.Forms.PictureBox();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.view_y = new System.Windows.Forms.PictureBox();
             this.panel6 = new System.Windows.Forms.Panel();
+            this.view_3d = new System.Windows.Forms.PictureBox();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.view_z = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel9 = new System.Windows.Forms.Panel();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.view_x = new System.Windows.Forms.PictureBox();
-            this.view_y = new System.Windows.Forms.PictureBox();
-            this.view_z = new System.Windows.Forms.PictureBox();
-            this.select_toolstrip = new System.Windows.Forms.ToolStripButton();
-            this.move_toolstrip = new System.Windows.Forms.ToolStripButton();
-            this.resize_toolstrip = new System.Windows.Forms.ToolStripButton();
-            this.zoomin_toolstrip = new System.Windows.Forms.ToolStripButton();
-            this.zoomout_toolstrip = new System.Windows.Forms.ToolStripButton();
-            this.sphere_toolstrip = new System.Windows.Forms.ToolStripButton();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.calculusWorker = new client.CalculusWorker();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -71,14 +76,16 @@
             this.panel3.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.view_x)).BeginInit();
             this.panel5.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.view_y)).BeginInit();
+            this.panel6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).BeginInit();
             this.panel7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.view_z)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel9.SuspendLayout();
             this.panel8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.view_x)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.view_y)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.view_z)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -104,12 +111,46 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // saveAsToolStripMenuItem
+            // 
+            this.saveAsToolStripMenuItem.Enabled = false;
+            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.saveAsToolStripMenuItem.Text = "Save As";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
+            // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.loadToolStripMenuItem.Text = "Load";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(111, 6);
+            // 
             // quitToolStripMenuItem
             // 
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            this.quitToolStripMenuItem.Size = new System.Drawing.Size(97, 22);
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
             this.quitToolStripMenuItem.Text = "Quit";
             this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // statusStrip1
             // 
@@ -128,6 +169,14 @@
             this.toolStripProgressBar1.Name = "toolStripProgressBar1";
             this.toolStripProgressBar1.Size = new System.Drawing.Size(100, 16);
             // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Image = global::client.Properties.Resources.red;
+            this.toolStripStatusLabel1.Margin = new System.Windows.Forms.Padding(10, 3, 20, 2);
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(95, 17);
+            this.toolStripStatusLabel1.Text = "Disconnected";
+            // 
             // draw_status
             // 
             this.draw_status.Name = "draw_status";
@@ -144,7 +193,9 @@
             this.zoomin_toolstrip,
             this.zoomout_toolstrip,
             this.toolStripSeparator2,
-            this.sphere_toolstrip});
+            this.sphere_toolstrip,
+            this.cylinder_toolstrip,
+            this.toolStripButton1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -152,15 +203,97 @@
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "Pointer";
             // 
+            // select_toolstrip
+            // 
+            this.select_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.select_toolstrip.Image = global::client.Properties.Resources.pointer_btn;
+            this.select_toolstrip.ImageTransparentColor = System.Drawing.Color.Red;
+            this.select_toolstrip.Name = "select_toolstrip";
+            this.select_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.select_toolstrip.Text = "Select";
+            this.select_toolstrip.Click += new System.EventHandler(this.toolStripButton2_Click);
+            // 
+            // move_toolstrip
+            // 
+            this.move_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.move_toolstrip.Enabled = false;
+            this.move_toolstrip.Image = global::client.Properties.Resources.drag_btn;
+            this.move_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.move_toolstrip.Name = "move_toolstrip";
+            this.move_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.move_toolstrip.Text = "Move";
+            this.move_toolstrip.Click += new System.EventHandler(this.toolStripButton3_Click);
+            // 
+            // resize_toolstrip
+            // 
+            this.resize_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.resize_toolstrip.Enabled = false;
+            this.resize_toolstrip.Image = global::client.Properties.Resources.resize_btn;
+            this.resize_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.resize_toolstrip.Name = "resize_toolstrip";
+            this.resize_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.resize_toolstrip.Text = "Resize";
+            this.resize_toolstrip.Click += new System.EventHandler(this.toolStripButton4_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
+            // zoomin_toolstrip
+            // 
+            this.zoomin_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomin_toolstrip.Image = global::client.Properties.Resources.zoomin_btn;
+            this.zoomin_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomin_toolstrip.Name = "zoomin_toolstrip";
+            this.zoomin_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.zoomin_toolstrip.Text = "Zoom In";
+            this.zoomin_toolstrip.Click += new System.EventHandler(this.zoomin_toolstrip_Click);
+            // 
+            // zoomout_toolstrip
+            // 
+            this.zoomout_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.zoomout_toolstrip.Image = global::client.Properties.Resources.zoomout_btn;
+            this.zoomout_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.zoomout_toolstrip.Name = "zoomout_toolstrip";
+            this.zoomout_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.zoomout_toolstrip.Text = "Zoom Out";
+            this.zoomout_toolstrip.Click += new System.EventHandler(this.zoomout_toolstrip_Click);
+            // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
+            // sphere_toolstrip
+            // 
+            this.sphere_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.sphere_toolstrip.Image = global::client.Properties.Resources.circle_btn;
+            this.sphere_toolstrip.ImageTransparentColor = System.Drawing.Color.White;
+            this.sphere_toolstrip.Name = "sphere_toolstrip";
+            this.sphere_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.sphere_toolstrip.Text = "Sphere";
+            this.sphere_toolstrip.Click += new System.EventHandler(this.toolStripButton1_Click);
+            // 
+            // toolStripButton1
+            // 
+            this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton1.Name = "toolStripButton1";
+            this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+            this.toolStripButton1.Text = "toolStripButton1";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click_1);
+            // 
+            // cylinder_toolstrip
+            // 
+            this.cylinder_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cylinder_toolstrip.Image = global::client.Properties.Resources.cylinder_btn;
+            this.cylinder_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cylinder_toolstrip.Name = "cylinder_toolstrip";
+            this.cylinder_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.cylinder_toolstrip.Text = "toolStripButton2";
+            this.cylinder_toolstrip.Click += new System.EventHandler(this.cylinder_toolstrip_Click);
             // 
             // panel1
             // 
@@ -208,6 +341,19 @@
             this.panel4.Size = new System.Drawing.Size(269, 166);
             this.panel4.TabIndex = 0;
             // 
+            // view_x
+            // 
+            this.view_x.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.view_x.Location = new System.Drawing.Point(0, 0);
+            this.view_x.Name = "view_x";
+            this.view_x.Size = new System.Drawing.Size(269, 166);
+            this.view_x.TabIndex = 0;
+            this.view_x.TabStop = false;
+            this.view_x.Click += new System.EventHandler(this.view_x_Click);
+            this.view_x.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseDown);
+            this.view_x.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseMove);
+            this.view_x.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseUp);
+            // 
             // panel5
             // 
             this.panel5.Controls.Add(this.view_y);
@@ -217,13 +363,37 @@
             this.panel5.Size = new System.Drawing.Size(269, 166);
             this.panel5.TabIndex = 1;
             // 
+            // view_y
+            // 
+            this.view_y.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.view_y.Location = new System.Drawing.Point(0, 0);
+            this.view_y.Name = "view_y";
+            this.view_y.Size = new System.Drawing.Size(269, 166);
+            this.view_y.TabIndex = 0;
+            this.view_y.TabStop = false;
+            this.view_y.Click += new System.EventHandler(this.view_y_Click);
+            this.view_y.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseDown);
+            this.view_y.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseMove);
+            this.view_y.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseUp);
+            // 
             // panel6
             // 
+            this.panel6.Controls.Add(this.view_3d);
             this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel6.Location = new System.Drawing.Point(3, 175);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(269, 167);
             this.panel6.TabIndex = 2;
+            // 
+            // view_3d
+            // 
+            this.view_3d.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.view_3d.InitialImage = null;
+            this.view_3d.Location = new System.Drawing.Point(0, 0);
+            this.view_3d.Name = "view_3d";
+            this.view_3d.Size = new System.Drawing.Size(269, 167);
+            this.view_3d.TabIndex = 0;
+            this.view_3d.TabStop = false;
             // 
             // panel7
             // 
@@ -233,6 +403,19 @@
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(269, 167);
             this.panel7.TabIndex = 3;
+            // 
+            // view_z
+            // 
+            this.view_z.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.view_z.Location = new System.Drawing.Point(0, 0);
+            this.view_z.Name = "view_z";
+            this.view_z.Size = new System.Drawing.Size(269, 167);
+            this.view_z.TabIndex = 0;
+            this.view_z.TabStop = false;
+            this.view_z.Click += new System.EventHandler(this.view_z_Click);
+            this.view_z.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseDown);
+            this.view_z.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseMove);
+            this.view_z.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseUp);
             // 
             // panel2
             // 
@@ -283,148 +466,12 @@
             this.comboBox1.TabStop = false;
             this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
             // 
-            // view_x
+            // calculusWorker
             // 
-            this.view_x.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.view_x.Location = new System.Drawing.Point(0, 0);
-            this.view_x.Name = "view_x";
-            this.view_x.Size = new System.Drawing.Size(269, 166);
-            this.view_x.TabIndex = 0;
-            this.view_x.TabStop = false;
-            this.view_x.Click += new System.EventHandler(this.view_x_Click);
-            this.view_x.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseDown);
-            this.view_x.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseMove);
-            this.view_x.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_x_MouseUp);
-            // 
-            // view_y
-            // 
-            this.view_y.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.view_y.Location = new System.Drawing.Point(0, 0);
-            this.view_y.Name = "view_y";
-            this.view_y.Size = new System.Drawing.Size(269, 166);
-            this.view_y.TabIndex = 0;
-            this.view_y.TabStop = false;
-            this.view_y.Click += new System.EventHandler(this.view_y_Click);
-            this.view_y.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseDown);
-            this.view_y.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseMove);
-            this.view_y.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_y_MouseUp);
-            // 
-            // view_z
-            // 
-            this.view_z.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.view_z.Location = new System.Drawing.Point(0, 0);
-            this.view_z.Name = "view_z";
-            this.view_z.Size = new System.Drawing.Size(269, 167);
-            this.view_z.TabIndex = 0;
-            this.view_z.TabStop = false;
-            this.view_z.Click += new System.EventHandler(this.view_z_Click);
-            this.view_z.MouseDown += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseDown);
-            this.view_z.MouseMove += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseMove);
-            this.view_z.MouseUp += new System.Windows.Forms.MouseEventHandler(this.view_z_MouseUp);
-            // 
-            // select_toolstrip
-            // 
-            this.select_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.select_toolstrip.Image = global::client.Properties.Resources.pointer_btn;
-            this.select_toolstrip.ImageTransparentColor = System.Drawing.Color.Red;
-            this.select_toolstrip.Name = "select_toolstrip";
-            this.select_toolstrip.Size = new System.Drawing.Size(23, 22);
-            this.select_toolstrip.Text = "Select";
-            this.select_toolstrip.Click += new System.EventHandler(this.toolStripButton2_Click);
-            // 
-            // move_toolstrip
-            // 
-            this.move_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.move_toolstrip.Enabled = false;
-            this.move_toolstrip.Image = global::client.Properties.Resources.drag_btn;
-            this.move_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.move_toolstrip.Name = "move_toolstrip";
-            this.move_toolstrip.Size = new System.Drawing.Size(23, 22);
-            this.move_toolstrip.Text = "Move";
-            this.move_toolstrip.Click += new System.EventHandler(this.toolStripButton3_Click);
-            // 
-            // resize_toolstrip
-            // 
-            this.resize_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.resize_toolstrip.Enabled = false;
-            this.resize_toolstrip.Image = global::client.Properties.Resources.resize_btn;
-            this.resize_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.resize_toolstrip.Name = "resize_toolstrip";
-            this.resize_toolstrip.Size = new System.Drawing.Size(23, 22);
-            this.resize_toolstrip.Text = "Resize";
-            this.resize_toolstrip.Click += new System.EventHandler(this.toolStripButton4_Click);
-            // 
-            // zoomin_toolstrip
-            // 
-            this.zoomin_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.zoomin_toolstrip.Image = global::client.Properties.Resources.zoomin_btn;
-            this.zoomin_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.zoomin_toolstrip.Name = "zoomin_toolstrip";
-            this.zoomin_toolstrip.Size = new System.Drawing.Size(23, 22);
-            this.zoomin_toolstrip.Text = "Zoom In";
-            this.zoomin_toolstrip.Click += new System.EventHandler(this.zoomin_toolstrip_Click);
-            // 
-            // zoomout_toolstrip
-            // 
-            this.zoomout_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.zoomout_toolstrip.Image = global::client.Properties.Resources.zoomout_btn;
-            this.zoomout_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.zoomout_toolstrip.Name = "zoomout_toolstrip";
-            this.zoomout_toolstrip.Size = new System.Drawing.Size(23, 22);
-            this.zoomout_toolstrip.Text = "Zoom Out";
-            this.zoomout_toolstrip.Click += new System.EventHandler(this.zoomout_toolstrip_Click);
-            // 
-            // sphere_toolstrip
-            // 
-            this.sphere_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.sphere_toolstrip.Image = global::client.Properties.Resources.circle_btn;
-            this.sphere_toolstrip.ImageTransparentColor = System.Drawing.Color.White;
-            this.sphere_toolstrip.Name = "sphere_toolstrip";
-            this.sphere_toolstrip.Size = new System.Drawing.Size(23, 22);
-            this.sphere_toolstrip.Text = "Sphere";
-            this.sphere_toolstrip.Click += new System.EventHandler(this.toolStripButton1_Click);
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Image = global::client.Properties.Resources.red;
-            this.toolStripStatusLabel1.Margin = new System.Windows.Forms.Padding(10, 3, 20, 2);
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(95, 17);
-            this.toolStripStatusLabel1.Text = "Disconnected";
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
-            // 
-            // saveToolStripMenuItem
-            // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
-            // 
-            // loadToolStripMenuItem
-            // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
-            // 
-            // saveAsToolStripMenuItem
-            // 
-            this.saveAsToolStripMenuItem.Enabled = false;
-            this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.saveAsToolStripMenuItem.Text = "Save As";
-            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveAsToolStripMenuItem_Click);
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
-            this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.calculusWorker.Connection = null;
+            this.calculusWorker.DestinationImage = null;
+            this.calculusWorker.WorkerReportsProgress = true;
+            this.calculusWorker.WorkerSupportsCancellation = true;
             // 
             // MainForm
             // 
@@ -452,14 +499,16 @@
             this.panel3.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.view_x)).EndInit();
             this.panel5.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.view_y)).EndInit();
+            this.panel6.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).EndInit();
             this.panel7.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.view_z)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             this.panel8.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.view_x)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.view_y)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.view_z)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -503,6 +552,10 @@
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private CalculusWorker calculusWorker;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
+        private System.Windows.Forms.PictureBox view_3d;
+        private System.Windows.Forms.ToolStripButton cylinder_toolstrip;
     }
 }
 

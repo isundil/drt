@@ -80,3 +80,11 @@ void ModuleManager::loadFile(const std::string &filename)
 	modules.push_back(new AModule(handler, name, (void *(*)())symLoader));
 }
 
+AModule	*ModuleManager::getModule(std::string &name)
+{
+  for (auto i = this->modules.cbegin(); i != this->modules.cend(); i++)
+    {
+      if ((*i)->getName() == name)
+	return *i;
+    }
+}

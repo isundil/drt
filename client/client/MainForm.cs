@@ -16,6 +16,7 @@ namespace client
         {
             InitializeComponent();
 
+            this.Icon = Properties.Resources.icon;
             this.Cursor = new Cursor(Properties.Resources.pointer_ptr.GetHicon());
 
             ol = new ObjectsList(this);
@@ -130,9 +131,9 @@ namespace client
 
             foreach (var o in ol.Collection)
             {
-                o.draw_x(bm_x, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
-                o.draw_y(bm_y, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
-                o.draw_z(bm_z, vp, (o == ol.Selected ? Color.White : Color.SteelBlue));
+                o.draw_x(bm_x, vp, (o == ol.Selected));
+                o.draw_y(bm_y, vp, (o == ol.Selected));
+                o.draw_z(bm_z, vp, (o == ol.Selected));
             }
 
             view_x.Image = bm_x;
@@ -140,12 +141,19 @@ namespace client
             view_z.Image = bm_z;
         }
 
+        private ListenerWorker listenerWorker = null;
         private void MainForm_Load(object sender, EventArgs e)
         {
             vp.GridLevel = 10;
             this.Show();
 
+            view_3d.Image = new Bitmap(view_3d.Width, view_3d.Height);
+
             this.client = new ConClient();
+            this.listenerWorker = new ListenerWorker(client);
+            calculusWorker.Connection = client;
+            calculusWorker.DestinationImage = view_3d.Image;
+
             var con = new Connection();
             con.ShowDialog(this);
 
@@ -162,6 +170,7 @@ namespace client
         enum eDrawMode
         {
             SPHERE,
+            CYLINDER,
             NONE,
             GRAB,
             RESIZE,
@@ -175,6 +184,13 @@ namespace client
             this.drawMode = eDrawMode.SPHERE;
 
             this.Cursor = new Cursor(Properties.Resources.circle_ptr.GetHicon());
+        }
+
+        private void cylinder_toolstrip_Click(object sender, EventArgs e)
+        {
+            this.drawMode = eDrawMode.CYLINDER;
+
+            this.Cursor = new Cursor(Properties.Resources.cylinder_ptr.GetHicon());
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -301,7 +317,8 @@ namespace client
 
         private void view_x_MouseUp(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            if (this.drawMode == eDrawMode.NONE || p1 == null) return;
+            _tmpObject = null;
 
             p2 = new Points();
 
@@ -325,7 +342,8 @@ namespace client
         }
         private void view_y_MouseUp(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            if (this.drawMode == eDrawMode.NONE || p1 == null) return;
+            _tmpObject = null;
 
             p2 = new Points();
 
@@ -348,7 +366,8 @@ namespace client
         }
         private void view_z_MouseUp(object sender, MouseEventArgs e)
         {
-            if (this.drawMode == eDrawMode.NONE) return;
+            if (this.drawMode == eDrawMode.NONE || p1 == null) return;
+            _tmpObject = null;
 
             p2 = new Points();
 
@@ -370,6 +389,7 @@ namespace client
             propertyGrid.Refresh();
         }
 
+        AObjects _tmpObject = null;
         private bool drawTmpObject(MouseEventArgs e, Points p3, Util.eView v)
         {
             draw_status.Text = "Coords { X : " + p3.X + ", Y : " + p3.Y + ", Z : " + p3.Z + " }";
@@ -380,21 +400,32 @@ namespace client
                 var vy = new System.Drawing.Bitmap(view_y_cp, view_y_cp.Size);
                 var vz = new System.Drawing.Bitmap(view_z_cp, view_z_cp.Size);
 
+                if (_tmpObject == null)
+                {
+                    if (v == Util.eView.x) _tmpObject = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                    if (v == Util.eView.y) _tmpObject = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                    if (v == Util.eView.z) _tmpObject = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                }
+                else
+                {
+                    _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                }
+
+
+                _tmpObject.draw_x(vx, vp, true);
+                _tmpObject.draw_y(vy, vp, true);
+                _tmpObject.draw_z(vz, vp, true);
+
                 switch (this.drawMode)
                 {
                     case eDrawMode.SPHERE:
-                        AObjects s = null;
-                        if (v == Util.eView.x) s = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        if (v == Util.eView.y) s = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        if (v == Util.eView.z) s = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-
-                        draw_status.Text += ", Sphere { Cx : " + s.centerPoint.X + ", Cy : " + s.centerPoint.Y + ", Cz : " + s.centerPoint.Z + ", R : " + ((Sphere)s).Radius + " }";
-
-                        s.draw_x(vx, vp, Color.White);
-                        s.draw_y(vy, vp, Color.White);
-                        s.draw_z(vz, vp, Color.White);
+                        draw_status.Text += ", Sphere { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + _tmpObject.Radius + " }";
+                        break;
+                    case eDrawMode.CYLINDER:
+                        draw_status.Text += ", Cylinder { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " +_tmpObject.Radius + " }";
                         break;
                 }
+                        
                 view_x.Image = vx;
                 view_y.Image = vy;
                 view_z.Image = vz;
@@ -595,7 +626,7 @@ namespace client
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (currentfile.Nlong.Length > 0)
+            if (currentfile.Nlong != null)
             {
                 var x = new XmlSerializer(ol.GetType());
                 TextWriter tw = new StreamWriter(currentfile.Nlong);
@@ -679,6 +710,11 @@ namespace client
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new About().Show();
+        }
+
+        private void toolStripButton1_Click_1(object sender, EventArgs e)
+        {
+            calculusWorker.DoScenePreviewCalculus(ol);
         }
     }
 }

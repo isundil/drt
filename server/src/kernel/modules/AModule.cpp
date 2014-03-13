@@ -12,3 +12,7 @@ AModule::~AModule()
 	dlclose(dlhandler);
 }
 
+const std::string	&AModule::getName() const
+{
+  return name;
+}

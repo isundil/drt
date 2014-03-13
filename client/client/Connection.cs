@@ -39,8 +39,9 @@ namespace client
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ip.Text = "192.168.175.129";
+            ip.Text = "192.168.1.172";
             port.Value = 8042;
+            ok_btn_Click(sender, e);
         }
 
         public short Id { get; set; }
