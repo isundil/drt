@@ -6,6 +6,8 @@
 #include "IObject.hh"
 
 class APropertyValue {};
+class	Ray;
+class	Camera;
 
 template <typename T>
 class PropertyValue : public APropertyValue {
@@ -42,6 +44,8 @@ public:
   T at(std::string name) {
     return ((PropertyValue<T> *) this->getProperty(name))->getValue();
   }
+
+  virtual double	computeEquation(Camera * camera, Ray * ray);
 
 protected:
 

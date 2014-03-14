@@ -26,7 +26,8 @@ SRC=	main.cpp					\
 		system/MemUsage.cpp			\
 		\
 		render/Scene.cpp		\
-		render/AObject.cpp
+		render/AObject.cpp		\
+		render/camera.cpp
 
 OBJ=	$(SRC:.cpp=.o)
 

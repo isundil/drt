@@ -4,6 +4,8 @@
 #include <string>
 #include "IObject.hh"
 #include "AObject.hpp"
+#include "camera.hpp"
+#include "ray.hpp"
 #include "worker/WorkerManager.hpp"
 #include "modules/ModuleManager.hpp"
 #include "modules/AModule.hpp"
@@ -30,20 +32,22 @@ namespace drt
     {
     public:
       Scene( std::ifstream &, const std::string &path );
-	  virtual ~Scene();
+      virtual ~Scene();
 
-	  unsigned int calc(WorkerManager &, unsigned int x, unsigned int y);
-	  unsigned int getWidth() const;
-	  unsigned int getHeight() const;
+      unsigned int calc(WorkerManager &, unsigned int x, unsigned int y);
+      unsigned int getWidth() const;
+      unsigned int getHeight() const;
 
     private:
-	  unsigned int height, width;
-
+      unsigned int height, width;
+      Camera	*camera;
+      double	d;
+      
       std::list<t_Item *>		objects;
       std::list<AObject *>		_objects;
 
       t_Item				*parseItem( std::ifstream & );
-	  const std::string scenePath;
+      const std::string scenePath;
     };
   }
 }

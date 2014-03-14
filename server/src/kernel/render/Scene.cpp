@@ -18,6 +18,20 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
   short			y;
   s.read((char *)&x, sizeof(x));
   s.read((char *)&y, sizeof(y));
+  short			cx;
+  short			cy;
+  short			cz;
+  double		crx;
+  double		cry;
+  double		crz;
+  s.read((char *)&cx, sizeof(cx));
+  s.read((char *)&cy, sizeof(cy));
+  s.read((char *)&cz, sizeof(cz));
+  s.read((char *)&crx, sizeof(crx));
+  s.read((char *)&cry, sizeof(cry));
+  s.read((char *)&crz, sizeof(crz));
+  this->camera = new Camera(cx, cy, cz, crx, cry, crz);
+  s.read((char *)&(this->d), sizeof(this->d));
   unsigned int		nbObjects;
   s.read((char *)&nbObjects, sizeof(nbObjects));
 
@@ -46,8 +60,8 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 	  tmp->addProperty(tmpStr, (*b)->data);
 	}
     }
-	width = y;
-	height = x;
+  width = y;
+  height = x;
 }
 
 Scene::~Scene()
@@ -80,8 +94,8 @@ t_Item	*Scene::parseItem( std::ifstream &s )
   std::cout << std::endl;
   if (obj->nbSubItem > 0)
     obj->subItems = new std::list<t_Item *>;
-  // for (int a = 0; a < obj->nbSubItem; a++)
-  //   obj->subItems->push_back(parseItem(s));
+  for (int a = 0; a < obj->nbSubItem; a++)
+    obj->subItems->push_back(parseItem(s));
   return (obj);
 }
 
@@ -91,8 +105,28 @@ unsigned int Scene::getHeight() const
 unsigned int Scene::getWidth() const
 { return width; }
 
-unsigned int Scene::calc(WorkerManager &, unsigned int , unsigned int )
+unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 {
-	return 0;
+  double	k = -1;
+  double	tmpK = k;
+  char		color[3];
+  unsigned int	_color;
+  Ray		*ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
+
+  for (auto a = this->_object.begin(); a != _object.end(); a++)
+    {
+      tmpK = (*a)->computeEquation(this->camera, ray);
+      if ((tmpk < k || k == -1) && tmpK != -1)
+	{
+	  k = tmpK;
+	  color = (*a)->getProperty("color");
+	}
+    }
+  if (k != -1)
+    _color = (int) color;
+  else
+    _color = 0;
+
+  return _color;
 }
 

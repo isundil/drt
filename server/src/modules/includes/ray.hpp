@@ -4,6 +4,6 @@
 
 class Ray : public AObject {
 public:
-
+  
   Ray();
 };
