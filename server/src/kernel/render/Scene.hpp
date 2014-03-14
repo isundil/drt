@@ -48,6 +48,8 @@ namespace drt
 
       t_Item				*parseItem( std::ifstream & );
       const std::string scenePath;
+
+      void copy_bufs(unsigned char dest[4], unsigned char src[3]);
     };
   }
 }

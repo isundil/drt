@@ -16,6 +16,6 @@ APropertyValue *AObject::getProperty(std::string name) {
 AObject::AObject() {
 }
 
-// double	AObject::computeEquation(Camera * camera, Ray * ray) {
-//   return 0;
-// }
+double	AObject::computeEquation(Camera * camera, Ray * ray) {
+  return 0;
+}

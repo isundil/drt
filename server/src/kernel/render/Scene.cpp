@@ -105,28 +105,35 @@ unsigned int Scene::getHeight() const
 unsigned int Scene::getWidth() const
 { return width; }
 
+void Scene::copy_bufs(unsigned char dest[4], unsigned char src[3])
+{
+  dest[0] = src[0];
+  dest[1] = src[1];
+  dest[2] = src[2];
+  dest[3] = 255;
+}
+
 unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 {
   double	k = -1;
   double	tmpK = k;
-  char		color[3];
-  unsigned int	_color;
+  union {
+    unsigned int asint;
+    unsigned char aschar[4];
+  } color;
+  //char		color[3];
   Ray		*ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
 
-  for (auto a = this->_object.begin(); a != _object.end(); a++)
+  for (auto a = this->_objects.begin(); a != _objects.end(); a++)
     {
       tmpK = (*a)->computeEquation(this->camera, ray);
-      if ((tmpk < k || k == -1) && tmpK != -1)
+      if ((tmpK < k || k == -1) && tmpK != -1)
 	{
 	  k = tmpK;
-	  color = (*a)->getProperty("color");
+	  copy_bufs(color.aschar, (unsigned char *) (*a)->getProperty("color"));
 	}
     }
-  if (k != -1)
-    _color = (int) color;
-  else
-    _color = 0;
 
-  return _color;
+  return color.asint;
 }
 
