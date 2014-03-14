@@ -33,9 +33,8 @@
             this.ip = new System.Windows.Forms.TextBox();
             this.ok_btn = new System.Windows.Forms.Button();
             this.cancel_btn = new System.Windows.Forms.Button();
-            this.port = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.port)).BeginInit();
+            this.port = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -61,46 +60,31 @@
             this.ip.Location = new System.Drawing.Point(128, 10);
             this.ip.Name = "ip";
             this.ip.Size = new System.Drawing.Size(152, 20);
-            this.ip.TabIndex = 2;
+            this.ip.TabIndex = 1;
             this.ip.Text = "127.0.0.1";
+            this.ip.Validating += new System.ComponentModel.CancelEventHandler(this.ip_Validating);
             // 
             // ok_btn
             // 
             this.ok_btn.Location = new System.Drawing.Point(205, 90);
             this.ok_btn.Name = "ok_btn";
             this.ok_btn.Size = new System.Drawing.Size(75, 23);
-            this.ok_btn.TabIndex = 4;
+            this.ok_btn.TabIndex = 3;
             this.ok_btn.Text = "OK";
             this.ok_btn.UseVisualStyleBackColor = true;
             this.ok_btn.Click += new System.EventHandler(this.ok_btn_Click);
             // 
             // cancel_btn
             // 
+            this.cancel_btn.CausesValidation = false;
             this.cancel_btn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.cancel_btn.Location = new System.Drawing.Point(128, 90);
             this.cancel_btn.Name = "cancel_btn";
             this.cancel_btn.Size = new System.Drawing.Size(75, 23);
-            this.cancel_btn.TabIndex = 5;
+            this.cancel_btn.TabIndex = 4;
             this.cancel_btn.Text = "Cancel";
             this.cancel_btn.UseVisualStyleBackColor = true;
             this.cancel_btn.Click += new System.EventHandler(this.cancel_btn_Click);
-            // 
-            // port
-            // 
-            this.port.Location = new System.Drawing.Point(128, 38);
-            this.port.Maximum = new decimal(new int[] {
-            12000,
-            0,
-            0,
-            0});
-            this.port.Name = "port";
-            this.port.Size = new System.Drawing.Size(152, 20);
-            this.port.TabIndex = 6;
-            this.port.Value = new decimal(new int[] {
-            11424,
-            0,
-            0,
-            0});
             // 
             // button1
             // 
@@ -112,6 +96,15 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // port
+            // 
+            this.port.Location = new System.Drawing.Point(128, 37);
+            this.port.Name = "port";
+            this.port.Size = new System.Drawing.Size(152, 20);
+            this.port.TabIndex = 2;
+            this.port.Text = "11424";
+            this.port.Validating += new System.ComponentModel.CancelEventHandler(this.port_Validating);
+            // 
             // Connection
             // 
             this.AcceptButton = this.ok_btn;
@@ -120,8 +113,8 @@
             this.CancelButton = this.cancel_btn;
             this.ClientSize = new System.Drawing.Size(292, 125);
             this.ControlBox = false;
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.port);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.cancel_btn);
             this.Controls.Add(this.ok_btn);
             this.Controls.Add(this.ip);
@@ -132,7 +125,6 @@
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Connection";
-            ((System.ComponentModel.ISupportInitialize)(this.port)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -145,7 +137,7 @@
         private System.Windows.Forms.TextBox ip;
         private System.Windows.Forms.Button ok_btn;
         private System.Windows.Forms.Button cancel_btn;
-        private System.Windows.Forms.NumericUpDown port;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox port;
     }
 }
