@@ -32,11 +32,12 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	ctors[ 8] = NewJob::create;
 	ctors[ 9] = EndJob::create;
 	ctors[10] = Ready::create;
-	ctors[11] = Monitor::create;
-	ctors[12] = Proc::create;
-	ctors[13] = Calc::create;
-	ctors[14] = Result::create;
-	ctors[15] = CompilFail::create;
+	ctors[11] = Proc::create;
+	ctors[12] = Calc::create;
+	ctors[13] = Result::create;
+	ctors[14] = CompilFail::create;
+
+	ctors[15] = Monitor::create;
 
 	auto f = ctors.find(code);
 	if (f == ctors.end())
@@ -473,7 +474,7 @@ std::stringstream * CAuth::getStream(size_t *s) const
 std::stringstream * Welcome::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 2;
+	char c = 0x02;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
 	*buflen = sizeof(c) +sizeof(id);
@@ -483,7 +484,7 @@ std::stringstream * Welcome::getStream(size_t *buflen) const
 std::stringstream * IdCh::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 3;
+	char c = 0x03;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &oldId, sizeof(oldId));
 	ss->write((char *) &newId, sizeof(newId));
@@ -494,7 +495,7 @@ std::stringstream * IdCh::getStream(size_t *buflen) const
 std::stringstream * Relog::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 4;
+	char c = 0x04;
 	ss->write((char *) &c, sizeof(c));
 	*buflen = sizeof(c);
 	return ss;
@@ -503,7 +504,7 @@ std::stringstream * Relog::getStream(size_t *buflen) const
 std::stringstream * Confirm::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 5;
+	char c = 0x05;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
 	*buflen = sizeof(c) +sizeof(id);
@@ -512,14 +513,13 @@ std::stringstream * Confirm::getStream(size_t *buflen) const
 
 std::stringstream * Quit::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
-	return ss;
+	return nullptr;
 }
 
 std::stringstream * Netsplit::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 7;
+	char c = 0x07;
 	ss->write((char *) &c, sizeof(c));
 	ss->write((char *) &id, sizeof(id));
 	*buflen = sizeof(c) +sizeof(id);
@@ -547,7 +547,7 @@ std::stringstream * Ready::getStream(size_t *buflen) const
 std::stringstream *Monitor::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char c = 11;
+	char c = 0x0F;
 	char nbProc;
 
 	nbProc = (char) cpuStat.size();
@@ -588,7 +588,7 @@ std::stringstream * Calc::getStream(size_t *buflen) const
 std::stringstream * Result::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char code = 0xc;
+	char code = 0x0D;
 	ss->write(&code, sizeof(code));
 	ss->write((char *)&id, sizeof(id));
 	ss->write((char *)&x, sizeof(x));
