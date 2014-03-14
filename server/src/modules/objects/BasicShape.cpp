@@ -1,5 +1,7 @@
 #include "BasicShape.hpp"
 
+#include <stdio>
+
 basicShape::basicShape()
 {
   name = "basic_shape";
