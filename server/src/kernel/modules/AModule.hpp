@@ -15,6 +15,8 @@ namespace module
 			AModule(void *dlHandler, const std::string &name, createFncPtr fnc);
 			virtual ~AModule();
 	  const std::string	&getName() const;
+	  AObject	*getInstance(unsigned short submodule, char *data);
+
 		private:
 			AModule();
 			AModule(const AModule &);
