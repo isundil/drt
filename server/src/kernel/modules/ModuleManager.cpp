@@ -85,7 +85,7 @@ AModule	*ModuleManager::getModule(std::string &name)
   for (auto i = this->modules.cbegin(); i != this->modules.cend(); i++)
     {
       if ((*i)->getName() == name)
-	return *i;
+	return (*i);
     }
   return NULL;
 }

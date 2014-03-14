@@ -15,7 +15,7 @@
 
 typedef	struct		s_rayon {
   unsigned int		color;
-  int			r;
+  short			r;
 }			t_rayon;
 
 typedef	struct		s_angle {

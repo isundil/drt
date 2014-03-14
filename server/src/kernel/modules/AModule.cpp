@@ -18,11 +18,11 @@ const std::string	&AModule::getName() const
 }
 
 
-#include <iostream>
-AObject	*AModule::getInstance(unsigned short submodule, char *data)
-{
-  std::cout << "int bad get instance" << std::endl;
-  (void)submodule;
-  (void)data;
-  return NULL;
-}
+// #include <iostream>
+// AObject	*AModule::getInstance(unsigned short submodule, char *data)
+// {
+//   std::cout << "int bad get instance" << std::endl;
+//   (void)submodule;
+//   (void)data;
+//   return NULL;
+// }
