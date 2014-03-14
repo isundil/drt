@@ -68,9 +68,11 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
+    <Compile Include="BasicTransformations.cs" />
     <Compile Include="CalculusWorker.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Camera.cs" />
     <Compile Include="ColorPicker.cs" />
     <Compile Include="ConConnect.cs" />
     <Compile Include="Connection.cs">
@@ -79,6 +81,7 @@
     <Compile Include="Connection.Designer.cs">
       <DependentUpon>Connection.cs</DependentUpon>
     </Compile>
+    <Compile Include="Cylinder.cs" />
     <Compile Include="ListenerWorker.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -198,6 +201,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cylinder_btn1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rotate_btn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rotate_ptr.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

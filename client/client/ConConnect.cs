@@ -39,6 +39,8 @@ namespace client
 
             buf.AddRange(BitConverter.GetBytes((UInt16)size.Width));
             buf.AddRange(BitConverter.GetBytes((UInt16)size.Height));
+            buf.AddRange(s.Items[0].refObject.getBytes());
+            s.Items.RemoveAt(0);
         }
 
         private void write_items(Scene s, List<byte> buf)
@@ -132,6 +134,20 @@ namespace client
 
             if (i == -1) throw new Exception("End of stream");
             return (byte)i;
+        }
+
+        public void RESULT(MainForm f)
+        {
+            var n = con.GetStream();
+            var buf = new byte[10];
+            n.Read(buf, 0, 10);
+
+            UInt16 Id = BitConverter.ToUInt16(buf, 0);
+            UInt16 X = BitConverter.ToUInt16(buf, 2);
+            UInt16 Y = BitConverter.ToUInt16(buf, 4);
+            UInt32 Color = BitConverter.ToUInt32(buf, 0);
+
+            f.Invoke(f.DrawPixel, new object[] { X, Y, Color });
         }
 
         public short clientId { get; set; }

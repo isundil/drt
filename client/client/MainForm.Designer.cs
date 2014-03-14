@@ -45,6 +45,7 @@
             this.select_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.move_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.resize_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.rotate_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.zoomin_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.zoomout_toolstrip = new System.Windows.Forms.ToolStripButton();
@@ -189,6 +190,7 @@
             this.select_toolstrip,
             this.move_toolstrip,
             this.resize_toolstrip,
+            this.rotate_toolstrip,
             this.toolStripSeparator1,
             this.zoomin_toolstrip,
             this.zoomout_toolstrip,
@@ -234,6 +236,16 @@
             this.resize_toolstrip.Size = new System.Drawing.Size(23, 22);
             this.resize_toolstrip.Text = "Resize";
             this.resize_toolstrip.Click += new System.EventHandler(this.toolStripButton4_Click);
+            // 
+            // rotate_toolstrip
+            // 
+            this.rotate_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.rotate_toolstrip.Image = global::client.Properties.Resources.rotate_btn;
+            this.rotate_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.rotate_toolstrip.Name = "rotate_toolstrip";
+            this.rotate_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.rotate_toolstrip.Text = "toolStripButton2";
+            this.rotate_toolstrip.Click += new System.EventHandler(this.rotate_toolstrip_Click);
             // 
             // toolStripSeparator1
             // 
@@ -556,6 +568,7 @@
         private System.Windows.Forms.PictureBox view_3d;
         private System.Windows.Forms.ToolStripButton cylinder_toolstrip;
         public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
+        private System.Windows.Forms.ToolStripButton rotate_toolstrip;
     }
 }
 
