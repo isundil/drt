@@ -204,9 +204,7 @@ namespace client
         {
             List<byte> b = new List<byte>();
 
-            b.Add(Color.R);
-            b.Add(Color.G);
-            b.Add(Color.B);
+            b.AddRange(BitConverter.GetBytes((UInt32)Color.GetARGB()));
             b.AddRange(BitConverter.GetBytes((UInt16)Radius));
 
             return b.ToArray();

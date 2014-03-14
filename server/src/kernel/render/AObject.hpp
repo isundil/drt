@@ -13,7 +13,7 @@ template <typename T>
 class PropertyValue : public APropertyValue {
 public:
   PropertyValue(T _val) : value(_val) {}
-  T getValue() { return value; }
+  T getValue() const { return value; }
 private :
   T value;
 };

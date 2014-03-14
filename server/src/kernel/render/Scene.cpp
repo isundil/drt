@@ -132,11 +132,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 {
   double	k = -1;
   double	tmpK = k;
-  union {
-    unsigned int asint;
-    unsigned char aschar[4];
-  } color;
-  //char		color[3];
+  unsigned int  color;
   std::cout << "instanciation de ray" << std::endl;
   Ray		*ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
 
@@ -149,12 +145,12 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	{
 	  k = tmpK;
 	  std::cout << "k = " << k << std::endl;
-	  copy_bufs(color.aschar, (unsigned char *) (*a)->getProperty("color"));
+	  color = (*a)->at<unsigned int>("color");
 	  std::cout << "color recuperee";
 	}
     }
 
   delete ray;
-  return color.asint;
+  return color;
 }
 
