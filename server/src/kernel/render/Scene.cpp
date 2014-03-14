@@ -41,6 +41,8 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
   for (int n = 0; n < nbModules; n++)
     std::cout << "[" << n << "]:" << moduleList[n] << std::endl;
   std::cout << "the image size is " << x << ":" << y << std::endl;
+  std::cout << "camera p" << cx << "," << cy << "," << cz << "][" << crx << "," << cry << "," << crz << "]" << std::endl;
+  std::cout << "d " << this->d << std::endl;
   std::cout << "there is " << nbObjects << " objects" << std::endl;
 
   for (short i = 0; i < nbObjects; i++)
