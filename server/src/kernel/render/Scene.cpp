@@ -46,21 +46,24 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
   std::cout << "there is " << nbObjects << " objects" << std::endl;
 
   for (short i = 0; i < nbObjects; i++)
-    this->objects.push_back(parseItem(s));
+    {
+      std::cout << "objet num " << i << std::endl;
+      this->objects.push_back(parseItem(s));
+    }
 
-  // module::ModuleManager *modules = WorkerManager::getSingleton()->getModuleManager();
+  module::ModuleManager *modules = WorkerManager::getSingleton()->getModuleManager();
   for (auto a = this->objects.begin(); a != this->objects.end(); a++)
     {
-      // std::string tmpStr = moduleList[(*a)->moduleID];
-      // AObject	*tmp = modules->getModule(tmpStr)->getInstance((*a)->subModule, (*a)->data);
-      // std::cout << "getting instance of " << tmpStr << std::endl;
-      // this->_objects.push_back(tmp);
-      // for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
-      // 	{
-      // 	  tmpStr = moduleList[(*b)->moduleID];
-      // 	  std::cout << " +-adding data for " << tmpStr << std::endl;
-      // 	  tmp->addProperty(tmpStr, (*b)->data);
-      // 	}
+      std::string tmpStr = moduleList[(*a)->moduleID];
+      AObject	*tmp = modules->getModule(tmpStr)->getInstance((*a)->subModule, (*a)->data);
+      std::cout << "getting instance of " << tmpStr << std::endl;
+      this->_objects.push_back(tmp);
+      for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
+      	{
+      	  tmpStr = moduleList[(*b)->moduleID];
+      	  std::cout << " +-adding data for " << tmpStr << std::endl;
+      	  tmp->addProperty(tmpStr, (*b)->data);
+      	}
     }
   std::cout << "si tu vois ceci, je ne cherche pas au bon endroit." << std::endl;
   width = y;
