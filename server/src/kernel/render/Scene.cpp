@@ -145,8 +145,9 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
       if ((tmpK < k || k == -1) && tmpK != -1)
 	{
 	  k = tmpK;
-	  std::cout << "tmpK = " << tmpK << std::endl;
+	  std::cout << "k = " << k << std::endl;
 	  copy_bufs(color.aschar, (unsigned char *) (*a)->getProperty("color"));
+	  std::cout << "color recuperee"
 	}
     }
 
