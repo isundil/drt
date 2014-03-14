@@ -16,7 +16,14 @@ namespace client
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            try
+            {
+                Application.Run(new MainForm());
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Last chance exception : " + e.Message);
+            }
         }
     }
 }
