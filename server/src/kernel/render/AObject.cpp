@@ -10,6 +10,6 @@
 // }
 
 
-AObject::AObject() {
-}
+//AObject::AObject() {
+//}
 
