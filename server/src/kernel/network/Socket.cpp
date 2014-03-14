@@ -85,5 +85,15 @@ char Socket::getc()
 }
 
 int Socket::write(void *buf, size_t len)
-{ return ::write(socket, buf, len); }
+{
+	fd_set fds;
+	FD_ZERO(&fds);
+	FD_SET(socket, &fds);
+	if (::select(socket +1, nullptr, &fds, nullptr, nullptr) <= 0)
+	{
+		std::cout << "Broken pipe !" << std::endl;
+	}
+	std::cout << "end test" << std::endl;
+	return ::write(socket, buf, len);
+}
 
