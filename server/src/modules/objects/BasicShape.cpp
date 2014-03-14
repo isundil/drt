@@ -1,6 +1,6 @@
 #include "BasicShape.hpp"
 
-basicShape::basicShape(void *dlHandler, const std::string &name, createFncPtr fnc) : AModule(dlHandler, name, fnc)
+basicShape::basicShape(void *dlHandler, const std::string &name, createFncPtr fnc) : AModule(dlHandler, "basic_shape", fnc)
 {
 }
 
@@ -30,8 +30,4 @@ AObject		*basicShape::getInstance(unsigned short subModule, char *data)
     }
 
   return ret;
-}
-
-const std::string	&basicShape::getName() const {
-  return "basic_shape";
 }
