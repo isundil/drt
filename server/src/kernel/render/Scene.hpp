@@ -41,7 +41,7 @@ namespace drt
     private:
       unsigned int height, width;
       Camera	*camera;
-      double	d;
+      short	d;
       
       std::list<t_Item *>		objects;
       std::list<AObject *>		_objects;
