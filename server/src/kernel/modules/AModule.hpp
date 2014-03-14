@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "render/AObject.hpp"
+#include "AObject.hpp"
 
 typedef void *(*createFncPtr)();
 

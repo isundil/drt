@@ -1,7 +1,7 @@
 
 NAME=	../../../modules/basicObjects.so
 
-CXX=	clang++ -fpic -I../../kernel/render/ -I../includes/
+CXX=	clang++ -fpic -I../../kernel/render/ -I../includes/ -I../../kernel/modules
 
 SRC=	BasicShape.cpp	\
 		Cone.cpp		\

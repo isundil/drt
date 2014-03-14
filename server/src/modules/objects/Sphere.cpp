@@ -1,9 +1,9 @@
 
 #include "Sphere.hpp"
 
-Sphere::Sphere(char color[3], double r) : AMathObject()
+Sphere::Sphere(unsigned int color, double r) : AMathObject()
 {
-  _props.addProperty("color", new PropertyValue<char[3]>(color));
+  _props.addProperty("color", new PropertyValue<unsigned int>(color));
   _props.addProperty("r", new PropertyValue<double>(r));
 }
 
@@ -19,5 +19,5 @@ double Sphere::computeEquation(Camera * camera, Ray * ray)
   std::cout << res.first << std::endl;
   std::cout << res.second << std::endl;
 
-  return getK(res, d);
+  return UtilSdeg::getK(res, d);
 }

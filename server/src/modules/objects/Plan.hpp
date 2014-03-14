@@ -6,7 +6,7 @@
 class Plan : public AMathObject {
 public:
 
-  Plan(char color[3]);
+  Plan(unsigned int color);
 
   virtual double computeEquation(Camera * camera, Ray * ray);
 };

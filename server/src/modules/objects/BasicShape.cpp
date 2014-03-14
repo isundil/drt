@@ -1,37 +1,41 @@
 #include "BasicShape.hpp"
 
-#include <stdio>
-
-basicShape::basicShape()
+basicShape::basicShape(void *dlHandler, const std::string &name, createFncPtr fnc) : AModule(dlHandler, name, fnc)
 {
-  name = "basic_shape";
 }
 
 AObject		*basicShape::getInstance(unsigned short subModule, char *data)
 {
-  AObject	*ret;  
+  AObject	*ret;
+  t_rayon	*d = (t_rayon *)data;
+  t_angle	*a = (t_angle *)data;
+  char		c[3];
 
-  std::cout << "coucou je suis de type " << subModule << std::endl; 
+  // std::cout << "coucou je suis de type " << subModule << std::endl; 
   switch (subModule)
     {
     case SPHERE:
-      t_rayon	*d = data;
       ret = new Sphere(d->color, d->r);
       break;
     case CYLINDRE:
-      t_rayon	*d = data;
       ret = new Cylindre(d->color, d->r);
       break;
     case CONE:
-      t_angle	*d = data;
-      ret = new Cone(d->color, d->a);
+      ret = new Cone(a->color, a->a);
       break;
     case PLAN:
-      ret = new Plan((char[3])data);
+      c[0] = data[0];
+      c[1] = data[1];
+      c[2] = data[2];
+      ret = new Plan(c);
       break;
     default:
       break;
     }
 
   return ret;
+}
+
+const std::string	&basicShape::getName() const {
+  return "basic_shape";
 }
