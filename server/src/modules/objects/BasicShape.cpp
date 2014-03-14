@@ -9,6 +9,7 @@ AObject		*basicShape::getInstance(unsigned short subModule, char *data)
 {
   AObject	*ret;  
 
+  std::cout << "coucou je suis de type " << subModule << std::endl; 
   switch (subModule)
     {
     case SPHERE:

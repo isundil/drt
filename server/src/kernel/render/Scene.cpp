@@ -55,16 +55,16 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
   for (auto a = this->objects.begin(); a != this->objects.end(); a++)
     {
       std::string tmpStr = moduleList[(*a)->moduleID];
-      std::cout << "sub module : " << tmpStr << std::endl;
+      std::cout << "module : " << tmpStr << std::endl;
       AObject	*tmp = modules->getModule(tmpStr)->getInstance((*a)->subModule, (*a)->data);
       std::cout << "getting instance of " << tmpStr << std::endl;
       this->_objects.push_back(tmp);
-      // for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
-      // 	{
-      // 	  tmpStr = moduleList[(*b)->moduleID];
-      // 	  std::cout << " +-adding data for " << tmpStr << std::endl;
-      // 	  tmp->addProperty(tmpStr, (*b)->data);
-      // 	}
+      for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
+      	{
+      	  tmpStr = moduleList[(*b)->moduleID];
+      	  std::cout << " +-adding data for " << tmpStr << std::endl;
+      	  tmp->addProperty(tmpStr, (*b)->data);
+      	}
     }
   std::cout << "si tu vois ceci, je ne cherche pas au bon endroit." << std::endl;
   width = y;
