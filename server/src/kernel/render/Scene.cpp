@@ -71,7 +71,6 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 	    tmp->addProperty(tmpStr, (*b)->data);
 	  }
     }
-  std::cout << "si tu vois ceci, ca devrait etre bon" << std::endl;
   width = y;
   height = x;
 }
@@ -136,6 +135,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
     unsigned char aschar[4];
   } color;
   //char		color[3];
+  std::cout << "instanciation de ray" << std::endl;
   Ray		*ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
 
   for (auto a = this->_objects.begin(); a != _objects.end(); a++)
