@@ -15,3 +15,13 @@ Ray::Ray(double x, double y, double z) : AObject() {
   // _props.addProperty("y", new PropertyValue<double>(y));
   // _props.addProperty("z", new PropertyValue<double>(z));
 }
+
+double Ray::getX() const
+{ return x; }
+
+double Ray::getY() const
+{ return y; }
+
+double Ray::getZ() const
+{ return z; }
+
