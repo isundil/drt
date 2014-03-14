@@ -152,6 +152,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	}
     }
 
+  delete ray;
   return color.asint;
 }
 
