@@ -35,6 +35,9 @@ namespace client
         {
             ip.Text = "192.168.1.172";
             port.Text = "8042";
+            Properties.Settings.Default.default_ip = ip.Text;
+            Properties.Settings.Default.default_port = port.Text;
+
             ok_btn_Click(sender, e);
         }
 

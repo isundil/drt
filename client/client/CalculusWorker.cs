@@ -21,10 +21,14 @@ namespace client
             Connection.NEWJOB(s, DestinationImage.Size);
         }
 
+        public CalculusWorker()
+        {
+            this.DoWork += new DoWorkEventHandler(doScenePreviewCalculus);
+        }
+
         public void DoScenePreviewCalculus(ObjectsList ol)
         {
             this.ol = ol;
-            this.DoWork += new DoWorkEventHandler(doScenePreviewCalculus);
             this.RunWorkerAsync();
         }
     }
