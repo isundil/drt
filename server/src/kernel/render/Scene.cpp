@@ -147,7 +147,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	  k = tmpK;
 	  std::cout << "k = " << k << std::endl;
 	  copy_bufs(color.aschar, (unsigned char *) (*a)->getProperty("color"));
-	  std::cout << "color recuperee"
+	  std::cout << "color recuperee";
 	}
     }
 
