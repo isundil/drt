@@ -24,6 +24,9 @@ namespace client
 
         private void ok_btn_Click(object sender, EventArgs e)
         {
+            Properties.Settings.Default.default_ip = ip.Text;
+            Properties.Settings.Default.default_port = port.Text;
+
             (this.Owner as MainForm).client.NewConnection(ip.Text, (int)UInt32.Parse(port.Text));
             this.Close();
         }
