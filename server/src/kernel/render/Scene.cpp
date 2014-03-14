@@ -71,8 +71,8 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 	    // tmp->addProperty(tmpStr, (*b)->data); // ca ca ne marche plus !
 	  }
     }
-  width = y;
-  height = x;
+  width = x;
+  height = y;
 }
 
 Scene::~Scene()
