@@ -100,7 +100,7 @@ t_Item	*Scene::parseItem( std::ifstream &s )
   std::cout << std::endl;
   if (obj->nbSubItem > 0)
     obj->subItems = new std::list<t_Item *>;
-  for (int a = 0; a < obj->nbSubItem < 1; a++)
+  for (int a = 0; a < obj->nbSubItem; a++)
     {
       obj->subItems->push_back(parseItem(s));
     }
