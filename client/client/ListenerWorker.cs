@@ -65,6 +65,8 @@ namespace client
                             else Disconnect();
                             break;
                         case ConClient.eInstruction.RESULT:
+                            Connection.RESULT(_form);
+                            break;
                         case ConClient.eInstruction.COMPILFAIL:
                             throw new NotImplementedException();
                             break;

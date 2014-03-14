@@ -11,6 +11,7 @@ namespace client
 {
     public enum eSubModules
     {
+        CAMERA      = 0,
         SPHERE      = 1,
         CYLINDER    = 2
     }
@@ -98,6 +99,9 @@ namespace client
         protected AObjects()
         {
             Color = new MyColor(0, 0, 0);
+            matrixX = new MatrixX(0);
+            matrixY = new MatrixY(0);
+            matrixZ = new MatrixZ(0);
 
             ++total;
             Id = total;
@@ -105,6 +109,9 @@ namespace client
 
         protected AObjects(bool tmp) {
             Color = new MyColor(0, 0, 0);
+            matrixX = new MatrixX(0);
+            matrixY = new MatrixY(0);
+            matrixZ = new MatrixZ(0);
 
             if (!tmp)
             {
@@ -112,6 +119,8 @@ namespace client
                 Id = total;
             }
         }
+
+        public abstract void Refresh();
 
         static private int total = 0;
 
@@ -160,6 +169,50 @@ namespace client
             set
             {
                 centerPoint.Z = value;
+            }
+        }
+
+        internal MatrixX matrixX;
+        internal MatrixY matrixY;
+        internal MatrixZ matrixZ;
+
+        private double _rotX;
+        private double _rotY;
+        private double _rotZ;
+        public double RotX
+        {
+            get
+            {
+                return _rotX;
+            }
+            set
+            {
+                _rotX = value;
+                matrixX = new MatrixX(value);
+            }
+        }
+        public double RotY
+        {
+            get
+            {
+                return _rotY;
+            }
+            set
+            {
+                _rotY = value;
+                matrixY = new MatrixY(value);
+            }
+        }
+        public double RotZ
+        {
+            get
+            {
+                return _rotZ;
+            }
+            set
+            {
+                _rotZ = value;
+                matrixZ = new MatrixZ(value);
             }
         }
 

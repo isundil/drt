@@ -118,6 +118,7 @@ namespace client
             }
         }
 
+        Bitmap td_bitmap;
         private void redraw()
         {
             var bm_x = new System.Drawing.Bitmap(view_x.InitialImage, view_x.Size);
@@ -128,6 +129,9 @@ namespace client
 
             var bm_z = new System.Drawing.Bitmap(view_x.InitialImage, view_z.Size);
             draw_grid_z(bm_z);
+
+            td_bitmap = new System.Drawing.Bitmap(view_3d.Image, view_3d.Size);
+            empty_bitmap(td_bitmap);
 
             foreach (var o in ol.Collection)
             {
@@ -144,6 +148,8 @@ namespace client
         private ListenerWorker listenerWorker = null;
         public delegate void ConnectDelegate();
         public ConnectDelegate Connect;
+        public delegate void DrawPixelDelegate(int x, int y, Color c);
+        public DrawPixelDelegate DrawPixel;
 
         private void ShowConnection()
         {
@@ -151,12 +157,20 @@ namespace client
             con.ShowDialog(this);
         }
 
+
+        private void DrawPixel3DView(int x, int y, Color c)
+        {
+            td_bitmap.SetPixel(x, y, c);
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
             vp.GridLevel = 10;
             this.Connect = new ConnectDelegate(ShowConnection);
+            this.DrawPixel = new DrawPixelDelegate(DrawPixel3DView);
 
-            view_3d.Image = new Bitmap(view_3d.Width, view_3d.Height);
+            td_bitmap = new Bitmap(view_3d.Width, view_3d.Height);
+            view_3d.Image = td_bitmap;
 
             this.client = new ConClient();
             this.listenerWorker = new ListenerWorker(client, this);
@@ -164,6 +178,8 @@ namespace client
             calculusWorker.Connection = client;
             calculusWorker.DestinationImage = view_3d.Image;
 
+            ol.Add(new Camera());
+            ol.Selected = ol.Collection[0];
             redraw();
         }
 
@@ -180,7 +196,8 @@ namespace client
             GRAB,
             RESIZE,
             ZOOMIN,
-            ZOOMOUT
+            ZOOMOUT,
+            ROTATE
         };
         eDrawMode drawMode = eDrawMode.NONE;
 
@@ -217,6 +234,13 @@ namespace client
             this.drawMode = eDrawMode.RESIZE;
 
             this.Cursor = new Cursor(Properties.Resources.resize_ptr.GetHicon());
+        }
+
+        private void rotate_toolstrip_Click(object sender, EventArgs e)
+        {
+            this.drawMode = eDrawMode.ROTATE;
+
+            this.Cursor = new Cursor(Properties.Resources.rotate_ptr.GetHicon());
         }
 
         private void zoomin_toolstrip_Click(object sender, EventArgs e)
@@ -333,13 +357,20 @@ namespace client
 
             Util.convertToMy(p2, vp, view_x.Image, Util.eView.x);
 
+            AObjects s = null;
             switch (this.drawMode)
             {
                 case eDrawMode.SPHERE:
-                    var s = Sphere.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
-                    ol.Add(s);
-                    ol.Selected = s;
+                    s = Sphere.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
+                case eDrawMode.CYLINDER:
+                    s = Cylinder.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
+            }
+            if (s != null)
+            {
+                ol.Add(s);
+                ol.Selected = s;
             }
 
             redraw();
@@ -358,12 +389,20 @@ namespace client
 
             Util.convertToMy(p2, vp, view_y.Image, Util.eView.y);
 
+            AObjects s = null;
             switch (this.drawMode)
             {
                 case eDrawMode.SPHERE:
-                    var s = Sphere.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
-                    ol.Add(s);
+                    s = Sphere.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
+                case eDrawMode.CYLINDER:
+                    s = Cylinder.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
+            }
+            if (s != null)
+            {
+                ol.Add(s);
+                ol.Selected = s;
             }
 
             redraw();
@@ -382,12 +421,20 @@ namespace client
 
             Util.convertToMy(p2, vp, view_z.Image, Util.eView.z);
 
+            AObjects s = null;
             switch (this.drawMode)
             {
                 case eDrawMode.SPHERE:
-                    var s = Sphere.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
-                    ol.Add(s);
+                    s = Sphere.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
+                case eDrawMode.CYLINDER:
+                    s = Cylinder.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
+            }
+            if (s != null)
+            {
+                ol.Add(s);
+                ol.Selected = s;
             }
 
             redraw();
@@ -405,31 +452,43 @@ namespace client
                 var vy = new System.Drawing.Bitmap(view_y_cp, view_y_cp.Size);
                 var vz = new System.Drawing.Bitmap(view_z_cp, view_z_cp.Size);
 
-                if (_tmpObject == null)
+                switch (this.drawMode)
                 {
-                    if (v == Util.eView.x) _tmpObject = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                    if (v == Util.eView.y) _tmpObject = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                    if (v == Util.eView.z) _tmpObject = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                }
-                else
-                {
-                    _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                    case eDrawMode.SPHERE:
+                        if (_tmpObject != null)
+                        {
+                            _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                        }
+                        else
+                        {
+                            if (v == Util.eView.x) _tmpObject = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                            if (v == Util.eView.y) _tmpObject = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                            if (v == Util.eView.z) _tmpObject = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        }
+
+                        draw_status.Text += ", Sphere { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + _tmpObject.Radius + " }";
+                        break;
+                    case eDrawMode.CYLINDER:
+                        if (_tmpObject != null)
+                        {
+                            _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                        }
+                        else
+                        {
+                            if (v == Util.eView.x) _tmpObject = Cylinder.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                            if (v == Util.eView.y) _tmpObject = Cylinder.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                            if (v == Util.eView.z) _tmpObject = Cylinder.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
+                        }
+
+                        draw_status.Text += ", Cylinder { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + _tmpObject.Radius + " }";
+                        break;
                 }
 
+                _tmpObject.Refresh();
 
                 _tmpObject.draw_x(vx, vp, true);
                 _tmpObject.draw_y(vy, vp, true);
                 _tmpObject.draw_z(vz, vp, true);
-
-                switch (this.drawMode)
-                {
-                    case eDrawMode.SPHERE:
-                        draw_status.Text += ", Sphere { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + _tmpObject.Radius + " }";
-                        break;
-                    case eDrawMode.CYLINDER:
-                        draw_status.Text += ", Cylinder { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " +_tmpObject.Radius + " }";
-                        break;
-                }
                         
                 view_x.Image = vx;
                 view_y.Image = vy;
@@ -464,6 +523,7 @@ namespace client
                 ol.Selected.centerPoint.Y = p3.Y;
                 ol.Selected.centerPoint.Z = p3.Z;
 
+                ol.Selected.Refresh();
                 redraw();
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
@@ -472,6 +532,19 @@ namespace client
 
                 ol.Selected.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - ol.Selected.centerPoint.Y, 2) + Math.Pow(p3.Z - ol.Selected.centerPoint.Z, 2));
 
+                ol.Selected.Refresh();
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
+            {
+                var d = (p3.Y - ol.Selected.centerPoint.Y) * Math.PI / view_x.Width;
+
+                ol.Selected.RotX += d;
+
+                if (ol.Selected.RotX >= 2 * Math.PI) ol.Selected.RotX -= 2 * Math.PI;
+                if (ol.Selected.RotX < 0) ol.Selected.RotX += 2 * Math.PI;
+
+                ol.Selected.Refresh();
                 redraw();
             }
         }
@@ -498,6 +571,7 @@ namespace client
                 ol.Selected.centerPoint.X = p3.X;
                 ol.Selected.centerPoint.Z = p3.Z;
 
+                ol.Selected.Refresh();
                 redraw();
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
@@ -506,6 +580,19 @@ namespace client
 
                 ol.Selected.Radius = (int)Math.Sqrt(Math.Pow(p3.X - ol.Selected.centerPoint.X, 2) + Math.Pow(p3.Z - ol.Selected.centerPoint.Z, 2));
 
+                ol.Selected.Refresh();
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
+            {
+                var d = (p3.X - ol.Selected.centerPoint.X) * Math.PI / view_y.Width;
+
+                ol.Selected.RotY += d;
+
+                if (ol.Selected.RotY >= 2 * Math.PI) ol.Selected.RotY -= 2 * Math.PI;
+                if (ol.Selected.RotY < 0) ol.Selected.RotY += 2 * Math.PI;
+
+                ol.Selected.Refresh();
                 redraw();
             }
         }
@@ -532,6 +619,7 @@ namespace client
                 ol.Selected.centerPoint.X = p3.X;
                 ol.Selected.centerPoint.Y = p3.Y;
 
+                ol.Selected.Refresh();
                 redraw();
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.RESIZE)
@@ -540,6 +628,19 @@ namespace client
 
                 ol.Selected.Radius = (int)Math.Sqrt(Math.Pow(p3.X - ol.Selected.centerPoint.X, 2) + Math.Pow(p3.Y - ol.Selected.centerPoint.Y, 2));
 
+                ol.Selected.Refresh();
+                redraw();
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
+            {
+                var d = (p3.X - ol.Selected.centerPoint.X) * Math.PI / view_z.Width;
+
+                ol.Selected.RotZ += d;
+
+                if (ol.Selected.RotZ >= 2 * Math.PI) ol.Selected.RotZ -= 2 * Math.PI;
+                if (ol.Selected.RotZ < 0) ol.Selected.RotZ += 2 * Math.PI;
+
+                ol.Selected.Refresh();
                 redraw();
             }
         }
@@ -552,7 +653,7 @@ namespace client
         {
             if (e.KeyCode == Keys.Delete)
             {
-                if (ol.Selected != null)
+                if (ol.Selected != null && ol.Selected != ol.Collection[0])
                 {
                     ol.Remove(ol.Selected);
                     ol.Selected = null;
@@ -609,6 +710,7 @@ namespace client
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            ol.Selected.Refresh();
             redraw();
         }
 
