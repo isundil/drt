@@ -12,9 +12,9 @@ public:
     return -1;
   }
   virtual unsigned int	getColor() {return 0;}
-  double	getX();
-  double	getY();
-  double	getZ();
+  double	getX() {return x;}
+  double	getY() {return y;}
+  double	getZ() {return z;}
 
 private:
   double	x;
