@@ -38,7 +38,7 @@ CXX=	clang++ -std=c++11 -DDEFAULT_PORT=11424 -DMODULE_DIRS=\""modules,../../modu
 
 CXXFLAGS=	-W -Wall -Wextra $(DEBUG) -I./ -I./render
 
-LDFLAGS=	-lpthread -ldl
+LDFLAGS=	-lpthread -ldl -rdynamic
 
 $(NAME):	$(OBJ) tags
 	$(CXX) $(OBJ) -o $(NAME) $(LDFLAGS)
