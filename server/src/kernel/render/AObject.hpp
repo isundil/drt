@@ -32,6 +32,7 @@ private :
 class AObject : public IObject {
 public:
   AObject();
+  virtual ~AObject() {}
 
   APropertyValue	*getProperty(std::string name);
 
