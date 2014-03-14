@@ -9,7 +9,6 @@ AObject		*basicShape::getInstance(unsigned short subModule, char *data)
   AObject	*ret;
   t_rayon	*d = (t_rayon *)data;
   t_angle	*a = (t_angle *)data;
-  char		c[3];
 
   // std::cout << "coucou je suis de type " << subModule << std::endl; 
   switch (subModule)
@@ -24,10 +23,7 @@ AObject		*basicShape::getInstance(unsigned short subModule, char *data)
       ret = new Cone(a->color, a->a);
       break;
     case PLAN:
-      c[0] = data[0];
-      c[1] = data[1];
-      c[2] = data[2];
-      ret = new Plan(c);
+      ret = new Plan((int) *data);
       break;
     default:
       break;
