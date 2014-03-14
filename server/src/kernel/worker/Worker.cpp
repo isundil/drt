@@ -27,7 +27,16 @@ void Worker::nextOp(Operation *op)
 	unsigned int color = 0xFFFFFF;
 
 	if (s)
-		color = 0xee0000; //s->calc(manager, op->x, op->y);
+	{
+		color = s->calc(manager, op->x, op->y);
+		color |= 0xff000000;
+		//color = rand(); //s->calc(manager, op->x, op->y);
+		//char *c = (char *)&color;
+		//c[0] = 0xff;
+		//c[1] = rand() % 255;
+		//c[2] = rand() % 255;
+		//c[3] = rand() % 255;
+	}
 	manager.send(op, color);
 }
 
