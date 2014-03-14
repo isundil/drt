@@ -59,18 +59,19 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
       module::AModule	*tmpModule = modules->getModule(tmpStr);
       if (tmpModule == NULL)
 	std::cout << "getModule() return NULL" << std::endl;
-      std::cout << "subModule : " << (*a)->subModule << std::endl;
+      std::cout << "subModule : " << (short) (*a)->subModule << std::endl;
       AObject	*tmp = tmpModule->getInstance((*a)->subModule, (*a)->data);
       std::cout << "getting instance of " << tmpStr << std::endl;
       this->_objects.push_back(tmp);
-      for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
-      	{
-      	  tmpStr = moduleList[(*b)->moduleID];
-      	  std::cout << " +-adding data for " << tmpStr << std::endl;
-      	  tmp->addProperty(tmpStr, (*b)->data);
-      	}
+      if ((*a)->subItems)
+	for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
+	  {
+	    tmpStr = moduleList[(*b)->moduleID];
+	    std::cout << " +-adding data for " << tmpStr << std::endl;
+	    tmp->addProperty(tmpStr, (*b)->data);
+	  }
     }
-  std::cout << "si tu vois ceci, je ne cherche pas au bon endroit." << std::endl;
+  std::cout << "si tu vois ceci, ca devrait etre bon" << std::endl;
   width = y;
   height = x;
 }
