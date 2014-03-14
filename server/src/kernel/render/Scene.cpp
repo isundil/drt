@@ -132,7 +132,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 {
   double	k = -1;
   double	tmpK = k;
-  unsigned int  color;
+  unsigned int  color = 0;
   Ray		*ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
 
   for (auto a = this->_objects.begin(); a != _objects.end(); a++)
