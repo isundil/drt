@@ -68,7 +68,7 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 	  {
 	    tmpStr = moduleList[(int) (*b)->moduleID];
 	    std::cout << " +-adding data for " << tmpStr << std::endl;
-	    tmp->addProperty(tmpStr, (*b)->data);
+	    // tmp->addProperty(tmpStr, (*b)->data); // ca ca ne marche plus !
 	  }
     }
   width = y;
@@ -145,7 +145,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	{
 	  k = tmpK;
 	  std::cout << "k = " << k << std::endl;
-	  color = (*a)->at<unsigned int>("color");
+	  color = (*a)->getColor();
 	  std::cout << "color recuperee";
 	}
     }

@@ -9,46 +9,45 @@ class APropertyValue {};
 class	Ray;
 class	Camera;
 
-template <typename T>
-class PropertyValue : public APropertyValue {
-public:
-  PropertyValue(T _val) : value(_val) {}
-  T getValue() const { return value; }
-private :
-  T value;
-};
+// template <typename T>
+// class PropertyValue : public APropertyValue {
+// public:
+//   PropertyValue(T _val) : value(_val) {}
+//   T getValue() const { return value; }
+// private :
+//   T value;
+// };
 
-class ObjectProperties {
-public:
-  void addProperty(std::string name, APropertyValue * property);
-  APropertyValue *operator[](std::string name) { return properties[name]; }
+// class ObjectProperties {
+// public:
+//   void addProperty(std::string name, APropertyValue * property);
+//   APropertyValue *operator[](std::string name) { return properties[name]; }
 
-private :
+// private :
 
-  std::map<std::string, APropertyValue *> properties;
+//   std::map<std::string, APropertyValue *> properties;
 
-};
+// };
 
-class AObject : public IObject {
+class AObject {
 public:
   AObject();
   virtual ~AObject() {}
 
-  APropertyValue	*getProperty(std::string name);
+  // template <class T>
+  // void			addProperty(std::string name, T data) {
+  //   _props.addProperty(name, new PropertyValue<T>(data));
+  // }
 
-  template <class T>
-  void			addProperty(std::string name, T data) {
-    _props.addProperty(name, new PropertyValue<T>(data));
-  }
+  // template <class T>
+  // T at(std::string name) {
+  //   return ((PropertyValue<T> *) this->getProperty(name))->getValue();
+  // }
 
-  template <class T>
-  T at(std::string name) {
-    return ((PropertyValue<T> *) this->getProperty(name))->getValue();
-  }
-
-  virtual double	computeEquation(Camera * camera, Ray * ray);
+  virtual double	computeEquation(Camera * camera, Ray * ray) = 0;
+  virtual unsigned int	getColor() = 0;
 
 protected:
 
-  ObjectProperties _props;
+  // ObjectProperties _props;
 };

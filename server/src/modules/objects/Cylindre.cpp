@@ -2,8 +2,8 @@
 
 Cylindre::Cylindre(unsigned int color, double r) : AMathObject()
 {
-  _props.addProperty("color", new PropertyValue<unsigned int>(color));
-  _props.addProperty("r", new PropertyValue<double>(r));
+  this->color = color;
+  this->r = r;
 }
 
 double		Cylindre::computeEquation(Camera *camera, Ray *ray)
@@ -13,9 +13,9 @@ double		Cylindre::computeEquation(Camera *camera, Ray *ray)
   double	c;
   std::pair<double, double> res;
 
-  a = SQ(ray->at<double>("x")) + SQ(ray->at<double>("y"));
-  b = 2 * (camera->at<double>("x") * ray->at<double>("x") + camera->at<double>("y") * ray->at<double>("y"));
-  c = SQ(camera->at<double>("x")) + SQ(camera->at<double>("y")) - SQ(this->at<double>("r"));
+  a = SQ(ray->getX()) + SQ(ray->getY());
+  b = 2 * (camera->getX() * ray->getX() + camera->getY() * ray->getY());
+  c = SQ(camera->getX()) + SQ(camera->getY()) - SQ(this->r);
   double d = SQ(b) - 4 * a * c;
 
   res = UtilSdeg::getRoots(a, b, c);
