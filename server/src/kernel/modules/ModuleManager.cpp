@@ -87,4 +87,5 @@ AModule	*ModuleManager::getModule(std::string &name)
       if ((*i)->getName() == name)
 	return *i;
     }
+  return NULL;
 }

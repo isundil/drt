@@ -57,6 +57,8 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
       std::string tmpStr = moduleList[(*a)->moduleID];
       std::cout << "module : " << tmpStr << std::endl;
       module::AModule	*tmpModule = modules->getModule(tmpStr);
+      if (tmpModule == NULL)
+	std::cout << "getModule() return NULL" << std::endl;
       std::cout << "subModule : " << (*a)->subModule << std::endl;
       AObject	*tmp = tmpModule->getInstance((*a)->subModule, (*a)->data);
       std::cout << "getting instance of " << tmpStr << std::endl;
