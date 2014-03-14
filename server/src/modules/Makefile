@@ -1,6 +1,7 @@
 
-SRC=	test \
-		test2
+SRC=	test 	\
+		test2	\
+		objects
 
 all:
 	for fileList in $(SRC) ; do \
