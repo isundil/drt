@@ -31,8 +31,8 @@ class	Camera;
 
 class AObject {
 public:
-  AObject();
-  virtual ~AObject() {}
+  //AObject();
+  //virtual ~AObject() {}
 
   // template <class T>
   // void			addProperty(std::string name, T data) {
