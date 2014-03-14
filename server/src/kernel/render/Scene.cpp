@@ -57,9 +57,9 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
       this->_objects.push_back(tmp);
       for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
 	{
-	  tmpStr = moduleList[(*b)->moduleID];
-	  std::cout << " +-adding data for " << tmpStr << std::endl;
-	  tmp->addProperty(tmpStr, (*b)->data);
+	  // tmpStr = moduleList[(*b)->moduleID];
+	  // std::cout << " +-adding data for " << tmpStr << std::endl;
+	  // tmp->addProperty(tmpStr, (*b)->data);
 	}
     }
   width = y;
