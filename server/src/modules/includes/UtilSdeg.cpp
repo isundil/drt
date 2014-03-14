@@ -12,7 +12,10 @@ std::pair<double, double> UtilSdeg::getRoots(double a, double b, double c) {
     }
   }
 
-  return { n1, n2 };
+  std::pair<double, double> n;
+  n.first = n1;
+  n.second = n2;
+  return n;
 }
 
 double		UtilSdeg::getK(std::pair<double, double> n, double d) {
@@ -20,10 +23,10 @@ double		UtilSdeg::getK(std::pair<double, double> n, double d) {
 
   if (d >= 0)
     {
-      if (n.first => 0)
+      if (n.first >= 0)
 	k = n.first;
-      if (d > 0 && n.second => 0)
-	if ((n.first => 0 && n.second < n.first) || n.first < 0)
+      if (d > 0 && n.second >= 0)
+	if ((n.first >= 0 && n.second < n.first) || n.first < 0)
 	  k = n.second;
     }
   return k;

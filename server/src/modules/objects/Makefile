@@ -8,7 +8,8 @@ SRC=	BasicShape.cpp	\
 		Cylindre.cpp	\
 		Plan.cpp		\
 		Sphere.cpp		\
-		def.cpp
+		def.cpp			\
+		../includes/UtilSdeg.cpp
 
 OBJ=	$(SRC:.cpp=.o)
 
