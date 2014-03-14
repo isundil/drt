@@ -48,7 +48,7 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 
   int	f = 0;
   module::ModuleManager *modules = WorkerManager::getSingleton()->getModuleManager();
-  for (auto a = this->objects.begin(); a != this->objects.end() && f < 14; a++)
+  for (auto a = this->objects.begin(); a != this->objects.end() && f < 9; a++)
     {
       f++;
       std::string tmpStr = moduleList[(*a)->moduleID];
@@ -97,7 +97,7 @@ t_Item	*Scene::parseItem( std::ifstream &s )
   if (obj->nbSubItem > 0)
     obj->subItems = new std::list<t_Item *>;
   int	f = 0;
-  for (int a = 0; a < obj->nbSubItem && f < 5; a++)
+  for (int a = 0; a < obj->nbSubItem && f < 1; a++)
     {
       f++;
       obj->subItems->push_back(parseItem(s));
