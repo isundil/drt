@@ -15,3 +15,6 @@ OBJ=	$(SRC:.cpp=.o)
 $(NAME):	$(OBJ)
 	$(CXX) -shared -o $(NAME) $(OBJ)
 
+clean:	rm $(OBJ)
+
+re:	clean $(NAME)

@@ -23,12 +23,8 @@ typedef	struct		s_angle {
   double		a;
 }			t_angle;
 
-class		basicShape : public drt::module::AModule {
+class		basicShape {
 public:
-  basicShape(void *dlHandler, const std::string &name, createFncPtr fnc);
-  AObject	*getInstance(unsigned short subModule, char *data);
-  const std::string	&getName() const;
-
-private:
   basicShape();
+
 };
