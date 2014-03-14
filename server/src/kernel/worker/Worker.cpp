@@ -27,7 +27,7 @@ void Worker::nextOp(Operation *op)
 	unsigned int color = 0xFFFFFF;
 
 	if (s)
-		color = s->calc(manager, op->x, op->y);
+		color = 0xee0000; //s->calc(manager, op->x, op->y);
 	manager.send(op, color);
 }
 
