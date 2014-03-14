@@ -3,7 +3,7 @@
 #include <string>
 #include "AObject.hpp"
 
-typedef void *(*createFncPtr)();
+typedef AObject *(*createFncPtr)(int, void *);
 
 namespace drt
 {

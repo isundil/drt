@@ -13,7 +13,7 @@ extern "C"
     t_rayon	*d = (t_rayon *)data;
     t_angle	*a = (t_angle *)data;
     
-    // std::cout << "coucou je suis de type " << subModule << std::endl; 
+     std::cout << "coucou je suis de type " << subModule << std::endl; 
     switch (subModule)
       {
       case SPHERE:
