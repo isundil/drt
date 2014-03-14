@@ -12,7 +12,7 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
   char			nbModules;
   s.read(&nbModules, sizeof(nbModules));
   char			moduleList[nbModules][20];
-  for (char n = 0; n < nbModules; n++)
+  for (int n = 0; n < nbModules; n++)
     s.read(moduleList[n], 20 * sizeof(**moduleList));
   short			x;
   short			y;
@@ -45,7 +45,7 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
   std::cout << "d " << this->d << std::endl;
   std::cout << "there is " << nbObjects << " objects" << std::endl;
 
-  for (short i = 0; i < nbObjects; i++)
+  for (unsigned int i = 0; i < nbObjects; i++)
     {
       std::cout << "objet num " << i << std::endl;
       this->objects.push_back(parseItem(s));
@@ -54,7 +54,7 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
   module::ModuleManager *modules = WorkerManager::getSingleton()->getModuleManager();
   for (auto a = this->objects.begin(); a != this->objects.end(); a++)
     {
-      std::string tmpStr = moduleList[(*a)->moduleID];
+      std::string tmpStr = moduleList[(int) (*a)->moduleID];
       std::cout << "module : " << tmpStr << std::endl;
       module::AModule	*tmpModule = modules->getModule(tmpStr);
       if (tmpModule == NULL)
@@ -66,7 +66,7 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
       if ((*a)->subItems)
 	for (auto b = (*a)->subItems->begin(); b != (*a)->subItems->end(); b++)
 	  {
-	    tmpStr = moduleList[(*b)->moduleID];
+	    tmpStr = moduleList[(int) (*b)->moduleID];
 	    std::cout << " +-adding data for " << tmpStr << std::endl;
 	    tmp->addProperty(tmpStr, (*b)->data);
 	  }
@@ -84,7 +84,7 @@ t_Item	*Scene::parseItem( std::ifstream &s )
 {
   // objects
   t_Item	*obj = new t_Item;
-  t_Item	*tmp;
+  // t_Item	*tmp;
 
   // s.read((char *) obj, sizeof(*obj));
   s.read((char *) &(obj->moduleID), sizeof(obj->moduleID));
@@ -107,7 +107,7 @@ t_Item	*Scene::parseItem( std::ifstream &s )
     obj->subItems = new std::list<t_Item *>;
   else
 	  obj->subItems = nullptr;
-  for (int a = 0; a < obj->nbSubItem; a++)
+  for (unsigned int a = 0; a < obj->nbSubItem; a++)
     {
       obj->subItems->push_back(parseItem(s));
     }
@@ -154,7 +154,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	}
     }
 
-  delete ray;
+  (void)worker;
   return color.asint;
 }
 

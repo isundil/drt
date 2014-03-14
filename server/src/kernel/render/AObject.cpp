@@ -17,5 +17,7 @@ AObject::AObject() {
 }
 
 double	AObject::computeEquation(Camera * camera, Ray * ray) {
-  return 0;
+  (void)camera;
+  (void)ray;
+  return -1;
 }
