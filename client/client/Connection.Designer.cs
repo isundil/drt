@@ -57,11 +57,12 @@
             // 
             // ip
             // 
+            this.ip.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::client.Properties.Settings.Default, "default_ip", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.ip.Location = new System.Drawing.Point(128, 10);
             this.ip.Name = "ip";
             this.ip.Size = new System.Drawing.Size(152, 20);
             this.ip.TabIndex = 1;
-            this.ip.Text = "127.0.0.1";
+            this.ip.Text = global::client.Properties.Settings.Default.default_ip;
             this.ip.Validating += new System.ComponentModel.CancelEventHandler(this.ip_Validating);
             // 
             // ok_btn
@@ -98,11 +99,12 @@
             // 
             // port
             // 
+            this.port.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::client.Properties.Settings.Default, "default_port", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this.port.Location = new System.Drawing.Point(128, 37);
             this.port.Name = "port";
             this.port.Size = new System.Drawing.Size(152, 20);
             this.port.TabIndex = 2;
-            this.port.Text = "11424";
+            this.port.Text = global::client.Properties.Settings.Default.default_port;
             this.port.Validating += new System.ComponentModel.CancelEventHandler(this.port_Validating);
             // 
             // Connection
