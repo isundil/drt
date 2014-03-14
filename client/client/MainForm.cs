@@ -157,10 +157,17 @@ namespace client
             con.ShowDialog(this);
         }
 
-
+        static int DrawPixel3DView_count = 0;
         private void DrawPixel3DView(int x, int y, Color c)
         {
+            if (x >= td_bitmap.Width || y >= td_bitmap.Height) return;
             td_bitmap.SetPixel(x, y, c);
+
+            DrawPixel3DView_count++;
+            if (DrawPixel3DView_count % 50 == 0 || DrawPixel3DView_count == td_bitmap.Width * td_bitmap.Height)
+            {
+                view_3d.Image = td_bitmap;
+            }
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -170,6 +177,7 @@ namespace client
             this.DrawPixel = new DrawPixelDelegate(DrawPixel3DView);
 
             td_bitmap = new Bitmap(view_3d.Width, view_3d.Height);
+            empty_bitmap(td_bitmap);
             view_3d.Image = td_bitmap;
 
             this.client = new ConClient();

@@ -27,6 +27,16 @@ namespace client
             con.Close();
         }
 
+        int READ(NetworkStream n, byte[] buf, int size)
+        {
+            int read = 0;
+            while (read < size)
+            {
+                read += n.Read(buf, read, size - read);
+            }
+            return read;
+        }
+
         private void write_header(Scene s, System.Drawing.Size size, List<byte> buf)
         {
             var n = con.GetStream();
@@ -91,7 +101,7 @@ namespace client
         {
             var n = con.GetStream();
             var buf = new byte[2];
-            n.Read(buf, 0, 2);
+            READ(n, buf, 2);
 
             this.clientId = BitConverter.ToInt16(buf, 0);
             if (clientId != -1) return true;
@@ -102,7 +112,7 @@ namespace client
         {
             var n = con.GetStream();
             var buf = new byte[4];
-            n.Read(buf, 0, 4);
+            READ(n, buf, 4);
 
             this.clientId = BitConverter.ToInt16(buf, 2);
             if (this.clientId != -1) return true;
@@ -140,14 +150,14 @@ namespace client
         {
             var n = con.GetStream();
             var buf = new byte[10];
-            n.Read(buf, 0, 10);
+            READ(n, buf, 10);
 
             UInt16 Id = BitConverter.ToUInt16(buf, 0);
             UInt16 X = BitConverter.ToUInt16(buf, 2);
             UInt16 Y = BitConverter.ToUInt16(buf, 4);
-            UInt32 Color = BitConverter.ToUInt32(buf, 0);
+            UInt32 color = BitConverter.ToUInt32(buf, 6);
 
-            f.Invoke(f.DrawPixel, new object[] { X, Y, Color });
+            f.Invoke(f.DrawPixel, new object[] { X, Y, System.Drawing.Color.FromArgb((int) color) });
         }
 
         public short clientId { get; set; }

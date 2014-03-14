@@ -61,7 +61,6 @@
             this.panel5 = new System.Windows.Forms.Panel();
             this.view_y = new System.Windows.Forms.PictureBox();
             this.panel6 = new System.Windows.Forms.Panel();
-            this.view_3d = new System.Windows.Forms.PictureBox();
             this.panel7 = new System.Windows.Forms.Panel();
             this.view_z = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -69,6 +68,7 @@
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.view_3d = new System.Windows.Forms.PictureBox();
             this.calculusWorker = new client.CalculusWorker();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -81,12 +81,12 @@
             this.panel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view_y)).BeginInit();
             this.panel6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).BeginInit();
             this.panel7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.view_z)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel9.SuspendLayout();
             this.panel8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -397,16 +397,6 @@
             this.panel6.Size = new System.Drawing.Size(269, 167);
             this.panel6.TabIndex = 2;
             // 
-            // view_3d
-            // 
-            this.view_3d.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.view_3d.InitialImage = null;
-            this.view_3d.Location = new System.Drawing.Point(0, 0);
-            this.view_3d.Name = "view_3d";
-            this.view_3d.Size = new System.Drawing.Size(269, 167);
-            this.view_3d.TabIndex = 0;
-            this.view_3d.TabStop = false;
-            // 
             // panel7
             // 
             this.panel7.Controls.Add(this.view_z);
@@ -478,6 +468,15 @@
             this.comboBox1.TabStop = false;
             this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
             // 
+            // view_3d
+            // 
+            this.view_3d.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.view_3d.Location = new System.Drawing.Point(0, 0);
+            this.view_3d.Name = "view_3d";
+            this.view_3d.Size = new System.Drawing.Size(269, 167);
+            this.view_3d.TabIndex = 0;
+            this.view_3d.TabStop = false;
+            // 
             // calculusWorker
             // 
             this.calculusWorker.Connection = null;
@@ -489,6 +488,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(750, 416);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
@@ -515,12 +515,12 @@
             this.panel5.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.view_y)).EndInit();
             this.panel6.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).EndInit();
             this.panel7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.view_z)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
             this.panel8.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.view_3d)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -565,10 +565,10 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private CalculusWorker calculusWorker;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.PictureBox view_3d;
         private System.Windows.Forms.ToolStripButton cylinder_toolstrip;
         public System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel;
         private System.Windows.Forms.ToolStripButton rotate_toolstrip;
+        private System.Windows.Forms.PictureBox view_3d;
     }
 }
 
