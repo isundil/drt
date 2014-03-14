@@ -12,7 +12,10 @@ namespace client
         {
             this.centerPoint = new Points();
             this.Name = "Camera";
+            this.Distance = 1000;
         }
+
+        public short Distance { get; set; }
 
         public override void Refresh() { }
         public override bool solve_equation_x(Points p) { return false; }
@@ -34,6 +37,7 @@ namespace client
             b.AddRange(BitConverter.GetBytes((double)this.RotY));
             b.AddRange(BitConverter.GetBytes((double)this.RotZ));
 
+            b.AddRange(BitConverter.GetBytes((UInt16)this.Distance));
             return b.ToArray();
         }
     }
