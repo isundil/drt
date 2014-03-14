@@ -587,7 +587,14 @@ std::stringstream * Calc::getStream(size_t *buflen) const
 
 std::stringstream * Result::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char code = 0xc;
+	ss->write(&code, sizeof(code));
+	ss->write((char *)&id, sizeof(id));
+	ss->write((char *)&x, sizeof(x));
+	ss->write((char *)&y, sizeof(y));
+	ss->write((char *)&color, sizeof(color));
+	*buflen = sizeof(code) +sizeof(id) +sizeof(x) +sizeof(y) +sizeof(color);
 	return ss;
 }
 
