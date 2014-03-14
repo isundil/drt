@@ -138,18 +138,20 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
   std::cout << "instanciation de ray" << std::endl;
   Ray		*ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
 
-  for (auto a = this->_objects.begin(); a != _objects.end(); a++)
-    {
-      tmpK = (*a)->computeEquation(this->camera, ray);
-      std::cout << "tmpK = " << tmpK << std::endl;
-      if ((tmpK < k || k == -1) && tmpK != -1)
-	{
-	  k = tmpK;
-	  std::cout << "k = " << k << std::endl;
-	  copy_bufs(color.aschar, (unsigned char *) (*a)->getProperty("color"));
-	  std::cout << "color recuperee";
-	}
-    }
+  std::cout << "si tu vois ca, on a un gros probleme..." << std::endl;
+  if (this->_object)
+    for (auto a = this->_objects.begin(); a != _objects.end(); a++)
+      {
+	tmpK = (*a)->computeEquation(this->camera, ray);
+	std::cout << "tmpK = " << tmpK << std::endl;
+	if ((tmpK < k || k == -1) && tmpK != -1)
+	  {
+	    k = tmpK;
+	    std::cout << "k = " << k << std::endl;
+	    copy_bufs(color.aschar, (unsigned char *) (*a)->getProperty("color"));
+	    std::cout << "color recuperee";
+	  }
+      }
 
   return color.asint;
 }
