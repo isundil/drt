@@ -16,8 +16,8 @@ double Sphere::computeEquation(Camera * camera, Ray * ray)
 
   std::pair<double, double> res = UtilSdeg::getRoots(a, b, c);
 
-  std::cout << res.first << std::endl;
-  std::cout << res.second << std::endl;
+  // std::cout << res.first << std::endl;
+  // std::cout << res.second << std::endl;
 
   return UtilSdeg::getK(res, d);
 }
