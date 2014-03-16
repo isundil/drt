@@ -239,13 +239,25 @@ class Result: public ANetworkPacket
 		unsigned int color;
 };
 
-class CompilFail: public ANetworkPacket
+class CompilFail: public ANetworkPacket, public std::exception
 {
 	public:
+		CompilFail(unsigned short id);
+		CompilFail(const PeerInfo &);
+		CompilFail(const CompilFail &);
+		CompilFail();
+
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;
 		bool sendToClient(PeerInfo *) const;
+		void setId(unsigned short id);
+
+		const char *what() const throw();
+
+	private:
+		unsigned short id;
+		unsigned short from;
 };
 }
 }

@@ -107,14 +107,33 @@ NewJob::NewJob(
 
 	file.close();
 	filein.open( filename );
-
 	render::Scene *scene = new render::Scene( filein, filename );
-	filein.close();
 
+	filein.close();
 	client = drt::WorkerManager::getSingleton() -> getNetwork() -> getPeer( id );
 	client -> setScene( scene );
 
 }
+
+CompilFail::CompilFail(unsigned short _id): id(_id), from(WorkerManager::getSingleton()->getNetwork()->getMe()->getId())
+{ }
+
+CompilFail::CompilFail(const PeerInfo &pi): id(pi.getId()), from(WorkerManager::getSingleton()->getNetwork()->getMe()->getId())
+{ }
+
+CompilFail::CompilFail(const CompilFail &o): id(o.id), from(o.from)
+{ }
+
+CompilFail::CompilFail(): id(0xFFFF), from(WorkerManager::getSingleton()->getNetwork()->getMe()->getId())
+{ }
+
+void CompilFail::setId(unsigned short _id)
+{
+	id = _id;
+}
+
+const char *CompilFail::what() const throw()
+{ return "Compil fail"; }
 
 Monitor::Monitor(unsigned short _src, std::list<float> &_cpus, const memInfo &_ram, const memInfo &_swap): src(_src), cpuStat(_cpus), ramLevel(_ram), swapLevel(_swap)
 { }
@@ -134,9 +153,8 @@ Monitor::Monitor(const PeerInfo &peer)
 bool Result::sendToClient(PeerInfo *pi) const
 { return id == pi->getId(); }
 
-bool CompilFail::sendToClient(PeerInfo *) const
-{ return true; //id == pi->getId();
-}
+bool CompilFail::sendToClient(PeerInfo *pi) const
+{ return id == pi->getId(); }
 
 ANetworkPacket * SAuth::create(network::Socket * socket)
 {
@@ -205,7 +223,7 @@ ANetworkPacket * NewJob::create(network::Socket * socket)
 
 	socket -> read( &id, sizeof( id ) );
 	socket -> read( &len, sizeof( len ) );
-	return new NewJob( socket, id, len );
+		return new NewJob( socket, id, len );
 }
 
 ANetworkPacket * EndJob::create(network::Socket * socket)
@@ -268,7 +286,10 @@ ANetworkPacket * Result::create(network::Socket * socket)
 
 ANetworkPacket * CompilFail::create(network::Socket * socket)
 {
-	return new CompilFail();
+	unsigned short id;
+
+	socket->read(&id, sizeof(id));
+	return new CompilFail(id);
 }
 
 void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
@@ -600,7 +621,14 @@ std::stringstream * Result::getStream(size_t *buflen) const
 
 std::stringstream * CompilFail::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char code;
+
+	code = 14;
+	ss->write(&code, sizeof(code));
+	ss->write((char *)&id, sizeof(id));
+	ss->write((char *)&from, sizeof(from));
+	*buflen = sizeof(code) +sizeof(id);
 	return ss;
 }
 

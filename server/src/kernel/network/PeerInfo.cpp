@@ -41,11 +41,21 @@ bool PeerInfo::isClosing() const
 void PeerInfo::read(WorkerManager &manager)
 {
 	char code;
+	ANetworkPacket *packet;
 
 	(void) manager;
 
 	code = socket->getc();
-	ANetworkPacket *packet = ANetworkPacket::fromSocket(code, socket);
+	try
+	{
+		packet = ANetworkPacket::fromSocket(code, socket);
+	}
+	catch (network::CompilFail &e)
+	{
+		e.setId(id);
+		manager.send(this, new CompilFail(e));
+		return;
+	}
 	if (packet == nullptr)
 	{
 		std::stringstream ss;

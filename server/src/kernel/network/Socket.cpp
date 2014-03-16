@@ -11,6 +11,7 @@
 #include <sys/ioctl.h>
 #include <errno.h>
 #include <string.h>
+#include <poll.h>
 #include "network/Socket.hpp"
 
 using namespace drt::network;
@@ -86,6 +87,9 @@ char Socket::getc()
 
 int Socket::write(void *buf, size_t len)
 {
+	struct pollfd pollfd = { .fd = socket, .events = POLLERR };
+	if (poll(&pollfd, 1, 0) < 0 || pollfd.revents & POLLERR)
+		throw std::runtime_error("Oops");
 	return ::write(socket, buf, len);
 }
 
