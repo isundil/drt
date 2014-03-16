@@ -1,4 +1,6 @@
 *.swp
 *.o
 *.orig
+*.so
+drt
 
