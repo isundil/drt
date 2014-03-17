@@ -24,17 +24,20 @@ namespace client
 
         private void Connect()
         {
+            _form.errorlabel.Text = "";
             _form.toolStripStatusLabel.Text = "Connected with id : " + Connection.clientId;
             _form.toolStripStatusLabel.Image = Properties.Resources.green;
         }
 
         private void Disconnect()
         {
-            Connection.clientId = -1;
+            Connection.clientId = 0xffff;
 
             this.Connection.Disconnect();
             _form.toolStripStatusLabel.Text = "Disconnected";
             _form.toolStripStatusLabel.Image = Properties.Resources.red;
+
+            this.CancelAsync();
 
             try
             {
@@ -48,24 +51,33 @@ namespace client
         {
             if (Connection == null) return;
 
+            bool wait_for_instruction = false;
             while (true)
             {
                 try
                 {
-                    byte b = Connection.ReadSync();
+                    byte b = 0;
 
-                    switch ((client.ConClient.eInstruction)b)
+                    if (wait_for_instruction == false)
+                    {
+                        if (Connection.GetByte(out b))
+                        {
+                            wait_for_instruction = true;
+                        }
+                    }
+
+                    switch ((ConClient.eInstruction)b)
                     {
                         case ConClient.eInstruction.WELCOME:
-                            if (Connection.WELCOME()) Connect();
+                            if (Connection.WELCOME(out wait_for_instruction)) Connect();
                             else Disconnect();
                             break;
                         case ConClient.eInstruction.IDCH:
-                            if (Connection.IDCH()) Connect();
+                            if (Connection.IDCH(out wait_for_instruction)) Connect();
                             else Disconnect();
                             break;
                         case ConClient.eInstruction.RESULT:
-                            Connection.RESULT(_form);
+                            Connection.RESULT(_form, out wait_for_instruction);
                             break;
                         case ConClient.eInstruction.COMPILFAIL:
                             throw new NotImplementedException();
@@ -75,8 +87,9 @@ namespace client
                             break;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _form.errorlabel.Text = ex.Message;
                     Disconnect();
                 }
             }

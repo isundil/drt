@@ -34,7 +34,7 @@ namespace client
         private void button1_Click(object sender, EventArgs e)
         {
             ip.Text = "192.168.1.172";
-            port.Text = "8042";
+            port.Text = "8040";
             Properties.Settings.Default.default_ip = ip.Text;
             Properties.Settings.Default.default_port = port.Text;
 

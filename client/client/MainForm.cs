@@ -119,7 +119,7 @@ namespace client
         }
 
         Bitmap td_bitmap;
-        private void redraw()
+        private void redraw(bool rebuild_3d = false)
         {
             var bm_x = new System.Drawing.Bitmap(view_x.InitialImage, view_x.Size);
             draw_grid_x(bm_x);
@@ -129,9 +129,6 @@ namespace client
 
             var bm_z = new System.Drawing.Bitmap(view_x.InitialImage, view_z.Size);
             draw_grid_z(bm_z);
-
-            td_bitmap = new System.Drawing.Bitmap(view_3d.Image, view_3d.Size);
-            empty_bitmap(td_bitmap);
 
             foreach (var o in ol.Collection)
             {
@@ -143,6 +140,12 @@ namespace client
             view_x.Image = bm_x;
             view_y.Image = bm_y;
             view_z.Image = bm_z;
+            if (rebuild_3d == true)
+            {
+                progressbar.Value = 0;
+                progressbar.Maximum = view_3d.Width * view_3d.Height;
+                calculusWorker.DoScenePreviewCalculus(ol);
+            }
         }
 
         private ListenerWorker listenerWorker = null;
@@ -164,9 +167,16 @@ namespace client
             td_bitmap.SetPixel(x, y, c);
 
             DrawPixel3DView_count++;
-            if (DrawPixel3DView_count % 50 == 0 || DrawPixel3DView_count == td_bitmap.Width * td_bitmap.Height)
+            progressbar.Value = DrawPixel3DView_count;
+
+            if (DrawPixel3DView_count % 50 == 0 || DrawPixel3DView_count == progressbar.Maximum)
             {
                 view_3d.Image = td_bitmap;
+            }
+            if (DrawPixel3DView_count == progressbar.Maximum)
+            {
+                DrawPixel3DView_count = 0;
+                progressbar.Value = 0;
             }
         }
 
@@ -182,18 +192,24 @@ namespace client
 
             this.client = new ConClient();
             this.listenerWorker = new ListenerWorker(client, this);
+            this.listenerWorker.WorkerSupportsCancellation = true;
             this.listenerWorker.RunWorkerAsync();
+            
             calculusWorker.Connection = client;
             calculusWorker.DestinationImage = view_3d.Image;
 
             ol.Add(new Camera());
             ol.Selected = ol.Collection[0];
-            redraw();
+            redraw(false);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
         {
-            redraw();
+            td_bitmap = new Bitmap(view_3d.Width, view_3d.Height);
+            empty_bitmap(td_bitmap);
+            view_3d.Image = td_bitmap;
+
+            redraw(ol.Collection.Count > 1 ? true : false);
         }
 
         enum eDrawMode
@@ -291,7 +307,7 @@ namespace client
                     if (o.solve_equation_x(p1))
                     {
                         ol.Selected = o;
-                        redraw();
+                        redraw(false);
                     }
                 }
 
@@ -318,7 +334,7 @@ namespace client
                     if (o.solve_equation_y(p1))
                     {
                         ol.Selected = o;
-                        redraw();
+                        redraw(false);
                     }
                 }
 
@@ -343,7 +359,7 @@ namespace client
                     if (o.solve_equation_z(p1))
                     {
                         ol.Selected = o;
-                        redraw();
+                        redraw(false);
                     }
                 }
 
@@ -381,7 +397,7 @@ namespace client
                 ol.Selected = s;
             }
 
-            redraw();
+            redraw(true);
             propertyGrid.Refresh();
         }
         private void view_y_MouseUp(object sender, MouseEventArgs e)
@@ -413,7 +429,7 @@ namespace client
                 ol.Selected = s;
             }
 
-            redraw();
+            redraw(true);
             propertyGrid.Refresh();
         }
         private void view_z_MouseUp(object sender, MouseEventArgs e)
@@ -445,7 +461,7 @@ namespace client
                 ol.Selected = s;
             }
 
-            redraw();
+            redraw(true);
             propertyGrid.Refresh();
         }
 
@@ -545,12 +561,11 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                var d = (p3.Y - ol.Selected.centerPoint.Y) * Math.PI / view_x.Width;
+                var d = Math.Sqrt(Math.Pow(p3.Y - ol.Selected.Y, 2) + Math.Pow(p3.Z - ol.Selected.Z, 2));
+                if (d == 0) return;
+                var angle = Math.Acos((p3.Y - ol.Selected.Y) / d);
 
-                ol.Selected.RotX += d;
-
-                if (ol.Selected.RotX >= 2 * Math.PI) ol.Selected.RotX -= 2 * Math.PI;
-                if (ol.Selected.RotX < 0) ol.Selected.RotX += 2 * Math.PI;
+                ol.Selected.RotX = angle;
 
                 ol.Selected.Refresh();
                 redraw();
@@ -593,12 +608,11 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                var d = (p3.X - ol.Selected.centerPoint.X) * Math.PI / view_y.Width;
+                var d = Math.Sqrt(Math.Pow(p3.X - ol.Selected.X, 2) + Math.Pow(p3.Z - ol.Selected.Z, 2));
+                if (d == 0) return;
+                var angle = Math.Acos((p3.X - ol.Selected.X) / d);
 
-                ol.Selected.RotY += d;
-
-                if (ol.Selected.RotY >= 2 * Math.PI) ol.Selected.RotY -= 2 * Math.PI;
-                if (ol.Selected.RotY < 0) ol.Selected.RotY += 2 * Math.PI;
+                ol.Selected.RotY = angle;
 
                 ol.Selected.Refresh();
                 redraw();
@@ -641,12 +655,11 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                var d = (p3.X - ol.Selected.centerPoint.X) * Math.PI / view_z.Width;
+                var d = Math.Sqrt(Math.Pow(p3.X - ol.Selected.X, 2) + Math.Pow(p3.Y - ol.Selected.Y, 2));
+                if (d == 0) return;
+                var angle = Math.Acos((p3.X - ol.Selected.X) / d);
 
-                ol.Selected.RotZ += d;
-
-                if (ol.Selected.RotZ >= 2 * Math.PI) ol.Selected.RotZ -= 2 * Math.PI;
-                if (ol.Selected.RotZ < 0) ol.Selected.RotZ += 2 * Math.PI;
+                ol.Selected.RotZ = angle;
 
                 ol.Selected.Refresh();
                 redraw();
@@ -665,7 +678,7 @@ namespace client
                 {
                     ol.Remove(ol.Selected);
                     ol.Selected = null;
-                    redraw();
+                    redraw(true);
                 }
             }
         }
@@ -676,13 +689,13 @@ namespace client
             {
                 if (vp.fx < 8) vp.fx *= 2;
 
-                redraw();
+                redraw(false);
             }
             if (this.drawMode == eDrawMode.ZOOMOUT)
             {
                 if (vp.fx > 0.25F) vp.fx /= 2;
 
-                redraw();
+                redraw(false);
             }
         }
         private void view_y_Click(object sender, EventArgs e)
@@ -691,13 +704,13 @@ namespace client
             {
                 if (vp.fy < 8) vp.fy *= 2;
 
-                redraw();
+                redraw(false);
             }
             if (this.drawMode == eDrawMode.ZOOMOUT)
             {
                 if (vp.fy > 0.25F) vp.fy /= 2;
 
-                redraw();
+                redraw(false);
             }
         }
         private void view_z_Click(object sender, EventArgs e)
@@ -706,20 +719,20 @@ namespace client
             {
                 if (vp.fz < 8) vp.fz *= 2;
 
-                redraw();
+                redraw(false);
             }
             if (this.drawMode == eDrawMode.ZOOMOUT)
             {
                 if (vp.fz > 0.25F) vp.fz /= 2;
 
-                redraw();
+                redraw(false);
             }
         }
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             ol.Selected.Refresh();
-            redraw();
+            redraw(true);
         }
 
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
@@ -728,7 +741,7 @@ namespace client
             if (c.SelectedIndex >= 0)
             {
                 ol.Selected = ol.Collection[c.SelectedIndex];
-                redraw();
+                redraw(false);
             }
         }
 
@@ -783,7 +796,7 @@ namespace client
                     ol.Collection.form = this;
                     comboBox1.DataSource = ol.Collection;
 
-                    redraw();
+                    redraw(true);
                 }
                 catch (System.InvalidOperationException)
                 {
@@ -825,11 +838,6 @@ namespace client
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new About().Show();
-        }
-
-        private void toolStripButton1_Click_1(object sender, EventArgs e)
-        {
-            calculusWorker.DoScenePreviewCalculus(ol);
         }
     }
 }
