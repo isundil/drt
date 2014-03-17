@@ -7,13 +7,6 @@ Ray::Ray(double x, double y, double z) : AObject() {
   this->x = x;
   this->y = y;
   this->z = z;
-  // std::cout << "x : " << x << std::endl;
-  // std::cout << "y : " << y << std::endl;
-  // std::cout << "z : " << z << std::endl;
-
-  // _props.addProperty("x", new PropertyValue<double>(x));
-  // _props.addProperty("y", new PropertyValue<double>(y));
-  // _props.addProperty("z", new PropertyValue<double>(z));
 }
 
 double Ray::getX() const
@@ -25,3 +18,11 @@ double Ray::getY() const
 double Ray::getZ() const
 { return z; }
 
+void Ray::setX(double _x)
+{ x = _x; }
+
+void Ray::setY(double _y)
+{ y = _y; }
+
+void Ray::setZ(double _z)
+{ z = _z; }
