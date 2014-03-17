@@ -628,7 +628,7 @@ std::stringstream * CompilFail::getStream(size_t *buflen) const
 	ss->write(&code, sizeof(code));
 	ss->write((char *)&id, sizeof(id));
 	ss->write((char *)&from, sizeof(from));
-	*buflen = sizeof(code) +sizeof(id);
+	*buflen = sizeof(code) +sizeof(id) +sizeof(from);
 	return ss;
 }
 

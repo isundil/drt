@@ -77,6 +77,7 @@ void ModuleManager::loadFile(const std::string &filename)
 		return;
 	}
 	std::string name = ((char *(*)())symName)();
+	std::cout << "Successfully loaded module " << name << std::endl;
 	modules.push_back(new AModule(handler, name, (createFncPtr)symLoader));
 }
 
