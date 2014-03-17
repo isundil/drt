@@ -10,6 +10,11 @@ using System.Windows.Forms;
 
 namespace client
 {
+    public class CompilFailException : Exception
+    {
+        public CompilFailException(string msg) : base(msg) { }
+    }
+
     public class ListenerWorker : BackgroundWorker
     {
         private ConClient Connection { get; set; }
@@ -49,7 +54,8 @@ namespace client
 
         private void doListen(object o, DoWorkEventArgs e)
         {
-            if (Connection == null) return;
+            if (Connection == null) Disconnect();
+            if (!Connection.isCreated()) Disconnect();
 
             bool wait_for_instruction = false;
             while (true)
@@ -80,12 +86,16 @@ namespace client
                             Connection.RESULT(_form, out wait_for_instruction);
                             break;
                         case ConClient.eInstruction.COMPILFAIL:
-                            throw new NotImplementedException();
-                            break;
+                            Connection.COMPILFAIL(out wait_for_instruction);
+                            throw new CompilFailException("Sorry, no server can handle your request.");
                         default:
                             Disconnect();
                             break;
                     }
+                }
+                catch (CompilFailException ex)
+                {
+                    _form.errorlabel.Text = ex.Message;
                 }
                 catch (Exception ex)
                 {

@@ -88,9 +88,10 @@ namespace client
         }
 
         Dictionary<eInstruction, uint> MessagesSizes = new Dictionary<eInstruction, uint> {
-            { eInstruction.WELCOME, 2 },
-            { eInstruction.IDCH,    4 },
-            { eInstruction.RESULT,  10 }
+            { eInstruction.WELCOME,     2  },
+            { eInstruction.IDCH,        4  },
+            { eInstruction.COMPILFAIL,  4  },
+            { eInstruction.RESULT,      10 }
         };
 
         public bool HasEnoughBytesToRead(eInstruction i)
@@ -106,6 +107,12 @@ namespace client
             this.clientId = BitConverter.ToUInt16(buf, 0);
             if (clientId != 0xffff) return true;
             return false;
+        }
+
+        public void COMPILFAIL(out bool wait_for_instruction)
+        {
+            var buf = Read(MessagesSizes[eInstruction.COMPILFAIL]);
+            wait_for_instruction = false;
         }
 
         public bool IDCH(out bool wait_for_instruction)
@@ -167,15 +174,20 @@ namespace client
             byte[] buf = new byte[size];
             if (!con.Connected) throw new Exception("Socket disconnected");
             var n = con.GetStream();
-            if (!n.CanRead) throw new Exception("Socket unreadable");
+            if (!n.CanRead)     throw new Exception("Socket unreadable");
             var ret = n.Read(buf, 0, (int)size);
-            if (ret == -1) throw new Exception("Unexpected error");
-            if (ret != size) throw new Exception("Unexpected end of stream");
+            if (ret == -1)      throw new Exception("Unexpected error");
+            if (ret != size)    throw new Exception("Error reading packet");
             return buf;
         }
 
         public ushort clientId { get; set; }
 
         public bool isAvailable() { if (con == null) return false; return con.Connected; }
+
+        public bool isCreated()
+        {
+            return con != null;
+        }
     }
 }
