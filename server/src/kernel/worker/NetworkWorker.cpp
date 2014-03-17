@@ -93,6 +93,7 @@ void NetworkWorker::sendCpuUsage()
 	std::list<int> usage = system::CpuUsage::getCpuUsage();
 	system::MemUsage::getMemUsage(memInfo[0], memInfo[1]);
 	network::PeerInfo::stats st;
+	network::ClientMonitor *cm = nullptr;
 
 	for (auto i = usage.cbegin(); i != usage.cend(); i++)
 		st.cpus.push_back((*i));
@@ -102,6 +103,33 @@ void NetworkWorker::sendCpuUsage()
 	st.maxSwap = memInfo[1].second;
 	getMe()->setStats(st);
 	manager.broadcast(new network::Monitor(*(getMe())));
+
+	for (auto i = clients.cbegin(); i != clients.cend(); i++)
+		if ((*i)->isAClient() && (*i)->isDirect())
+		{
+			if (!cm)
+				cm = getAvgUsage();
+			manager.send(*i, new network::ClientMonitor(*cm));
+		}
+	if (cm)
+		delete cm;
+}
+
+drt::network::ClientMonitor *NetworkWorker::getAvgUsage() const
+{
+	network::ClientMonitor *result = new network::ClientMonitor();
+
+	if (myself->getStats())
+		result->addStat(*(myself->getStats()));
+	for (auto i =clients.cbegin(); i != clients.cend(); i++)
+		if (!(*i)->isAClient())
+		{
+			const drt::network::PeerInfo::stats *st;
+
+			if ((st = (*i)->getStats()) != nullptr)
+				result->addStat(*st);
+		}
+	return result;
 }
 
 void NetworkWorker::connectToPeers()
