@@ -89,7 +89,7 @@ int Socket::write(void *buf, size_t len)
 {
 	struct pollfd pollfd = { .fd = socket, .events = POLLERR };
 	if (poll(&pollfd, 1, 0) < 0 || pollfd.revents & POLLERR)
-		throw std::runtime_error("Oops");
+		return 0;
 	return ::write(socket, buf, len);
 }
 
