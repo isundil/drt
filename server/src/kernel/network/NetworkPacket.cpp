@@ -38,6 +38,7 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	ctors[14] = CompilFail::create;
 
 	ctors[15] = Monitor::create;
+	//ctors[16] = Monitor::ClientMonitor; //-> will NEVER be received by server
 
 	auto f = ctors.find(code);
 	if (f == ctors.end())
@@ -149,6 +150,12 @@ Monitor::Monitor(const PeerInfo &peer)
 	ramLevel = std::make_pair(peer.getStats()->ram, peer.getStats()->maxRam);
 	swapLevel = std::make_pair(peer.getStats()->swap, peer.getStats()->maxSwap);
 }
+
+ClientMonitor::ClientMonitor(): cpuSum(0), nbCpu(0), ramUsage(0), ramMax(0)
+{ }
+
+ClientMonitor::ClientMonitor(const ClientMonitor &o): cpuSum(o.cpuSum), nbCpu(o.nbCpu), ramUsage(o.ramUsage), ramMax(o.ramMax)
+{ }
 
 bool Result::sendToClient(PeerInfo *pi) const
 { return id == pi->getId(); }
@@ -437,6 +444,18 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 	}
 }
 
+bool ClientMonitor::sendToClient(network::PeerInfo *pi) const
+{ return pi->isDirect(); }
+
+void ClientMonitor::addStat(const drt::network::PeerInfo::stats &st)
+{
+	for (auto i = st.cpus.cbegin(); i != st.cpus.cend(); i++)
+		cpuSum += (*i);
+	nbCpu += st.cpus.size();
+	ramUsage += st.ram +st.swap;
+	ramMax += st.maxRam +st.maxSwap;
+}
+
 void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 {
 	m.getNetwork()->rmPeer(m.getNetwork()->getPeer(id));
@@ -594,6 +613,21 @@ std::stringstream *Monitor::getStream(size_t *buflen) const
 	return ss;
 }
 
+std::stringstream *ClientMonitor::getStream(size_t *buflen) const
+{
+	std::stringstream *ss = new std::stringstream();
+	char code = 16;
+	unsigned char cpu;
+
+	cpu = (nbCpu == 0) ? 0 : (cpuSum / nbCpu);
+	ss->write(&code, sizeof(code));
+	ss->write((char *)&cpu, sizeof(cpu));
+	ss->write((char *)&ramUsage, sizeof(ramUsage));
+	ss->write((char *)&ramMax, sizeof(ramMax));
+	*buflen = sizeof(code) +sizeof(cpu) +sizeof(ramUsage) +sizeof(ramMax);
+	return ss;
+}
+
 std::stringstream * Proc::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = nullptr;
@@ -687,6 +721,9 @@ const std::string Ready::getName() const
 
 const std::string Monitor::getName() const
 { return "Monitor"; }
+
+const std::string ClientMonitor::getName() const
+{ return "ClientMonitor"; }
 
 const std::string Proc::getName() const
 { return "Proc"; }

@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <list>
 
+#include "PeerInfo.hpp"
+
 #define NETWORK_MAXCODE  *create(14)
 
 namespace drt
@@ -12,7 +14,6 @@ namespace drt
 class WorkerManager;
 namespace network
 {
-class PeerInfo;
 class Socket;
 
 class ANetworkPacket
@@ -180,6 +181,26 @@ class Ready: public ANetworkPacket
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;
+};
+
+class ClientMonitor: public ANetworkPacket
+{
+	public:
+		ClientMonitor();
+		ClientMonitor(const ClientMonitor &);
+
+		std::stringstream *getStream(size_t *buflen) const;
+
+		const std::string getName() const;
+
+		void addStat(const PeerInfo::stats &st);
+		bool sendToClient(network::PeerInfo *) const;
+
+	private:
+		unsigned int cpuSum;
+		unsigned char nbCpu;
+		unsigned int ramUsage;
+		unsigned int ramMax;
 };
 
 class Monitor: public ANetworkPacket

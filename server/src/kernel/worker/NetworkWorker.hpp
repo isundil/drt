@@ -12,6 +12,7 @@ namespace network
 class PeerInfo;
 class ServerSocket;
 class Socket;
+class ClientMonitor;
 }
 
 namespace worker
@@ -57,6 +58,7 @@ class NetworkWorker: public AWorker
 			void releasePeer(network::PeerInfo *i);
 
 			void sendCpuUsage();
+			network::ClientMonitor *getAvgUsage() const;
 			void acceptNew();
 			void connectToPeers();
 			void readAll();
