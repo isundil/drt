@@ -40,6 +40,7 @@
             this.progressbar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.draw_status = new System.Windows.Forms.ToolStripStatusLabel();
+            this.errorlabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.select_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.move_toolstrip = new System.Windows.Forms.ToolStripButton();
@@ -64,11 +65,12 @@
             this.view_z = new System.Windows.Forms.PictureBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel9 = new System.Windows.Forms.Panel();
+            this.panel10 = new System.Windows.Forms.Panel();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.monitoring1 = new client.Monitoring();
             this.calculusWorker = new client.CalculusWorker();
-            this.errorlabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -85,6 +87,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.view_z)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel9.SuspendLayout();
+            this.panel10.SuspendLayout();
             this.panel8.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -169,6 +172,7 @@
             // 
             this.progressbar.Name = "progressbar";
             this.progressbar.Size = new System.Drawing.Size(120, 20);
+            this.progressbar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             // 
             // toolStripStatusLabel
             // 
@@ -182,6 +186,11 @@
             // 
             this.draw_status.Name = "draw_status";
             this.draw_status.Size = new System.Drawing.Size(0, 21);
+            // 
+            // errorlabel
+            // 
+            this.errorlabel.Name = "errorlabel";
+            this.errorlabel.Size = new System.Drawing.Size(0, 21);
             // 
             // toolStrip1
             // 
@@ -429,6 +438,7 @@
             // 
             // panel9
             // 
+            this.panel9.Controls.Add(this.panel10);
             this.panel9.Controls.Add(this.propertyGrid);
             this.panel9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel9.Location = new System.Drawing.Point(0, 21);
@@ -436,8 +446,18 @@
             this.panel9.Size = new System.Drawing.Size(200, 320);
             this.panel9.TabIndex = 1;
             // 
+            // panel10
+            // 
+            this.panel10.Controls.Add(this.monitoring1);
+            this.panel10.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel10.Location = new System.Drawing.Point(0, 261);
+            this.panel10.Name = "panel10";
+            this.panel10.Size = new System.Drawing.Size(200, 59);
+            this.panel10.TabIndex = 1;
+            // 
             // propertyGrid
             // 
+            this.propertyGrid.CommandsVisibleIfAvailable = false;
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(0, 0);
             this.propertyGrid.Name = "propertyGrid";
@@ -468,17 +488,20 @@
             this.comboBox1.TabStop = false;
             this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
             // 
+            // monitoring1
+            // 
+            this.monitoring1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.monitoring1.Location = new System.Drawing.Point(0, 0);
+            this.monitoring1.Name = "monitoring1";
+            this.monitoring1.Size = new System.Drawing.Size(200, 59);
+            this.monitoring1.TabIndex = 0;
+            // 
             // calculusWorker
             // 
             this.calculusWorker.Connection = null;
             this.calculusWorker.DestinationImage = null;
             this.calculusWorker.WorkerReportsProgress = true;
             this.calculusWorker.WorkerSupportsCancellation = true;
-            // 
-            // errorlabel
-            // 
-            this.errorlabel.Name = "errorlabel";
-            this.errorlabel.Size = new System.Drawing.Size(0, 21);
             // 
             // MainForm
             // 
@@ -516,6 +539,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.view_z)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel9.ResumeLayout(false);
+            this.panel10.ResumeLayout(false);
             this.panel8.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -565,6 +589,8 @@
         private System.Windows.Forms.ToolStripButton rotate_toolstrip;
         private System.Windows.Forms.PictureBox view_3d;
         public System.Windows.Forms.ToolStripStatusLabel errorlabel;
+        private System.Windows.Forms.Panel panel10;
+        private Monitoring monitoring1;
     }
 }
 

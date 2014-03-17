@@ -16,10 +16,19 @@ namespace client
             CAUTH       = 1,
             WELCOME     = 2,
             IDCH        = 3,
+            MONITOR     = 16,
             NEWJOB      = 8,
             RESULT      = 13,
             COMPILFAIL  = 14
-        }
+        };
+
+        Dictionary<eInstruction, uint> MessagesSizes = new Dictionary<eInstruction, uint> {
+            { eInstruction.WELCOME,     2  },
+            { eInstruction.IDCH,        4  },
+            { eInstruction.COMPILFAIL,  4  },
+            { eInstruction.MONITOR,     9  },
+            { eInstruction.RESULT,      10 }
+        };
 
         public void Disconnect()
         {
@@ -86,13 +95,6 @@ namespace client
             var msg = -1;
             n.Write(BitConverter.GetBytes((UInt16)msg), 0, 2);
         }
-
-        Dictionary<eInstruction, uint> MessagesSizes = new Dictionary<eInstruction, uint> {
-            { eInstruction.WELCOME,     2  },
-            { eInstruction.IDCH,        4  },
-            { eInstruction.COMPILFAIL,  4  },
-            { eInstruction.RESULT,      10 }
-        };
 
         public bool HasEnoughBytesToRead(eInstruction i)
         {
@@ -167,6 +169,19 @@ namespace client
             Int32 color = BitConverter.ToInt32(buf, 6);
 
             f.Invoke(f.DrawPixel, new object[] { X, Y, System.Drawing.Color.FromArgb(color) });
+        }
+
+        public void MONITOR(MainForm f, out bool wait_for_instruction)
+        {
+            var buf = Read(MessagesSizes[eInstruction.MONITOR]);
+
+            wait_for_instruction = false;
+
+            byte cpu = buf[0];
+            UInt32 ramuse = BitConverter.ToUInt32(buf, 1);
+            UInt32 rammax = BitConverter.ToUInt32(buf, 5);
+
+            f.Invoke(f.Monitor, new object[] { cpu, ramuse, rammax });
         }
 
         private byte[] Read(uint size)

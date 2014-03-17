@@ -153,11 +153,18 @@ namespace client
         public ConnectDelegate Connect;
         public delegate void DrawPixelDelegate(int x, int y, Color c);
         public DrawPixelDelegate DrawPixel;
+        public delegate void MonitorDelegate(byte cpu, UInt32 ramuse, UInt32 rammax);
+        public MonitorDelegate Monitor;
 
         private void ShowConnection()
         {
             var con = new Connection();
             con.ShowDialog(this);
+        }
+
+        private void UpdateMonitor(byte cpu, UInt32 ramuse, UInt32 rammax)
+        {
+            monitoring1.UpdateMonitor(cpu, ramuse, rammax);
         }
 
         static int DrawPixel3DView_count = 0;
@@ -185,6 +192,7 @@ namespace client
             vp.GridLevel = 10;
             this.Connect = new ConnectDelegate(ShowConnection);
             this.DrawPixel = new DrawPixelDelegate(DrawPixel3DView);
+            this.Monitor = new MonitorDelegate(UpdateMonitor);
 
             td_bitmap = new Bitmap(view_3d.Width, view_3d.Height);
             empty_bitmap(td_bitmap);

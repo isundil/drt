@@ -88,6 +88,9 @@ namespace client
                         case ConClient.eInstruction.COMPILFAIL:
                             Connection.COMPILFAIL(out wait_for_instruction);
                             throw new CompilFailException("Sorry, no server can handle your request.");
+                        case ConClient.eInstruction.MONITOR:
+                            Connection.MONITOR(_form, out wait_for_instruction);
+                            break;
                         default:
                             Disconnect();
                             break;
