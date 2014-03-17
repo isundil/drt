@@ -169,9 +169,9 @@ namespace client
             DrawPixel3DView_count++;
             progressbar.Value = DrawPixel3DView_count;
 
-            if (DrawPixel3DView_count % 50 == 0 || DrawPixel3DView_count == progressbar.Maximum)
+            if (DrawPixel3DView_count % 100 == 0 || DrawPixel3DView_count == progressbar.Maximum)
             {
-                view_3d.Image = td_bitmap;
+                view_3d.Refresh();
             }
             if (DrawPixel3DView_count == progressbar.Maximum)
             {
