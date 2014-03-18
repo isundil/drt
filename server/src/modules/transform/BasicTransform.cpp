@@ -14,7 +14,7 @@ extern "C"
 	ret = new Translation(param->x, param->y, param->z);
 	break;
       case 2:
-	// ret = new Rotation(param->x, param->y, param->z);
+	ret = new Rotation(param->x, param->y, param->z);
 	break;
       default:
 	break;

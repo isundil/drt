@@ -123,7 +123,6 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	    	color = objects[i]->object->getColor();
 		// here I need to apply post calc effects such as light
 	      }
-	    
 	  }
 	(void)worker;
 	delete ray;
