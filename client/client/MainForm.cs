@@ -144,6 +144,7 @@ namespace client
             {
                 progressbar.Value = 0;
                 progressbar.Maximum = view_3d.Width * view_3d.Height;
+                calculusWorker.DestinationImage = view_3d.Image;
                 calculusWorker.DoScenePreviewCalculus(ol);
             }
         }
@@ -159,7 +160,10 @@ namespace client
         private void ShowConnection()
         {
             var con = new Connection();
-            con.ShowDialog(this);
+            if (con.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            {
+                Properties.Settings.Default.Save();
+            }
         }
 
         private void UpdateMonitor(byte cpu, UInt32 ramuse, UInt32 rammax)
