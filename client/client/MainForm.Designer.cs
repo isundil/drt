@@ -69,6 +69,7 @@
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.show_server_mapping = new System.Windows.Forms.CheckBox();
             this.monitoring1 = new client.Monitoring();
             this.calculusWorker = new client.CalculusWorker();
             this.menuStrip1.SuspendLayout();
@@ -488,6 +489,17 @@
             this.comboBox1.TabStop = false;
             this.comboBox1.SelectedValueChanged += new System.EventHandler(this.comboBox1_SelectedValueChanged);
             // 
+            // show_server_mapping
+            // 
+            this.show_server_mapping.AutoSize = true;
+            this.show_server_mapping.Location = new System.Drawing.Point(278, 29);
+            this.show_server_mapping.Name = "show_server_mapping";
+            this.show_server_mapping.Size = new System.Drawing.Size(128, 17);
+            this.show_server_mapping.TabIndex = 4;
+            this.show_server_mapping.Text = "Show server mapping";
+            this.show_server_mapping.UseVisualStyleBackColor = true;
+            this.show_server_mapping.CheckedChanged += new System.EventHandler(this.show_server_mapping_CheckedChanged);
+            // 
             // monitoring1
             // 
             this.monitoring1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -509,6 +521,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(750, 416);
+            this.Controls.Add(this.show_server_mapping);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.statusStrip1);
@@ -591,6 +604,7 @@
         public System.Windows.Forms.ToolStripStatusLabel errorlabel;
         private System.Windows.Forms.Panel panel10;
         private Monitoring monitoring1;
+        private System.Windows.Forms.CheckBox show_server_mapping;
     }
 }
 
