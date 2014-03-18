@@ -120,8 +120,6 @@ namespace client
         }
 
         Bitmap td_bitmap;
-        bool finished_3d_drawing = true;
-        bool request_new_drawing = false;
         private void redraw(bool rebuild_3d = false)
         {
             var bm_x = new System.Drawing.Bitmap(view_x.InitialImage, view_x.Size);
@@ -143,20 +141,13 @@ namespace client
             view_x.Image = bm_x;
             view_y.Image = bm_y;
             view_z.Image = bm_z;
-            if (rebuild_3d == true && request_new_drawing == false && finished_3d_drawing == true)
+            if (rebuild_3d == true)
             {
-                finished_3d_drawing = false;
-                show_server_mapping.Enabled = false;
-                show_server_mapping.Checked = false;
                 servers_map.Clear();
                 progressbar.Value = 0;
                 progressbar.Maximum = view_3d.Width * view_3d.Height;
                 calculusWorker.DestinationImage = view_3d.Image;
                 calculusWorker.DoScenePreviewCalculus(ol);
-            }
-            else if (rebuild_3d == true && finished_3d_drawing == false)
-            {
-                request_new_drawing = true;
             }
         }
 
@@ -212,13 +203,6 @@ namespace client
                 DrawPixel3DView_count = 0;
                 progressbar.Value = 0;
                 show_server_mapping.Enabled = true;
-
-                finished_3d_drawing = true;
-                if (request_new_drawing == true)
-                {
-                    request_new_drawing = false;
-                    redraw(ol.Collection.Count > 1 ? true : false);
-                }
             }
         }
 
