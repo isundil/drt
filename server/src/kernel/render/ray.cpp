@@ -10,19 +10,25 @@ Ray::Ray(double x, double y, double z) : AObject() {
 }
 
 double Ray::getX() const
-{ return x; }
+{ return x + mod_x; }
 
 double Ray::getY() const
-{ return y; }
+{ return y + mod_y; }
 
 double Ray::getZ() const
-{ return z; }
+{ return z + mod_z; }
 
 void Ray::setX(double _x)
-{ x = _x; }
+{ mod_x = _x; }
 
 void Ray::setY(double _y)
-{ y = _y; }
+{ mod_y = _y; }
 
 void Ray::setZ(double _z)
-{ z = _z; }
+{ mod_z = _z; }
+
+void Ray::reset() {
+  mod_x = 0;
+  mod_y = 0;
+  mod_z = 0;
+}

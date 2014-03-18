@@ -15,6 +15,9 @@ void	Translation::preProcess(Camera * camera, Ray * ray)
   double	y = camera->getY() - _y;
   double	z = camera->getZ() - _z;
 
+  camera->setX(x);
+  camera->setY(y);
+  camera->setZ(z);
   // probleme : comment je modifie la camera ? dois-je retourner une copie modifiee ?
 }
 
