@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -119,6 +120,8 @@ namespace client
         }
 
         Bitmap td_bitmap;
+        bool finished_3d_drawing = true;
+        bool request_new_drawing = false;
         private void redraw(bool rebuild_3d = false)
         {
             var bm_x = new System.Drawing.Bitmap(view_x.InitialImage, view_x.Size);
@@ -140,19 +143,27 @@ namespace client
             view_x.Image = bm_x;
             view_y.Image = bm_y;
             view_z.Image = bm_z;
-            if (rebuild_3d == true)
+            if (rebuild_3d == true && request_new_drawing == false && finished_3d_drawing == true)
             {
+                finished_3d_drawing = false;
+                show_server_mapping.Enabled = false;
+                show_server_mapping.Checked = false;
+                servers_map.Clear();
                 progressbar.Value = 0;
                 progressbar.Maximum = view_3d.Width * view_3d.Height;
                 calculusWorker.DestinationImage = view_3d.Image;
                 calculusWorker.DoScenePreviewCalculus(ol);
+            }
+            else if (rebuild_3d == true && finished_3d_drawing == false)
+            {
+                request_new_drawing = true;
             }
         }
 
         private ListenerWorker listenerWorker = null;
         public delegate void ConnectDelegate();
         public ConnectDelegate Connect;
-        public delegate void DrawPixelDelegate(int x, int y, Color c);
+        public delegate void DrawPixelDelegate(ushort src, int x, int y, Color c);
         public DrawPixelDelegate DrawPixel;
         public delegate void MonitorDelegate(byte cpu, UInt32 ramuse, UInt32 rammax);
         public MonitorDelegate Monitor;
@@ -172,10 +183,22 @@ namespace client
         }
 
         static int DrawPixel3DView_count = 0;
-        private void DrawPixel3DView(int x, int y, Color c)
+
+        Dictionary<ushort, int> servers_map = new Dictionary<ushort,int>();
+
+        private void DrawPixel3DView(ushort src, int x, int y, Color c)
         {
             if (x >= td_bitmap.Width || y >= td_bitmap.Height) return;
             td_bitmap.SetPixel(x, y, c);
+
+            if (servers_map.ContainsKey(src))
+            {
+                servers_map[src]++;
+            }
+            else
+            {
+                servers_map[src] = 1;
+            }
 
             DrawPixel3DView_count++;
             progressbar.Value = DrawPixel3DView_count;
@@ -188,6 +211,14 @@ namespace client
             {
                 DrawPixel3DView_count = 0;
                 progressbar.Value = 0;
+                show_server_mapping.Enabled = true;
+
+                finished_3d_drawing = true;
+                if (request_new_drawing == true)
+                {
+                    request_new_drawing = false;
+                    redraw(ol.Collection.Count > 1 ? true : false);
+                }
             }
         }
 
@@ -213,6 +244,8 @@ namespace client
             ol.Add(new Camera());
             ol.Selected = ol.Collection[0];
             redraw(false);
+
+            show_server_mapping.Enabled = false;
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -850,6 +883,41 @@ namespace client
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new About().Show();
+        }
+
+        private void show_server_mapping_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!show_server_mapping.Checked)
+            {
+                view_3d.Image = td_bitmap;
+                return;
+            }
+
+            Bitmap bm = new Bitmap(td_bitmap.Width, td_bitmap.Height);
+            Color[] colors = new Color[10] {
+                Color.Red, Color.Blue, Color.Green, Color.Gold, Color.Silver,
+                Color.Violet, Color.Turquoise, Color.Pink, Color.AliceBlue, Color.Black
+            };
+
+            int x = 0;
+            int y = 0;
+
+            foreach (var key in servers_map.Keys)
+            {
+                for (var i = 0; i < servers_map[key]; i++)
+                {
+                    bm.SetPixel(x, y, colors[key % colors.Length]);
+
+                    y++;
+                    if (y >= td_bitmap.Height)
+                    {
+                        y = 0;
+                        x++;
+                    }
+                }
+            }
+
+            view_3d.Image = bm;
         }
     }
 }
