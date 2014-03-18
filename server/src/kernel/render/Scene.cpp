@@ -45,7 +45,16 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 
 Scene::~Scene()
 {
+	delete camera;
+	for (auto i = objects.cbegin(); i != objects.cend(); i++)
+		delete i->second;
 	::unlink(scenePath.c_str());
+}
+
+Scene::s_Item::~s_Item()
+{
+	delete [] data;
+	delete object;
 }
 
 Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *modules, std::map<unsigned int, char[20]>moduleArray)
@@ -114,6 +123,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	(void)worker;
 	std::cout << "[" << x << ", " << y << "] color is " << color << " and k is " << k << std::endl;
 	*/
+	delete ray;
 	return 0x1155ee;
 	return color;
 }

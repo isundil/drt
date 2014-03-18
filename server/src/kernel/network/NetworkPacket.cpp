@@ -113,7 +113,7 @@ NewJob::NewJob(
 	filein.close();
 	client = drt::WorkerManager::getSingleton() -> getNetwork() -> getPeer( id );
 	client -> setScene( scene );
-
+	free(filename);
 }
 
 CompilFail::CompilFail(unsigned short _id): id(_id), from(WorkerManager::getSingleton()->getNetwork()->getMe()->getId())

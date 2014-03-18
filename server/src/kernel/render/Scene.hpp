@@ -38,6 +38,8 @@ namespace drt
 					char					*data;
 					std::list<struct s_Item *>	subItems;
 					AObject *object;
+
+					~s_Item();
 				}					t_Item;
 				typedef struct __attribute__((packed))
 				{

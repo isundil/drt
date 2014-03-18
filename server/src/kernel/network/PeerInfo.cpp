@@ -163,6 +163,8 @@ std::string PeerInfo::stats::debug() const
 void
 PeerInfo::setScene( render::Scene *s )
 {
+	if (scene)
+		delete scene;
 	this -> scene = s;
 }
 
