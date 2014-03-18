@@ -70,7 +70,7 @@ Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *module
 		if (s.read(obj->data, obj->toReceive.headerSize))
 			std::cout << "  data contain [" << (char *) obj->data << "]" << std::endl;
 	}
-	std::cout << std::endl;
+	std::cout << std::endl << "there is " << obj->toReceive.nbSubItem << " subItems" << std::endl;
 	for (unsigned int a = 0; a < obj->toReceive.nbSubItem; a++)
 		obj->subItems.push_back(parseItem(s, modules, moduleArray));
 
