@@ -3,8 +3,8 @@
 #include <ostream>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <map>
+
 #include "NetworkPacket.hpp"
 #include "PeerInfo.hpp"
 #include "Socket.hpp"
@@ -36,7 +36,6 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	ctors[12] = Calc::create;
 	ctors[13] = Result::create;
 	ctors[14] = CompilFail::create;
-
 	ctors[15] = Monitor::create;
 	//ctors[16] = Monitor::ClientMonitor; //-> will NEVER be received by server
 
