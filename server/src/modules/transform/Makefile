@@ -5,7 +5,7 @@ CXX=	clang++ -std=c++11 -fpic -I../../kernel/render/ -I../includes/ -I../../kern
 
 SRC=	BasicTransform.cpp	\
 	Translation.cpp		\
-	Rotation.hpp
+	Rotation.cpp
 
 OBJ=	$(SRC:.cpp=.o)
 

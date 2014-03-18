@@ -16,5 +16,9 @@ private:
   double	_x;
   double	_y;
   double	_z;
+
+  void			xRotation(Camera * camera, Ray * ray);
+  void			yRotation(Camera * camera, Ray * ray);
+  void			zRotation(Camera * camera, Ray * ray);
 };
 
