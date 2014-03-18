@@ -1,5 +1,6 @@
 #pragma once
 #include "Translation.hpp"
+#include "Rotation.hpp"
 
 typedef struct	s_param {
   double	x;

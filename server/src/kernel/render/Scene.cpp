@@ -106,7 +106,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	double	tmpk = k;
 	unsigned int  color = 0;
 	Camera	saveCamera(*camera);
-	Ray *ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
+	Ray *ray = new Ray(this->d, this->width / 2 - x, this->height / 2 - y);
 
 	for (unsigned int i = 0; i < objects.size(); i++)
 	  {
@@ -121,12 +121,13 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	      {
 	    	k = tmpk;
 	    	color = objects[i]->object->getColor();
+		// std::cout << "at [" << x << ", " << y << "] k = " << k << std::endl;
 		// here I need to apply post calc effects such as light
 	      }
 	  }
 	(void)worker;
 	delete ray;
-	return 0x1155ee;
+	// return 0x1155ee;
 	return color;
 }
 
