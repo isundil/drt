@@ -250,11 +250,12 @@ class Result: public ANetworkPacket
 		const std::string getName() const;
 		bool sendToClient(PeerInfo *) const;
 
-		Result(unsigned short id, unsigned short x, unsigned short y, unsigned int color);
+		Result(unsigned short id, unsigned short x, unsigned short y, unsigned int color, unsigned short src=0xFFFF);
 		Result(const Result &);
 
 	private:
 		unsigned short id;
+		unsigned short src;
 		unsigned short x;
 		unsigned short y;
 		unsigned int color;
