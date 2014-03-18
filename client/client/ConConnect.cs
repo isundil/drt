@@ -27,7 +27,7 @@ namespace client
             { eInstruction.IDCH,        4  },
             { eInstruction.COMPILFAIL,  4  },
             { eInstruction.MONITOR,     9  },
-            { eInstruction.RESULT,      10 }
+            { eInstruction.RESULT,      12 }
         };
 
         public void Disconnect()
@@ -163,12 +163,12 @@ namespace client
 
             wait_for_instruction = false;
 
-            UInt16 Id = BitConverter.ToUInt16(buf, 0);
-            UInt16 X = BitConverter.ToUInt16(buf, 2);
-            UInt16 Y = BitConverter.ToUInt16(buf, 4);
-            Int32 color = BitConverter.ToInt32(buf, 6);
+            UInt16 Src = BitConverter.ToUInt16(buf, 2);
+            UInt16 X = BitConverter.ToUInt16(buf, 4);
+            UInt16 Y = BitConverter.ToUInt16(buf, 6);
+            Int32 color = BitConverter.ToInt32(buf, 8);
 
-            f.Invoke(f.DrawPixel, new object[] { X, Y, System.Drawing.Color.FromArgb(color) });
+            f.Invoke(f.DrawPixel, new object[] { Src, X, Y, System.Drawing.Color.FromArgb(color) });
         }
 
         public void MONITOR(MainForm f, out bool wait_for_instruction)

@@ -3,8 +3,8 @@
 #include <ostream>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <map>
+
 #include "NetworkPacket.hpp"
 #include "PeerInfo.hpp"
 #include "Socket.hpp"
@@ -36,7 +36,6 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	ctors[12] = Calc::create;
 	ctors[13] = Result::create;
 	ctors[14] = CompilFail::create;
-
 	ctors[15] = Monitor::create;
 	//ctors[16] = Monitor::ClientMonitor; //-> will NEVER be received by server
 
@@ -67,10 +66,13 @@ bool IdCh::sendToClient(PeerInfo *pi) const
 Confirm::Confirm(unsigned short _id): id(_id)
 { }
 
-Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigned int c): id(_id), x(px), y(py), color(c)
-{ }
+Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigned int c, unsigned short _src): id(_id), x(px), y(py), color(c), src(_src)
+{
+	if (src == 0xFFFF)
+		src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
+}
 
-Result::Result(const Result &o): id(o.id), x(o.x), y(o.y), color(o.color)
+Result::Result(const Result &o): id(o.id), x(o.x), y(o.y), color(o.color), src(o.src)
 { }
 
 Netsplit::Netsplit(unsigned short _id): id(_id)
@@ -282,13 +284,15 @@ ANetworkPacket * Calc::create(network::Socket * socket)
 ANetworkPacket * Result::create(network::Socket * socket)
 {
 	unsigned short id;
+	unsigned short src;
 	unsigned short pos[2];
 	unsigned int color;
 
 	socket->read(&id, sizeof(id));
+	socket->read(&src, sizeof(src));
 	socket->read(&pos, sizeof(pos));
 	socket->read(&color, sizeof(color));
-	return new Result(id, pos[0], pos[1], color);
+	return new Result(id, pos[0], pos[1], color, src);
 }
 
 ANetworkPacket * CompilFail::create(network::Socket * socket)
@@ -646,10 +650,11 @@ std::stringstream * Result::getStream(size_t *buflen) const
 	char code = 0x0D;
 	ss->write(&code, sizeof(code));
 	ss->write((char *)&id, sizeof(id));
+	ss->write((char *)&src, sizeof(src));
 	ss->write((char *)&x, sizeof(x));
 	ss->write((char *)&y, sizeof(y));
 	ss->write((char *)&color, sizeof(color));
-	*buflen = sizeof(code) +sizeof(id) +sizeof(x) +sizeof(y) +sizeof(color);
+	*buflen = sizeof(code) +sizeof(id) +sizeof(x) +sizeof(y) +sizeof(color) +sizeof(src);
 	return ss;
 }
 
