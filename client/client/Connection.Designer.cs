@@ -33,7 +33,6 @@
             this.ip = new System.Windows.Forms.TextBox();
             this.ok_btn = new System.Windows.Forms.Button();
             this.cancel_btn = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.port = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -87,16 +86,6 @@
             this.cancel_btn.UseVisualStyleBackColor = true;
             this.cancel_btn.Click += new System.EventHandler(this.cancel_btn_Click);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(12, 90);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "TEST";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // port
             // 
             this.port.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::client.Properties.Settings.Default, "default_port", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
@@ -113,10 +102,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel_btn;
-            this.ClientSize = new System.Drawing.Size(292, 125);
+            this.ClientSize = new System.Drawing.Size(289, 125);
             this.ControlBox = false;
             this.Controls.Add(this.port);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.cancel_btn);
             this.Controls.Add(this.ok_btn);
             this.Controls.Add(this.ip);
@@ -139,7 +127,6 @@
         private System.Windows.Forms.TextBox ip;
         private System.Windows.Forms.Button ok_btn;
         private System.Windows.Forms.Button cancel_btn;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TextBox port;
     }
 }
