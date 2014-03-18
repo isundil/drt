@@ -26,7 +26,6 @@ SRC=	main.cpp					\
 		system/MemUsage.cpp			\
 		\
 		render/Scene.cpp		\
-		render/AObject.cpp		\
 		render/camera.cpp \
 		render/ray.cpp
 

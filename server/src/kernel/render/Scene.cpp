@@ -80,8 +80,6 @@ Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *module
 	if (tmpModule == nullptr)
 		throw network::CompilFail();
 	result = tmpModule->getInstance(obj->toReceive.subModule, obj->data);
-	if (tmpModule == NULL)
-		std::cout << "getModule() return NULL" << std::endl;
 	std::cout << "subModule : " << (short) obj->toReceive.subModule << std::endl;
 	std::cout << "getting instance of " << tmpStr << std::endl;
 	obj->object = result;
@@ -105,24 +103,28 @@ void Scene::copy_bufs(unsigned char dest[4], unsigned char src[3])
 unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 {
 	double	k = -1;
-	double	tmpK = k;
+	double	tmpk = k;
 	unsigned int  color = 0;
-	Ray		*ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
+	Camera	saveCamera(*camera);
+	Ray *ray = new Ray(this->d, this->width / 2 - x, this->height / 2 -y);
 
-	/*
-	for (auto a = objects.begin(); a != objects.end(); a++)
-	{
-		tmpK = (*a).second->object->computeEquation(camera, ray);
-		if ((tmpK < k || k == -1) && tmpK != -1)
-		{
-			k = tmpK;
-			color = (*a).second->object->getColor();
-		}
-	}
-
+	for (unsigned int i = 0; i < objects.size(); i++)
+	  {
+	    // here I need to apply transformation on the camera and then apply rotation on ray
+	    // objects[i]->preProcess(); // I don't think the object will need a preProcess func.
+	    camera->reset();
+	    ray->reset();
+	    for (auto a = objects[i]->subItems.cbegin(); a != objects[i]->subItems.cend(); a++)
+	      (*a)->object->preProcess(camera, ray);
+	    tmpk = objects[i]->object->computeEquation(camera, ray);
+	    if ((tmpk < k || k == -1) && tmpk >= 0)
+	      {
+	    	k = tmpk;
+	    	color = objects[i]->object->getColor();
+		// here I need to apply post calc effects such as light
+	      }
+	  }
 	(void)worker;
-	std::cout << "[" << x << ", " << y << "] color is " << color << " and k is " << k << std::endl;
-	*/
 	delete ray;
 	return 0x1155ee;
 	return color;

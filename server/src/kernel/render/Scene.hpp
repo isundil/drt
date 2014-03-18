@@ -2,6 +2,7 @@
 
 #include <list>
 #include <string>
+#include <map>
 #include "IObject.hh"
 #include "AObject.hpp"
 #include "camera.hpp"
