@@ -526,7 +526,9 @@ namespace client
                     case eDrawMode.SPHERE:
                         if (_tmpObject != null)
                         {
-                            _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                            if (v == Util.eView.x) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                            if (v == Util.eView.y) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                            if (v == Util.eView.z) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2));
                         }
                         else
                         {
@@ -540,7 +542,9 @@ namespace client
                     case eDrawMode.CYLINDER:
                         if (_tmpObject != null)
                         {
-                            _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                            if (v == Util.eView.x) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                            if (v == Util.eView.y) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                            if (v == Util.eView.z) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2));
                         }
                         else
                         {
