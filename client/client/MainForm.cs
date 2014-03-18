@@ -521,41 +521,33 @@ namespace client
                 var vy = new System.Drawing.Bitmap(view_y_cp, view_y_cp.Size);
                 var vz = new System.Drawing.Bitmap(view_z_cp, view_z_cp.Size);
 
+                Type object_type = null;
+
                 switch (this.drawMode)
                 {
                     case eDrawMode.SPHERE:
-                        if (_tmpObject != null)
-                        {
-                            if (v == Util.eView.x) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
-                            if (v == Util.eView.y) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
-                            if (v == Util.eView.z) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2));
-                        }
-                        else
-                        {
-                            if (v == Util.eView.x) _tmpObject = Sphere.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                            if (v == Util.eView.y) _tmpObject = Sphere.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                            if (v == Util.eView.z) _tmpObject = Sphere.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        }
-
-                        draw_status.Text += ", Sphere { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + _tmpObject.Radius + " }";
+                        object_type = typeof(Sphere);
                         break;
                     case eDrawMode.CYLINDER:
-                        if (_tmpObject != null)
-                        {
-                            if (v == Util.eView.x) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
-                            if (v == Util.eView.y) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
-                            if (v == Util.eView.z) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2));
-                        }
-                        else
-                        {
-                            if (v == Util.eView.x) _tmpObject = Cylinder.create_x((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                            if (v == Util.eView.y) _tmpObject = Cylinder.create_y((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                            if (v == Util.eView.z) _tmpObject = Cylinder.create_z((Points)p1.Clone(), (Points)p3.Clone(), vp, true);
-                        }
-
-                        draw_status.Text += ", Cylinder { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + _tmpObject.Radius + " }";
+                        object_type = typeof(Cylinder);
                         break;
                 }
+
+                if (object_type == null) return false;
+
+                if (_tmpObject != null)
+                {
+                    if (v == Util.eView.x) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                    if (v == Util.eView.y) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Z - _tmpObject.centerPoint.Z, 2));
+                    if (v == Util.eView.z) _tmpObject.Radius = (int)Math.Sqrt(Math.Pow(p3.X - _tmpObject.centerPoint.X, 2) + Math.Pow(p3.Y - _tmpObject.centerPoint.Y, 2));
+                }
+                else
+                {
+                    if (v == Util.eView.x) _tmpObject = object_type.GetMethod("create_x").Invoke(null, new object[] { (Points)p1.Clone(), (Points)p3.Clone(), vp, true }) as AObjects;
+                    if (v == Util.eView.y) _tmpObject = object_type.GetMethod("create_y").Invoke(null, new object[] { (Points)p1.Clone(), (Points)p3.Clone(), vp, true }) as AObjects;
+                    if (v == Util.eView.z) _tmpObject = object_type.GetMethod("create_z").Invoke(null, new object[] { (Points)p1.Clone(), (Points)p3.Clone(), vp, true }) as AObjects;
+                }
+                draw_status.Text += ", " + object_type.ToString() + " { Cx : " + _tmpObject.centerPoint.X + ", Cy : " + _tmpObject.centerPoint.Y + ", Cz : " + _tmpObject.centerPoint.Z + ", R : " + _tmpObject.Radius + " }";
 
                 _tmpObject.Refresh();
 
