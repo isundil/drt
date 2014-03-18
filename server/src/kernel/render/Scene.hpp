@@ -2,6 +2,7 @@
 
 #include <list>
 #include <string>
+#include <map>
 #include "IObject.hh"
 #include "AObject.hpp"
 #include "camera.hpp"
@@ -38,6 +39,8 @@ namespace drt
 					char					*data;
 					std::list<struct s_Item *>	subItems;
 					AObject *object;
+
+					~s_Item();
 				}					t_Item;
 				typedef struct __attribute__((packed))
 				{

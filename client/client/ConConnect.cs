@@ -16,25 +16,24 @@ namespace client
             CAUTH       = 1,
             WELCOME     = 2,
             IDCH        = 3,
+            MONITOR     = 16,
             NEWJOB      = 8,
             RESULT      = 13,
             COMPILFAIL  = 14
-        }
+        };
+
+        Dictionary<eInstruction, uint> MessagesSizes = new Dictionary<eInstruction, uint> {
+            { eInstruction.WELCOME,     2  },
+            { eInstruction.IDCH,        4  },
+            { eInstruction.COMPILFAIL,  4  },
+            { eInstruction.MONITOR,     9  },
+            { eInstruction.RESULT,      10 }
+        };
 
         public void Disconnect()
         {
             if (con != null)
             con.Close();
-        }
-
-        int READ(NetworkStream n, byte[] buf, int size)
-        {
-            int read = 0;
-            while (read < size)
-            {
-                read += n.Read(buf, read, size - read);
-            }
-            return read;
         }
 
         private void write_header(Scene s, System.Drawing.Size size, List<byte> buf)
@@ -97,25 +96,34 @@ namespace client
             n.Write(BitConverter.GetBytes((UInt16)msg), 0, 2);
         }
 
-        public bool WELCOME()
+        public bool HasEnoughBytesToRead(eInstruction i)
         {
-            var n = con.GetStream();
-            var buf = new byte[2];
-            READ(n, buf, 2);
+            return MessagesSizes[i] >= con.Available;
+        }
 
-            this.clientId = BitConverter.ToInt16(buf, 0);
-            if (clientId != -1) return true;
+        public bool WELCOME(out bool wait_for_instruction)
+        {
+            var buf = Read(MessagesSizes[eInstruction.WELCOME]);
+            wait_for_instruction = false;
+
+            this.clientId = BitConverter.ToUInt16(buf, 0);
+            if (clientId != 0xffff) return true;
             return false;
         }
 
-        public bool IDCH()
+        public void COMPILFAIL(out bool wait_for_instruction)
         {
-            var n = con.GetStream();
-            var buf = new byte[4];
-            READ(n, buf, 4);
+            var buf = Read(MessagesSizes[eInstruction.COMPILFAIL]);
+            wait_for_instruction = false;
+        }
 
-            this.clientId = BitConverter.ToInt16(buf, 2);
-            if (this.clientId != -1) return true;
+        public bool IDCH(out bool wait_for_instruction)
+        {
+            var buf = Read(MessagesSizes[eInstruction.IDCH]);
+
+            wait_for_instruction = false;
+            this.clientId = BitConverter.ToUInt16(buf, 2);
+            if (this.clientId != 0xffff) return true;
             return false;
         }
 
@@ -123,7 +131,7 @@ namespace client
         {
             try
             {
-                clientId = -1;
+                clientId = 0xffff;
                 con = new TcpClient(ip, port);
 
                 CAUTH();
@@ -134,32 +142,67 @@ namespace client
             catch (Exception) { throw; }
         }
 
-        public byte ReadSync()
+        public bool GetByte(out byte b)
         {
+            if (!con.Connected) throw new Exception("Socket disconnected");
             var n = con.GetStream();
-
-            if (!n.CanRead) throw new Exception("Can't read dude");
-
-            var i = n.ReadByte();
-
-            if (i == -1) throw new Exception("End of stream");
-            return (byte)i;
+            if (!n.CanRead) throw new Exception("Socket unreadable");
+            var ret = n.ReadByte();
+            if (ret == -1)
+            {
+                b = 0;
+                return false;
+            }
+            b = (byte)ret;
+            return true;
         }
 
-        public void RESULT(MainForm f)
+        public void RESULT(MainForm f, out bool wait_for_instruction)
         {
-            var n = con.GetStream();
-            var buf = new byte[10];
-            READ(n, buf, 10);
+            var buf = Read(MessagesSizes[eInstruction.RESULT]);
+
+            wait_for_instruction = false;
 
             UInt16 Id = BitConverter.ToUInt16(buf, 0);
             UInt16 X = BitConverter.ToUInt16(buf, 2);
             UInt16 Y = BitConverter.ToUInt16(buf, 4);
-            UInt32 color = BitConverter.ToUInt32(buf, 6);
+            Int32 color = BitConverter.ToInt32(buf, 6);
 
-            f.Invoke(f.DrawPixel, new object[] { X, Y, System.Drawing.Color.FromArgb((int) color) });
+            f.Invoke(f.DrawPixel, new object[] { X, Y, System.Drawing.Color.FromArgb(color) });
         }
 
-        public short clientId { get; set; }
+        public void MONITOR(MainForm f, out bool wait_for_instruction)
+        {
+            var buf = Read(MessagesSizes[eInstruction.MONITOR]);
+
+            wait_for_instruction = false;
+
+            byte cpu = buf[0];
+            UInt32 ramuse = BitConverter.ToUInt32(buf, 1);
+            UInt32 rammax = BitConverter.ToUInt32(buf, 5);
+
+            f.Invoke(f.Monitor, new object[] { cpu, ramuse, rammax });
+        }
+
+        private byte[] Read(uint size)
+        {
+            byte[] buf = new byte[size];
+            if (!con.Connected) throw new Exception("Socket disconnected");
+            var n = con.GetStream();
+            if (!n.CanRead)     throw new Exception("Socket unreadable");
+            var ret = n.Read(buf, 0, (int)size);
+            if (ret == -1)      throw new Exception("Unexpected error");
+            if (ret != size)    throw new Exception("Error reading packet");
+            return buf;
+        }
+
+        public ushort clientId { get; set; }
+
+        public bool isAvailable() { if (con == null) return false; return con.Connected; }
+
+        public bool isCreated()
+        {
+            return con != null;
+        }
     }
 }

@@ -11,12 +11,12 @@ Camera::Camera(short x, short y, short z, double rx, double ry, double rz) : AOb
 }
 
 Camera::Camera(Camera &cam) {
-  this->x = cam->getX();
-  this->y = cam->getY();
-  this->z = cam->getZ();
-  this->rx = cam->getRX();
-  this->ry = cam->getRY();
-  this->rz = cam->getRZ();
+  this->x = cam.getX();
+  this->y = cam.getY();
+  this->z = cam.getZ();
+  this->rx = cam.getRX();
+  this->ry = cam.getRY();
+  this->rz = cam.getRZ();
 }
 
 void	Camera::reset()

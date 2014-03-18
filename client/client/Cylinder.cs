@@ -29,78 +29,78 @@ namespace client
 
         override public void draw_x(Image b, Viewport vp, bool selected)
         {
-            var points = new Point[points_x.Count];
+            var points_f = new Point[points.Count];
             var g = System.Drawing.Graphics.FromImage(b);
             var i = 0;
 
-            foreach (var p in points_x)
+            foreach (var p in points)
             {
                 Points t = (Points)p.Clone();
 
-                this.matrixX.ApplyOnPoint(t);
+                //this.matrixX.ApplyOnPoint(t);
                 this.matrixY.ApplyOnPoint(t);
                 this.matrixZ.ApplyOnPoint(t);
 
-                t.X += this.centerPoint.X;
+                //t.X += this.centerPoint.X;
                 t.Y += this.centerPoint.Y;
                 t.Z += this.centerPoint.Z;
 
                 Util.convertToGe(t, vp, b, Util.eView.x);
-                points[i] = new Point(t.Y, t.Z);
+                points_f[i] = new Point(t.Y, t.Z);
                 i++;
             }
 
-            g.DrawClosedCurve(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), points);
+            g.DrawClosedCurve(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), points_f);
         }
         override public void draw_y(Image b, Viewport vp, bool selected)
         {
-            var points = new Point[points_y.Count];
+            var points_f = new Point[points.Count];
             var g = System.Drawing.Graphics.FromImage(b);
             var i = 0;
 
-            foreach (var p in points_y)
+            foreach (var p in points)
             {
                 Points t = (Points)p.Clone();
 
                 this.matrixX.ApplyOnPoint(t);
-                this.matrixY.ApplyOnPoint(t);
+                //this.matrixY.ApplyOnPoint(t);
                 this.matrixZ.ApplyOnPoint(t);
 
                 t.X += this.centerPoint.X;
-                t.Y += this.centerPoint.Y;
+                //t.Y += this.centerPoint.Y;
                 t.Z += this.centerPoint.Z;
 
                 Util.convertToGe(t, vp, b, Util.eView.y);
-                points[i] = new Point(t.X, t.Z);
+                points_f[i] = new Point(t.X, t.Z);
                 i++;
             }
 
-            g.DrawClosedCurve(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), points);
+            g.DrawClosedCurve(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), points_f);
         }
         override public void draw_z(Image b, Viewport vp, bool selected)
         {
-            var points = new Point[points_z.Count];
+            var points_f = new Point[points.Count];
             var g = System.Drawing.Graphics.FromImage(b);
             var i = 0;
 
-            foreach (var p in points_z)
+            foreach (var p in points)
             {
                 Points t = (Points)p.Clone();
 
                 this.matrixX.ApplyOnPoint(t);
                 this.matrixY.ApplyOnPoint(t);
-                this.matrixZ.ApplyOnPoint(t);
+                //this.matrixZ.ApplyOnPoint(t);
 
                 t.X += this.centerPoint.X;
                 t.Y += this.centerPoint.Y;
-                t.Z += this.centerPoint.Z;
+                //t.Z += this.centerPoint.Z;
 
                 Util.convertToGe(t, vp, b, Util.eView.z);
-                points[i] = new Point(t.X, t.Y);
+                points_f[i] = new Point(t.X, t.Y);
                 i++;
             }
 
-            g.DrawClosedCurve(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), points);
+            g.DrawClosedCurve(new Pen((selected ? System.Drawing.Color.White : Color.toColor())), points_f);
         }
 
         public override bool solve_equation_x(Points p)
@@ -128,40 +128,21 @@ namespace client
 
         static protected int count = 0;
 
-        private List<Points> points_x = new List<Points>();
-        private List<Points> points_y = new List<Points>();
-        private List<Points> points_z = new List<Points>();
+        private List<Points> points = new List<Points>();
         public void generate_points()
         {
             double angle = 0;
             double delta = Math.PI / 8;
-            points_x.Clear();
-            points_y.Clear();
-            points_z.Clear();
+            points.Clear();
 
             while (angle < 2 * Math.PI)
             {
-                points_x.Add(
-                    new Points()
-                    {
-                        Y = (int)(this.Radius * Math.Cos(angle)),
-                        Z = (int)(this.Radius * Math.Sin(angle))
-                    }
-                    );
-
-                points_y.Add(
+                points.Add(
                     new Points()
                     {
                         X = (int)(this.Radius * Math.Cos(angle)),
-                        Z = (int)(this.Radius * Math.Sin(angle))
-                    }
-                    );
-
-                points_z.Add(
-                    new Points()
-                    {
-                        X = (int)(this.Radius * Math.Cos(angle)),
-                        Y = (int)(this.Radius * Math.Sin(angle))
+                        Y = (int)(this.Radius * Math.Sin(angle)),
+                        Z = 0
                     }
                     );
                 angle += delta;

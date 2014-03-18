@@ -21,7 +21,6 @@ public:
   virtual void		preProcess(Camera * camera, Ray * ray);
   virtual double        computeEquation(Camera * camera, Ray * ray);
   virtual void		postProcess() {}
-  virtual void		undoPreProcess(Camera * camera, Ray * ray) {(void)camera; (void)ray;}
   virtual unsigned int  getColor();
 
 private:

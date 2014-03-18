@@ -1,10 +1,11 @@
 
 NAME=	../../../modules/basicTransform.so
 
-CXX=	clang++ -fpic -I../../kernel/render/ -I../includes/ -I../../kernel/modules -g3
+CXX=	clang++ -std=c++11 -fpic -I../../kernel/render/ -I../includes/ -I../../kernel/modules -g3
 
-SRC=	BasicTransform.cpp
-
+SRC=	BasicTransform.cpp	\
+	Translation.cpp		\
+	Rotation.hpp
 
 OBJ=	$(SRC:.cpp=.o)
 

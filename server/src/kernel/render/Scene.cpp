@@ -45,7 +45,16 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 
 Scene::~Scene()
 {
+	delete camera;
+	for (auto i = objects.cbegin(); i != objects.cend(); i++)
+		delete i->second;
 	::unlink(scenePath.c_str());
+}
+
+Scene::s_Item::~s_Item()
+{
+	delete [] data;
+	delete object;
 }
 
 Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *modules, std::map<unsigned int, char[20]>moduleArray)
@@ -103,7 +112,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	  {
 	    // here I need to apply transformation on the camera and then apply rotation on ray
 	    // objects[i]->preProcess(); // I don't think the object will need a preProcess func.
-	    for (auto a = objects[i]->subItems->cbegin(); a != objects[i]->subItems->cend(); a++)
+	    for (auto a = objects[i]->subItems.cbegin(); a != objects[i]->subItems.cend(); a++)
 	      (*a)->object->preProcess(camera, ray);
 	    tmpk = objects[i]->object->computeEquation(camera, ray);
 	    if ((tmpk < k || k == -1) && tmpk >= 0)
@@ -114,7 +123,8 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	      }
 	    
 	  }
-
+	(void)worker;
+	delete ray;
 	return 0x1155ee;
 	return color;
 }

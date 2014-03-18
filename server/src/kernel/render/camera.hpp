@@ -14,15 +14,14 @@ public:
   }
   virtual void		preProcess(Camera * camera, Ray * ray) {(void)camera; (void)ray;};
   virtual void		postProcess() {};
-  virtual void		undoPreProcess(Camera * camera, Ray * ray) {(void)camera; (void)ray;};
   virtual unsigned int	getColor() {return 0;}
 
   double	getX() {return x + mod_x;}
   double	getY() {return y + mod_y;}
   double	getZ() {return z + mod_z;}
-  double	getRX() {return rx + mod_rx;}
-  double	getRY() {return ry + mod_ry;}
-  double	getRZ() {return rz + mod_rz;}
+  double	getRX() {return rx;}
+  double	getRY() {return ry;}
+  double	getRZ() {return rz;}
 
   void		setX(double _x) {mod_x = _x;}
   void		setY(double _y) {mod_y = _y;}

@@ -19,6 +19,7 @@ namespace client
 
         private void cancel_btn_Click(object sender, EventArgs e)
         {
+            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.Owner.Close();
         }
 
@@ -27,6 +28,8 @@ namespace client
             Properties.Settings.Default.default_ip = ip.Text;
             Properties.Settings.Default.default_port = port.Text;
 
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+
             (this.Owner as MainForm).client.NewConnection(ip.Text, (int)UInt32.Parse(port.Text));
             this.Close();
         }
@@ -34,7 +37,8 @@ namespace client
         private void button1_Click(object sender, EventArgs e)
         {
             ip.Text = "192.168.1.172";
-            port.Text = "8042";
+            port.Text = "8040";
+
             Properties.Settings.Default.default_ip = ip.Text;
             Properties.Settings.Default.default_port = port.Text;
 

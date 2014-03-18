@@ -13,7 +13,6 @@ public:
   }
   virtual void		preProcess(Camera * camera, Ray * ray) {(void)camera; (void)ray;};
   virtual void		postProcess() {};
-  virtual void		undoPreProcess(Camera * camera, Ray * ray) {(void)camera; (void)ray;};
   virtual unsigned int	getColor() {return 0;}
 
   double	getX() const;
@@ -30,6 +29,8 @@ private:
   double	y;
   double	z;
 
-  
+  double	mod_x;
+  double	mod_y;
+  double	mod_z;
 };
 
