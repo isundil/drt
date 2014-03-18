@@ -52,7 +52,7 @@ class WorkerManager
 
 		void log(std::ostream &channel, const worker::AWorker &sender, const std::string &msg);
 
-		void removeScene(render::Scene *);
+		void releaseScene(render::Scene *);
 		void addScene(network::PeerInfo *, render::Scene *);
 		bool getNextBroadcast(network::ANetworkPacket **packet, network::Socket **avoid);
 		bool getNextSend(network::ANetworkPacket **packet, network::PeerInfo **dst);

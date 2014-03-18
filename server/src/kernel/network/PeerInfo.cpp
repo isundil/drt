@@ -28,8 +28,7 @@ PeerInfo::~PeerInfo()
 		delete socket;
 	if (procInfo)
 		delete procInfo;
-	if( scene )
-		delete scene;
+	this->setScene(nullptr);
 }
 
 Socket *PeerInfo::getSocket() const
@@ -163,9 +162,8 @@ std::string PeerInfo::stats::debug() const
 void
 PeerInfo::setScene( render::Scene *s )
 {
-	if (scene)
-		delete scene;
-	this -> scene = s;
+	drt::WorkerManager::getSingleton()->releaseScene(scene);
+	scene = s;
 }
 
 drt::render::Scene*

@@ -3,8 +3,8 @@
 #include <ostream>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <map>
+
 #include "NetworkPacket.hpp"
 #include "PeerInfo.hpp"
 #include "Socket.hpp"
@@ -36,7 +36,6 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	ctors[12] = Calc::create;
 	ctors[13] = Result::create;
 	ctors[14] = CompilFail::create;
-
 	ctors[15] = Monitor::create;
 	//ctors[16] = Monitor::ClientMonitor; //-> will NEVER be received by server
 
@@ -69,8 +68,8 @@ Confirm::Confirm(unsigned short _id): id(_id)
 
 Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigned int c, unsigned short _src): id(_id), x(px), y(py), color(c), src(_src)
 {
-	if (_src == 0xFFFF)
-		_src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
+	if (src == 0xFFFF)
+		src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
 }
 
 Result::Result(const Result &o): id(o.id), x(o.x), y(o.y), color(o.color), src(o.src)

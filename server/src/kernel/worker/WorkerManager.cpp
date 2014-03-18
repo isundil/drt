@@ -192,7 +192,7 @@ bool WorkerManager::sendQueueEmpty()
 	return r;
 }
 
-void WorkerManager::removeScene(render::Scene *s)
+void WorkerManager::releaseScene(render::Scene *s)
 {
 	scenes.remove(s);
 }
