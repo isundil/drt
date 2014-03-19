@@ -11,7 +11,7 @@ extern "C"
     switch (subModule)
       {
       case 1:
-	ret = new Translation(param->x, param->y, param->z);
+	ret = new Translation((double)param->x, (double)param->y, (double)param->z);
 	break;
       case 2:
 	ret = new Rotation(param->x, param->y, param->z);

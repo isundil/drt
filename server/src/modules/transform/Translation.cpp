@@ -11,14 +11,10 @@ Translation::Translation(double x, double y, double z)
 
 void	Translation::preProcess(Camera * camera, Ray * ray)
 {
-  double	x = camera->getX() - _x;
-  double	y = camera->getY() - _y;
-  double	z = camera->getZ() - _z;
-
-  camera->setX(x);
-  camera->setY(y);
-  camera->setZ(z);
-  // probleme : comment je modifie la camera ? dois-je retourner une copie modifiee ?
+  camera->setX((double)-_x);
+  camera->setY((double)-_y);
+  camera->setZ((double)-_z);
+  (void)ray;
 }
 
 double	Translation::computeEquation(Camera * camera, Ray * ray)
