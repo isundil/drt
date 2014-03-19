@@ -72,6 +72,9 @@ namespace client
                         }
                     }
 
+                    if (b == 0) continue;
+                    if (!Connection.HasEnoughBytesToRead((ConClient.eInstruction)b)) continue;
+
                     switch ((ConClient.eInstruction)b)
                     {
                         case ConClient.eInstruction.WELCOME:

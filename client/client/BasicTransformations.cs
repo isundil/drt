@@ -65,5 +65,20 @@ namespace client
 
     static public class BasicTransformations
     {
+        public static byte[] getTranslation(SceneItem i)
+        {
+            List<byte> l = new List<byte>();
+            List<byte> h = new List<byte>();
+
+            l.Add((byte)i.Module);
+            l.Add((byte)i.SubModule);
+            h.AddRange(BitConverter.GetBytes((double)i.refObject.X));
+            h.AddRange(BitConverter.GetBytes((double)i.refObject.Y));
+            h.AddRange(BitConverter.GetBytes((double)i.refObject.Z));
+            l.AddRange(BitConverter.GetBytes((ushort)h.Count));
+            l.AddRange(BitConverter.GetBytes((UInt32)0));
+            l.AddRange(h);
+            return l.ToArray();
+        }
     }
 }

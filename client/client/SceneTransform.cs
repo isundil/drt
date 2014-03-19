@@ -56,24 +56,25 @@ namespace client
         {
             Scene s = new Scene();
 
-            List<eModules> auth = new List<eModules>()
-            {
-                eModules.BASIC_SHAPE,
-                eModules.BASIC_TRANSFORM
-            };
+            s.RequestedModules.Add(eModules.BASIC_SHAPE);
+            s.RequestedModules.Add(eModules.BASIC_TRANSFORM);
 
             foreach (var o in ol.Collection)
             {
                 var i = new SceneItem();
 
-                if (!auth.Contains(i.Module)) continue;
-
                 i.Module = o.getModule();
                 i.SubModule = o.getSubModule();
                 i.refObject = o;
 
+                var translation = new SceneItem();
+                translation.Module = eModules.BASIC_TRANSFORM;
+                translation.SubModule = 1;
+                translation.refObject = o;
+
+                i.Items.Add(translation);
+
                 s.Items.Add(i);
-                if (! s.RequestedModules.Contains(i.Module)) s.RequestedModules.Add(i.Module);
             }
 
             return s;

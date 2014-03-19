@@ -65,10 +65,15 @@ namespace client
                 buf.AddRange(BitConverter.GetBytes((UInt16) h.Length));
 
                 // nb sub items
-                buf.AddRange(BitConverter.GetBytes((UInt32)0));
+                buf.AddRange(BitConverter.GetBytes((UInt32)i.Items.Count));
 
                 // header
                 buf.AddRange(h);
+
+                // sub items
+                // translation
+                var res = BasicTransformations.getTranslation(i.Items[0]);
+                buf.AddRange(res);
             }
         }
 
@@ -98,7 +103,7 @@ namespace client
 
         public bool HasEnoughBytesToRead(eInstruction i)
         {
-            return MessagesSizes[i] >= con.Available;
+            return MessagesSizes[i] <= con.Available;
         }
 
         public bool WELCOME(out bool wait_for_instruction)
@@ -192,7 +197,8 @@ namespace client
             if (!n.CanRead)     throw new Exception("Socket unreadable");
             var ret = n.Read(buf, 0, (int)size);
             if (ret == -1)      throw new Exception("Unexpected error");
-            if (ret != size)    throw new Exception("Error reading packet");
+            if (ret != size)
+                throw new Exception("Error reading packet");
             return buf;
         }
 
