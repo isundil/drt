@@ -124,7 +124,7 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 		// std::cout << "at [" << x << ", " << y << "] k = " << k << std::endl;
 		// here I need to apply post calc effects such as light
 	      }
-	    color |= 0x00FF0000;
+	    // color |= 0x00FF0000;
 	  }
 	(void)worker;
 	delete ray;

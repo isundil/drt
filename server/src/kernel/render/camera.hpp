@@ -16,16 +16,16 @@ public:
   virtual void		postProcess() {};
   virtual unsigned int	getColor() {return 0;}
 
-  double	getX() {return x + mod_x;}
-  double	getY() {return y + mod_y;}
-  double	getZ() {return z + mod_z;}
-  double	getRX() {return rx;}
-  double	getRY() {return ry;}
-  double	getRZ() {return rz;}
+  double	getX();
+  double	getY();
+  double	getZ();
+  double	getRX();
+  double	getRY();
+  double	getRZ();
 
-  void		setX(double _x) {mod_x = _x;}
-  void		setY(double _y) {mod_y = _y;}
-  void		setZ(double _z) {mod_z = _z;}
+  void		setX(double _x);
+  void		setY(double _y);
+  void		setZ(double _z);
 
   void		reset();
 

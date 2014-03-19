@@ -31,7 +31,7 @@ double		UtilSdeg::getK(std::pair<double, double> n, double d) {
   //   }
   // return k;
 
-  if (d >= 0 && (n.first <= k || k == -1) && n.first >= 0)
+  if (d >= 0 && k == -1 && n.first >= 0)
     k = n.first;
   if (d > 0 && (n.second <= k || k == -1) && n.second >= 0)
     k = n.second;
