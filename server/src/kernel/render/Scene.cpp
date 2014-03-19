@@ -100,7 +100,7 @@ void Scene::copy_bufs(unsigned char dest[4], unsigned char src[3])
 	dest[3] = 255;
 }
 
-unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
+unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 {
 	double	k = -1;
 	double	tmpk = k;
@@ -108,25 +108,24 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	Camera	saveCamera(*camera);
 	Ray *ray = new Ray(this->d, this->width / 2 - x, this->height / 2 - y);
 
-	for (unsigned int i = 0; i < objects.size(); i++)
+	for (auto i = objects.cbegin(); i != objects.cend(); i++)
 	  {
 	    // here I need to apply transformation on the camera and then apply rotation on ray
 	    // objects[i]->preProcess(); // I don't think the object will need a preProcess func.
 	    camera->reset();
 	    ray->reset();
-	    for (auto a = objects[i]->subItems.cbegin(); a != objects[i]->subItems.cend(); a++)
+	    for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++)
 	      (*a)->object->preProcess(camera, ray);
-	    tmpk = objects[i]->object->computeEquation(camera, ray);
+	    tmpk = (*i).second->object->computeEquation(camera, ray);
 	    if ((tmpk < k || k == -1) && tmpk >= 0)
 	      {
 	    	k = tmpk;
-	    	color = objects[i]->object->getColor();
+	    	color = (*i).second->object->getColor();
 		// std::cout << "at [" << x << ", " << y << "] k = " << k << std::endl;
 		// here I need to apply post calc effects such as light
 	      }
 	    color |= 0x00FF0000;
 	  }
-	(void)worker;
 	delete ray;
 	// return 0x1155ee;
 	return color;

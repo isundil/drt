@@ -165,6 +165,7 @@ class NewJob: public ANetworkPacket
 
 	private:
 		unsigned short id;
+		render::Scene *scene;
 };
 
 class EndJob: public ANetworkPacket

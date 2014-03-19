@@ -4,6 +4,7 @@
 #include <ostream>
 #include <queue>
 #include <list>
+#include <map>
 #include "worker/AWorker.hpp"
 
 namespace drt
@@ -38,7 +39,8 @@ class WorkerManager
 		virtual ~WorkerManager();
 
 		bool isDone() const;
-		worker::AWorker::Operation *pickNext();
+		worker::AWorker::Operation *pickNext(const worker::AWorker *);
+		void releaseThread(const worker::AWorker *);
 		void addOperation(worker::AWorker::Operation *);
 		void start();
 		void stop();
@@ -70,9 +72,11 @@ class WorkerManager
 	private:
 		std::list<worker::AWorker *> workers;
 		std::list<render::Scene *> scenes;
+		std::list<render::Scene *> endedScenes;
 		worker::AWorker *networkWorker;
 
-		std::queue<worker::AWorker::Operation *>operationList;
+		std::list<worker::AWorker::Operation *>operationList;
+		std::map<const worker::AWorker *, worker::AWorker::Operation *>runningOp;
 		std::queue<std::pair<network::Socket *, network::ANetworkPacket *> >broadcastQueue;
 		std::queue<std::pair<network::PeerInfo *, network::ANetworkPacket *> >sendQueue;
 		drt::Config * const info;
