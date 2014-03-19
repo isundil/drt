@@ -92,21 +92,13 @@ unsigned int Scene::getHeight() const
 unsigned int Scene::getWidth() const
 { return width; }
 
-void Scene::copy_bufs(unsigned char dest[4], unsigned char src[3])
-{
-	dest[0] = src[0];
-	dest[1] = src[1];
-	dest[2] = src[2];
-	dest[3] = 255;
-}
-
 unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 {
 	double	k = -1;
 	double	tmpk = k;
 	unsigned int  color = 0;
 	Camera	saveCamera(*camera);
-	Ray *ray = new Ray(this->d, this->width / 2 - x, this->height / 2 - y);
+	Ray *ray = new Ray(this->d, (double)(this->width / 2) - x, (double)(this->height / 2) - y);
 
 	for (unsigned int i = 0; i < objects.size(); i++)
 	  {
