@@ -82,7 +82,7 @@
             this.cancel_btn.Name = "cancel_btn";
             this.cancel_btn.Size = new System.Drawing.Size(75, 23);
             this.cancel_btn.TabIndex = 4;
-            this.cancel_btn.Text = "Cancel";
+            this.cancel_btn.Text = "Offline";
             this.cancel_btn.UseVisualStyleBackColor = true;
             this.cancel_btn.Click += new System.EventHandler(this.cancel_btn_Click);
             // 
@@ -103,7 +103,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancel_btn;
             this.ClientSize = new System.Drawing.Size(289, 125);
-            this.ControlBox = false;
             this.Controls.Add(this.port);
             this.Controls.Add(this.cancel_btn);
             this.Controls.Add(this.ok_btn);
@@ -111,6 +110,8 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Connection";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

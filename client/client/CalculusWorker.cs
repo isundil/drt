@@ -14,10 +14,13 @@ namespace client
         public System.Drawing.Image DestinationImage { get; set; }
         public ConClient Connection { get; set; }
 
+        public bool Offline { get; set; }
+
         private void doScenePreviewCalculus(object o, DoWorkEventArgs e)
         {
             var s = SceneTransform.TransformPreview(ol);
-  
+            
+            if (! this.Offline)
             Connection.NEWJOB(s, DestinationImage.Size);
         }
 

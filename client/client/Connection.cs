@@ -19,8 +19,8 @@ namespace client
 
         private void cancel_btn_Click(object sender, EventArgs e)
         {
-            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.Owner.Close();
+            this.DialogResult = System.Windows.Forms.DialogResult.Ignore;
+            this.Close();
         }
 
         private void ok_btn_Click(object sender, EventArgs e)

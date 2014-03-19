@@ -162,9 +162,22 @@ namespace client
         private void ShowConnection()
         {
             var con = new Connection();
-            if (con.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
+            var res = con.ShowDialog(this);
+            if (res == System.Windows.Forms.DialogResult.OK && this.client.isAvailable())
             {
                 Properties.Settings.Default.Save();
+                listenerWorker.Offline = false;
+                calculusWorker.Offline = false;
+                redraw(ol.Collection.Count > 1 ? true : false);
+            }
+            else if (res == System.Windows.Forms.DialogResult.Ignore)
+            {
+                listenerWorker.Offline = true;
+                calculusWorker.Offline = true;
+            }
+            else if (res == System.Windows.Forms.DialogResult.Cancel)
+            {
+                this.Close();
             }
         }
 
@@ -220,8 +233,9 @@ namespace client
             this.client = new ConClient();
             this.listenerWorker = new ListenerWorker(client, this);
             this.listenerWorker.WorkerSupportsCancellation = true;
-            this.listenerWorker.RunWorkerAsync();
-            
+            this.listenerWorker.Offline = false;
+            this.calculusWorker.Offline = false;
+
             calculusWorker.Connection = client;
             calculusWorker.DestinationImage = view_3d.Image;
 
@@ -757,7 +771,7 @@ namespace client
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             ol.Selected.Refresh();
-            redraw(true);
+            redraw(ol.Collection.Count > 1 ? true : false);
         }
 
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
@@ -898,6 +912,11 @@ namespace client
             }
 
             view_3d.Image = bm;
+        }
+
+        private void connectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.ShowConnection();
         }
     }
 }

@@ -204,7 +204,13 @@ namespace client
 
         public ushort clientId { get; set; }
 
-        public bool isAvailable() { if (con == null) return false; return con.Connected; }
+        public bool isAvailable()
+        {
+            if (con == null) return false;
+            if (!con.Connected) return false;
+            if (!con.GetStream().CanRead) return false;
+            return true;
+        }
 
         public bool isCreated()
         {

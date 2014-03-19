@@ -20,6 +20,27 @@ namespace client
         private ConClient Connection { get; set; }
         private MainForm _form;
 
+        private bool offline;
+        public bool Offline {
+            get
+            {
+                return offline;
+            }
+            set
+            {
+                offline = value;
+                if (value == false)
+                {
+                    if (!this.IsBusy)
+                    this.RunWorkerAsync();
+                }
+                else
+                {
+                    this.CancelAsync();
+                }
+            }
+        }
+
         public ListenerWorker(ConClient con, MainForm form)
         {
             this.Connection = con;
@@ -36,13 +57,13 @@ namespace client
 
         private void Disconnect()
         {
+            this.CancelAsync();
+            if (this.Offline == true) return;
             Connection.clientId = 0xffff;
 
             this.Connection.Disconnect();
             _form.toolStripStatusLabel.Text = "Disconnected";
             _form.toolStripStatusLabel.Image = Properties.Resources.red;
-
-            this.CancelAsync();
 
             try
             {
@@ -54,12 +75,15 @@ namespace client
 
         private void doListen(object o, DoWorkEventArgs e)
         {
-            if (Connection == null) Disconnect();
-            if (!Connection.isCreated()) Disconnect();
-
             bool wait_for_instruction = false;
-            while (true)
+            while (!e.Cancel && !this.Offline)
             {
+                if (!Connection.isAvailable())
+                {
+                    Disconnect();
+                    break;
+                }
+
                 try
                 {
                     byte b = 0;
@@ -95,6 +119,7 @@ namespace client
                             Connection.MONITOR(_form, out wait_for_instruction);
                             break;
                         default:
+                            _form.errorlabel.Text = "Unknown packet header";
                             Disconnect();
                             break;
                     }
