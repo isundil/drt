@@ -207,9 +207,7 @@ namespace client
         public bool isAvailable()
         {
             if (con == null) return false;
-            if (!con.Connected) return false;
-            if (!con.GetStream().CanRead) return false;
-            return true;
+            return !((con.Client.Poll(1000, SelectMode.SelectRead) && (con.Available == 0)) || !con.Connected);
         }
 
         public bool isCreated()
