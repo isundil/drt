@@ -309,7 +309,7 @@ void NetworkWorker::sendAll()
 
 void NetworkWorker::sendBroadcast()
 {
-	while (!manager.broadcastQueueEmpty())
+	for (char sendProtec=0; sendProtec < 10 && !manager.broadcastQueueEmpty(); sendProtec++)
 	{
 		network::Socket *avoid;
 		network::ANetworkPacket *packet;
@@ -346,7 +346,7 @@ static bool isInList(T elem, std::list<T> list)
 
 void NetworkWorker::sendUnique()
 {
-	while (!manager.sendQueueEmpty())
+	for (char i=0; i < 10 && !manager.sendQueueEmpty(); i++)
 	{
 		network::PeerInfo *peer;
 		network::ANetworkPacket *packet;

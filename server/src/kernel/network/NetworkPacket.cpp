@@ -68,6 +68,9 @@ Confirm::Confirm(unsigned short _id): id(_id)
 
 Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigned int c, unsigned short _src): id(_id), src(_src), x(px), y(py), color(c)
 {
+#ifdef PINK_WORLD
+	color = 0xFFE743F3;
+#endif
 	if (src == 0xFFFF)
 		src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
 }
