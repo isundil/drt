@@ -145,6 +145,7 @@ namespace client
             {
                 servers_map.Clear();
                 progressbar.Value = 0;
+                DrawPixel3DView_count = 0;
                 progressbar.Maximum = view_3d.Width * view_3d.Height;
                 calculusWorker.DestinationImage = view_3d.Image;
                 calculusWorker.DoScenePreviewCalculus(ol);
