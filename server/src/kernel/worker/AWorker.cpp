@@ -13,10 +13,11 @@ void AWorker::start()
 	manager.log(std::cout, *this, "Started thread");
 	while (!manager.isDone())
 	{
-		Operation *current = manager.pickNext();
+		Operation *current = manager.pickNext(this);
 		if (current)
 		{
 			this->nextOp(current);
+			manager.releaseThread(this);
 			delete current;
 		}
 		else

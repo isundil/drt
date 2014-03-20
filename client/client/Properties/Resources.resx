@@ -145,6 +145,15 @@
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="light" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\light.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="light_btn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\light_btn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="light_ptr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\light_ptr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="pointer_btn" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pointer_btn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -165,6 +174,9 @@
   </data>
   <data name="rotate_ptr" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\rotate_ptr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ulight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ulight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="zoomin_btn" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\zoomin_btn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

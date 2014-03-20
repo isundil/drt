@@ -59,12 +59,12 @@ class NetworkWorker: public AWorker
 
 			void sendCpuUsage();
 			network::ClientMonitor *getAvgUsage() const;
-			void acceptNew();
-			void connectToPeers();
-			void readAll();
-			void sendAll();
-			void sendBroadcast();
-			void sendUnique();
+			bool acceptNew();
+			bool connectToPeers();
+			bool readAll();
+			bool sendAll();
+			bool sendBroadcast();
+			bool sendUnique();
 			void readPeer(network::PeerInfo *);
 	};
 }

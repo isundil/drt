@@ -66,13 +66,16 @@ bool IdCh::sendToClient(PeerInfo *pi) const
 Confirm::Confirm(unsigned short _id): id(_id)
 { }
 
-Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigned int c, unsigned short _src): id(_id), x(px), y(py), color(c), src(_src)
+Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigned int c, unsigned short _src): id(_id), src(_src), x(px), y(py), color(c)
 {
+#ifdef PINK_WORLD
+	color = 0xFFE743F3;
+#endif
 	if (src == 0xFFFF)
 		src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
 }
 
-Result::Result(const Result &o): id(o.id), x(o.x), y(o.y), color(o.color), src(o.src)
+Result::Result(const Result &o): id(o.id), src(o.src), x(o.x), y(o.y), color(o.color)
 { }
 
 Netsplit::Netsplit(unsigned short _id): id(_id)
@@ -110,11 +113,9 @@ NewJob::NewJob(
 
 	file.close();
 	filein.open( filename );
-	render::Scene *scene = new render::Scene( filein, filename );
+	scene = new render::Scene( filein, filename );
 
 	filein.close();
-	client = drt::WorkerManager::getSingleton() -> getNetwork() -> getPeer( id );
-	client -> setScene( scene );
 	free(filename);
 }
 
@@ -354,11 +355,6 @@ CAuth::doMagic(
 
 void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 {
-	//unsigned short oldId;
-
-	//oldId = m.getNetwork()->getMe()->getId();
-	//if (oldId == id)
-	//	return;
 	m.getNetwork()->getMe()->setId(id);
 	m.getNetwork()->setMax(id);
 }
@@ -373,7 +369,6 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 		unsigned int children = m.getNetwork()->nbSocket(p->getSocket());
 
 		pi->setConfirmed(children);
-		//TODO boucle inf ICI (cas circle loop)
 		m.broadcast(new IdCh(*this), p);
 		if (children == 0)
 			m.send(p, new Confirm(oldId));
@@ -473,6 +468,10 @@ void
 NewJob::doMagic( drt::WorkerManager &m,
 		drt::network::PeerInfo * pi)
 {
+	if (id == 0xFFFF)
+		pi->setScene(scene);
+	else
+		m.getNetwork()->getPeer(id)->setScene(scene);
 	m.addScene(pi, pi->getScene());
 }
 

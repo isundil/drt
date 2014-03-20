@@ -66,15 +66,18 @@ void NetworkWorker::start()
 {
 	while (!manager.isDone())
 	{
-		acceptNew();
-		readAll();
-		connectToPeers();
-		sendAll();
-		usleep(500);
+		bool use = false;
+
+		use |= acceptNew();
+		use |= readAll();
+		use |= connectToPeers();
+		use |= sendAll();
+		if (!use)
+			usleep(500);
 	}
 }
 
-void NetworkWorker::acceptNew()
+bool NetworkWorker::acceptNew()
 {
 	if (server != nullptr)
 	{
@@ -83,8 +86,10 @@ void NetworkWorker::acceptNew()
 		{
 			clients.push_back(new drt::network::PeerInfo(s, true));
 			manager.log(std::cout, *this, "new client");
+			return true;
 		}
 	}
+	return false;
 }
 
 void NetworkWorker::sendCpuUsage()
@@ -132,16 +137,17 @@ drt::network::ClientMonitor *NetworkWorker::getAvgUsage() const
 	return result;
 }
 
-void NetworkWorker::connectToPeers()
+bool NetworkWorker::connectToPeers()
 {
 	std::list<std::pair<std::string, unsigned short> >clients = manager.config()->getSection<drt::parser::PeerSection>()->getPeerlist();
 	is_connected d(connectedPeers, blackListedPeers);
+	bool use = false;
 
 	if (time(nullptr) - lastConnectAtempt < 5)
-		return;
+		return false;
 	sendCpuUsage();
 	if (connectingTo)
-		return;
+		return false;
 	lastConnectAtempt = time(nullptr);
 	clients.remove_if(d);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
@@ -153,6 +159,7 @@ void NetworkWorker::connectToPeers()
 		try
 		{
 			pi = new network::PeerInfo(addr.first, addr.second);
+			use = true;
 		}
 		catch (std::exception &e)
 		{
@@ -191,6 +198,7 @@ void NetworkWorker::connectToPeers()
 		ss << std::endl;
 	}
 	manager.log(std::cout, *this, ss.str());
+	return use;
 }
 
 void NetworkWorker::releasePeer(network::PeerInfo *peer)
@@ -220,14 +228,15 @@ void NetworkWorker::releasePeer(network::PeerInfo *peer)
 	delete peer;
 }
 
-void NetworkWorker::readAll()
+bool NetworkWorker::readAll()
 {
 	fd_set fdset;
 	const network::Socket *biggerFd =nullptr;
 	std::set<network::Socket *> discon;
+	bool usage = false;
 
 	if (clients.size() == 0)
-		return;
+		return false;
 	FD_ZERO(&fdset);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{
@@ -237,7 +246,7 @@ void NetworkWorker::readAll()
 		biggerFd = (*i)->getSocket()->greater(biggerFd);
 	}
 	if (biggerFd == nullptr || biggerFd->select(&fdset) <= 0)
-		return;
+		return false;
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{
 		if (!(*i)->getSocket()->isInSet(&fdset) || !(*i)->isDirect())
@@ -257,6 +266,7 @@ void NetworkWorker::readAll()
 			try
 			{
 				this->readPeer((*i));
+				usage = true;
 			}
 			catch (std::exception &e)
 			{
@@ -267,6 +277,7 @@ void NetworkWorker::readAll()
 	for (auto i = this->discon.cbegin(); i != this->discon.cend(); i++)
 	{
 		releasePeer(*i);
+		usage = true;
 	}
 	for (auto i = discon.cbegin(); i != discon.cend(); i++)
 	{
@@ -279,10 +290,14 @@ void NetworkWorker::readAll()
 		{
 			manager.broadcast(new network::Netsplit(dd->getId()));
 			if (this->discon.find(dd) == this->discon.end())
+			{
+				usage = true;
 				releasePeer(dd);
+			}
 		}
 	}
 	this->discon.clear();
+	return usage;
 }
 
 void NetworkWorker::readPeer(network::PeerInfo *peer)
@@ -301,15 +316,20 @@ void NetworkWorker::stop()
 	}
 }
 
-void NetworkWorker::sendAll()
+bool NetworkWorker::sendAll()
 {
-	sendUnique();
-	sendBroadcast();
+	bool usage = false;
+
+	usage |= sendUnique();
+	usage |= sendBroadcast();
+	return usage;
 }
 
-void NetworkWorker::sendBroadcast()
+bool NetworkWorker::sendBroadcast()
 {
-	while (!manager.broadcastQueueEmpty())
+	if (manager.broadcastQueueEmpty())
+		return false;
+	for (char sendProtec=0; sendProtec < 10 && !manager.broadcastQueueEmpty(); sendProtec++)
 	{
 		network::Socket *avoid;
 		network::ANetworkPacket *packet;
@@ -333,6 +353,7 @@ void NetworkWorker::sendBroadcast()
 		}
 		delete packet;
 	}
+	return true;
 }
 
 template <class T>
@@ -344,9 +365,11 @@ static bool isInList(T elem, std::list<T> list)
 	return false;
 }
 
-void NetworkWorker::sendUnique()
+bool NetworkWorker::sendUnique()
 {
-	while (!manager.sendQueueEmpty())
+	if (manager.sendQueueEmpty())
+		return false;
+	for (char i=0; i < 10 && !manager.sendQueueEmpty(); i++)
 	{
 		network::PeerInfo *peer;
 		network::ANetworkPacket *packet;
@@ -363,6 +386,7 @@ void NetworkWorker::sendUnique()
 		delete ss;
 		delete packet;
 	}
+	return true;
 }
 
 drt::network::PeerInfo *NetworkWorker::getPeer(unsigned short id)

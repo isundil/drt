@@ -90,12 +90,12 @@ bool WorkerManager::isDone() const
 void WorkerManager::addOperation(worker::AWorker::Operation *next)
 {
 	pthread_mutex_lock(&queueMutex);
-	operationList.push(next);
+	operationList.push_back(next);
 	ready = false;
 	pthread_mutex_unlock(&queueMutex);
 }
 
-worker::AWorker::Operation *WorkerManager::pickNext()
+worker::AWorker::Operation *WorkerManager::pickNext(const worker::AWorker *thread)
 {
 	pthread_mutex_lock(&queueMutex);
 	if (operationList.size() == 0)
@@ -105,9 +105,16 @@ worker::AWorker::Operation *WorkerManager::pickNext()
 		return nullptr;
 	}
 	worker::AWorker::Operation *next = operationList.front();
-	operationList.pop();
+	operationList.erase(operationList.begin());
+	unsigned int r = runningOp.size();
+	runningOp[thread] = next;
 	pthread_mutex_unlock(&queueMutex);
 	return next;
+}
+
+void WorkerManager::releaseThread(const worker::AWorker *w)
+{
+	runningOp[w] = nullptr;
 }
 
 void WorkerManager::log(std::ostream &out, const worker::AWorker &sender, const std::string &message)
@@ -194,7 +201,32 @@ bool WorkerManager::sendQueueEmpty()
 
 void WorkerManager::releaseScene(render::Scene *s)
 {
+	bool contains = false;
+	std::list<worker::AWorker::Operation *> rem;
+
+	if (!s)
+		return;
+	::pthread_mutex_lock(&queueMutex);
+	for (auto i = runningOp.cbegin(); i != runningOp.cend() && !contains; i++)
+		if ((*i).second && (*i).second->scene == s)
+			contains = true;
+	if (contains)
+	{
+		std::cout << "running scene " <<std::endl;
+		endedScenes.push_back(s);
+	}
+	else
+	{
+		std::cout << "not running scene " <<std::endl;
+		delete s;
+	}
+	for (auto i = operationList.cbegin(); i != operationList.cend(); i++)
+		if ((*i)->scene == s)
+			rem.push_back(*i);
+	for (auto i = rem.cbegin(); i != rem.cend(); i++)
+		operationList.remove(*i);
 	scenes.remove(s);
+	::pthread_mutex_unlock(&queueMutex);
 }
 
 void WorkerManager::addScene(network::PeerInfo *pi, render::Scene *s)
@@ -203,7 +235,7 @@ void WorkerManager::addScene(network::PeerInfo *pi, render::Scene *s)
 
 	for (unsigned int x =0; x < s->getWidth(); x++)
 		for (unsigned int y =0; y < s->getHeight(); y++)
-			operationList.push(new worker::AWorker::Operation(pi, s, x, y));
+			operationList.push_back(new worker::AWorker::Operation(pi, s, x, y));
 }
 
 worker::NetworkWorker *WorkerManager::getNetwork()

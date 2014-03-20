@@ -42,8 +42,6 @@ void PeerInfo::read(WorkerManager &manager)
 	char code;
 	ANetworkPacket *packet;
 
-	(void) manager;
-
 	code = socket->getc();
 	try
 	{
@@ -64,7 +62,7 @@ void PeerInfo::read(WorkerManager &manager)
 	}
 	if (dynamic_cast<SAuth *> (packet) == nullptr && dynamic_cast<Welcome *> (packet) == nullptr && dynamic_cast<IdCh *> (packet) == nullptr && dynamic_cast<Confirm *> (packet) == nullptr && getConfirmed())
 	{
-		std::cerr << "Packet " << packet->getName() << "dropped" << std::endl;
+		std::cerr << "Packet " << packet->getName() << " dropped" << std::endl;
 		delete packet;
 		return;
 	}

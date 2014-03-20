@@ -7,12 +7,13 @@
 
 namespace drt
 {
+class Config;
 namespace parser
 {
 class UnixParser
 {
 	public:
-		UnixParser();
+		UnixParser(unsigned short default_port);
 		virtual ~UnixParser();
 
 		void parseFile(std::ifstream &file);

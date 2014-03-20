@@ -92,7 +92,15 @@ unsigned int Scene::getHeight() const
 unsigned int Scene::getWidth() const
 { return width; }
 
-unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
+void Scene::copy_bufs(unsigned char dest[4], unsigned char src[3])
+{
+	dest[0] = src[0];
+	dest[1] = src[1];
+	dest[2] = src[2];
+	dest[3] = 255;
+}
+
+unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 {
 	double	k = -1;
 	double	tmpk = k;
@@ -101,19 +109,18 @@ unsigned int Scene::calc(WorkerManager &worker, unsigned int x, unsigned int y)
 	x = this->width - x;
 	Ray *ray = new Ray(this->d, (double)(this->width / 2) - x, (double)(this->height / 2) - y);
 
-	for (unsigned int i = 0; i < objects.size(); i++)
+	for (auto i = objects.cbegin(); i != objects.cend(); i++)
 	  {
 	    // objects[i]->preProcess(); // I don't think the object will need a preProcess func.
 	    for (auto a = objects[i]->subItems.cbegin(); a != objects[i]->subItems.cend(); a++)
 	      (*a)->object->preProcess(camera, ray);
-	    tmpk = objects[i]->object->computeEquation(camera, ray);
+	    tmpk = (*i).second->object->computeEquation(camera, ray);
 	    if ((tmpk < k || k == -1) && tmpk >= 0)
 	      {
 	    	k = tmpk;
 	    	color = objects[i]->object->getColor();
 	      }
 	  }
-	(void)worker;
 	delete ray;
 	return color;
 }

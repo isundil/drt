@@ -1,7 +1,8 @@
 
 SRC=	test 	\
 		test2	\
-		objects
+		objects	\
+		transform
 
 all:
 	for fileList in $(SRC) ; do \
