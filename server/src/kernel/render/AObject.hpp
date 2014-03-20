@@ -6,6 +6,7 @@ class	Camera;
 class AObject {
 public:
 
+  virtual ~AObject() {};
   virtual double	computeEquation(Camera * camera, Ray * ray) = 0;
   virtual void		preProcess(Camera * camera, Ray * ray) = 0;
   virtual void		postProcess() = 0;
