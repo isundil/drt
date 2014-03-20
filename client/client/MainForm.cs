@@ -168,7 +168,6 @@ namespace client
                 Properties.Settings.Default.Save();
                 listenerWorker.Offline = false;
                 calculusWorker.Offline = false;
-                redraw(ol.Collection.Count > 1 ? true : false);
             }
             else if (res == System.Windows.Forms.DialogResult.Ignore)
             {
@@ -241,7 +240,7 @@ namespace client
 
             ol.Add(new Camera());
             ol.Selected = ol.Collection[0];
-            redraw(false);
+            redraw();
 
             show_server_mapping.Enabled = false;
         }
@@ -252,7 +251,7 @@ namespace client
             empty_bitmap(td_bitmap);
             view_3d.Image = td_bitmap;
 
-            redraw(ol.Collection.Count > 1 ? true : false);
+            redraw();
         }
 
         enum eDrawMode
@@ -350,7 +349,7 @@ namespace client
                     if (o.solve_equation_x(p1))
                     {
                         ol.Selected = o;
-                        redraw(false);
+                        redraw();
                     }
                 }
 
@@ -377,7 +376,7 @@ namespace client
                     if (o.solve_equation_y(p1))
                     {
                         ol.Selected = o;
-                        redraw(false);
+                        redraw();
                     }
                 }
 
@@ -402,7 +401,7 @@ namespace client
                     if (o.solve_equation_z(p1))
                     {
                         ol.Selected = o;
-                        redraw(false);
+                        redraw();
                     }
                 }
 
@@ -440,7 +439,7 @@ namespace client
                 ol.Selected = s;
             }
 
-            redraw(true);
+            redraw();
             propertyGrid.Refresh();
         }
         private void view_y_MouseUp(object sender, MouseEventArgs e)
@@ -472,7 +471,7 @@ namespace client
                 ol.Selected = s;
             }
 
-            redraw(true);
+            redraw();
             propertyGrid.Refresh();
         }
         private void view_z_MouseUp(object sender, MouseEventArgs e)
@@ -504,7 +503,7 @@ namespace client
                 ol.Selected = s;
             }
 
-            redraw(true);
+            redraw();
             propertyGrid.Refresh();
         }
 
@@ -717,7 +716,7 @@ namespace client
                 {
                     ol.Remove(ol.Selected);
                     ol.Selected = null;
-                    redraw(true);
+                    redraw();
                 }
             }
         }
@@ -728,13 +727,13 @@ namespace client
             {
                 if (vp.fx < 8) vp.fx *= 2;
 
-                redraw(false);
+                redraw();
             }
             if (this.drawMode == eDrawMode.ZOOMOUT)
             {
                 if (vp.fx > 0.25F) vp.fx /= 2;
 
-                redraw(false);
+                redraw();
             }
         }
         private void view_y_Click(object sender, EventArgs e)
@@ -743,13 +742,13 @@ namespace client
             {
                 if (vp.fy < 8) vp.fy *= 2;
 
-                redraw(false);
+                redraw();
             }
             if (this.drawMode == eDrawMode.ZOOMOUT)
             {
                 if (vp.fy > 0.25F) vp.fy /= 2;
 
-                redraw(false);
+                redraw();
             }
         }
         private void view_z_Click(object sender, EventArgs e)
@@ -758,20 +757,20 @@ namespace client
             {
                 if (vp.fz < 8) vp.fz *= 2;
 
-                redraw(false);
+                redraw();
             }
             if (this.drawMode == eDrawMode.ZOOMOUT)
             {
                 if (vp.fz > 0.25F) vp.fz /= 2;
 
-                redraw(false);
+                redraw();
             }
         }
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             ol.Selected.Refresh();
-            redraw(ol.Collection.Count > 1 ? true : false);
+            redraw();
         }
 
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e)
@@ -780,7 +779,7 @@ namespace client
             if (c.SelectedIndex >= 0)
             {
                 ol.Selected = ol.Collection[c.SelectedIndex];
-                redraw(false);
+                redraw();
             }
         }
 
@@ -835,7 +834,7 @@ namespace client
                     ol.Collection.form = this;
                     comboBox1.DataSource = ol.Collection;
 
-                    redraw(true);
+                    redraw();
                 }
                 catch (System.InvalidOperationException)
                 {
@@ -917,6 +916,11 @@ namespace client
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.ShowConnection();
+        }
+
+        private void redraw3DToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            redraw(true);
         }
     }
 }

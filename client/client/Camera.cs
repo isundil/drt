@@ -29,9 +29,9 @@ namespace client
         {
             List<byte> b = new List<byte>();
 
-            b.AddRange(BitConverter.GetBytes((UInt16)this.X));
-            b.AddRange(BitConverter.GetBytes((UInt16)this.Y));
-            b.AddRange(BitConverter.GetBytes((UInt16)this.Z));
+            b.AddRange(BitConverter.GetBytes((Int16)this.X));
+            b.AddRange(BitConverter.GetBytes((Int16)this.Y));
+            b.AddRange(BitConverter.GetBytes((Int16)this.Z));
 
             b.AddRange(BitConverter.GetBytes((double)this.RotX));
             b.AddRange(BitConverter.GetBytes((double)this.RotY));

@@ -81,7 +81,6 @@ namespace client
                 if (!Connection.isAvailable())
                 {
                     Disconnect();
-                    break;
                 }
 
                 try
