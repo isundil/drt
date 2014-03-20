@@ -87,7 +87,6 @@ NewJob::NewJob(
 		size_t len  ):id( _id )
 {
 	char* filename = tempnam( nullptr, nullptr );
-	network::PeerInfo *client = nullptr;
 	std::ofstream file( filename );
 	std::ifstream filein;
 
