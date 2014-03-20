@@ -40,15 +40,15 @@ void	Rotation::yRotation(Camera * camera, Ray * ray)
   double	x = camera->getX() * cosy - camera->getZ() * siny;
   double	y = camera->getY();
   double	z = camera->getY() * cosy - camera->getZ() * siny;
-  camera->setX(x);
-  camera->setY(y);
-  camera->setZ(z);
+  camera->setX(x - camera->getX());
+  camera->setY(y - camera->getY());
+  camera->setZ(z - camera->getZ());
   x = ray->getX() * cosy - ray->getZ() * siny;
   y = ray->getY();
   z = ray->getY() * cosy - ray->getZ() * siny;
-  ray->setX(x);
-  ray->setY(y);
-  ray->setZ(z);
+  ray->setX(x - ray->getX());
+  ray->setY(y - ray->getY());
+  ray->setZ(z - ray->getZ());
 }
 
 void	Rotation::zRotation(Camera * camera, Ray * ray)
