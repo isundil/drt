@@ -24,6 +24,7 @@ int main(int ac, char **av)
 	drt::Config *conf;
 
 	params << drt::ConfigParam::StringValue("config-file", "server.conf", false);
+	params << drt::ConfigParam::StringValue("port", "0", false);
 
 	conf = new drt::Config(params);
 	conf->eval<drt::parser::UnixParser>(ac, av);

@@ -9,10 +9,10 @@
 
 using namespace drt::parser;
 
-UnixParser::UnixParser(): section(nullptr)
+UnixParser::UnixParser(unsigned short default_port): section(nullptr)
 {
 	sections["peers"] = new PeerSection();
-	sections["server"] = new ServerSection();
+	sections["server"] = new ServerSection(default_port);
 	sections["worker"] = new WorkerSection();
 }
 

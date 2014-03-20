@@ -1,4 +1,5 @@
-#ifndef DRT_CONFIG
+#ifndef  DRT_CONFIG
+# define DRT_CONFIG
 
 # include <string> //std::string
 # include "ConfigParam.hpp"
@@ -31,7 +32,6 @@ class Config
 		template<class Parser>void parseFile(); //throw
 		bool parseParam(int ac, char **av);
 
-		bool parseParamShort(char *str);
 		int parseParamFull(char **str);
 
 	private:

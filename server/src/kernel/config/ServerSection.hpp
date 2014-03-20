@@ -10,7 +10,7 @@ namespace parser
 class ServerSection: public ISection
 {
 	public:
-		ServerSection();
+		ServerSection(unsigned short port=0);
 		ServerSection(const ServerSection &);
 		virtual ~ServerSection();
 
@@ -27,6 +27,7 @@ class ServerSection: public ISection
 		unsigned int maxClient;
 		bool maxClient_set;
 		bool noListen;
+		unsigned short realPort;
 };
 }
 }
