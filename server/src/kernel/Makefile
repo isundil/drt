@@ -33,7 +33,7 @@ OBJ=	$(SRC:.cpp=.o)
 
 NAME=	./drt
 
-CXX=	clang++ -std=c++11 -DDEFAULT_PORT=11424 -DMODULE_DIRS=\""modules,../../modules/"\" -DPINK_WORLD
+CXX=	clang++ -std=c++11 -DDEFAULT_PORT=11424 -DMODULE_DIRS=\""modules,../../modules/"\"
 
 CXXFLAGS=	-W -Wall -Wextra $(DEBUG) -I./ -I./render
 
