@@ -1,4 +1,5 @@
-﻿using System;
+﻿using client.Objects;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -180,6 +181,9 @@ namespace client
                         break;
                     case eDrawMode.CYLINDER:
                         object_type = typeof(Cylinder);
+                        break;
+                    case eDrawMode.LIGHT:
+                        object_type = typeof(Light);
                         break;
                 }
 
