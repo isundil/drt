@@ -1,4 +1,5 @@
-﻿using System;
+﻿using client.Objects;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -98,7 +99,7 @@ namespace client
 
                 return;
             }
-            if (this.drawMode == eDrawMode.GRAB) return;
+            if (this.drawMode > eDrawMode.NONE) return;
 
             save_views();
         }
@@ -125,6 +126,8 @@ namespace client
 
                 return;
             }
+            if (this.drawMode > eDrawMode.NONE) return;
+
             save_views();
         }
         private void view_z_MouseDown(object sender, MouseEventArgs e)
@@ -150,6 +153,8 @@ namespace client
 
                 return;
             }
+            if (this.drawMode > eDrawMode.NONE) return;
+
             save_views();
         }
 
@@ -174,6 +179,9 @@ namespace client
                     break;
                 case eDrawMode.CYLINDER:
                     s = Cylinder.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
+                case eDrawMode.LIGHT:
+                    s = Light.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
             }
             if (s != null)
@@ -207,6 +215,9 @@ namespace client
                 case eDrawMode.CYLINDER:
                     s = Cylinder.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
+                case eDrawMode.LIGHT:
+                    s = Light.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
             }
             if (s != null)
             {
@@ -238,6 +249,9 @@ namespace client
                     break;
                 case eDrawMode.CYLINDER:
                     s = Cylinder.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
+                case eDrawMode.LIGHT:
+                    s = Light.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
             }
             if (s != null)
