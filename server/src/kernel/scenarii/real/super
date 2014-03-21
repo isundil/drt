@@ -1,0 +1,12 @@
+[peers]
+Server 192.168.1.201:8040
+
+[server]
+Listen 8140
+MaxClient unlimited
+
+#NoListen
+
+[worker]
+MaxThreads 0
+
