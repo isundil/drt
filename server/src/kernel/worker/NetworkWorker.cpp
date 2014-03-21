@@ -189,7 +189,7 @@ bool NetworkWorker::connectToPeers()
 		if (!(*i)->getConfirmed())
 			ss << "[C]";
 		else
-			ss << "   ";
+			ss << "[ ]";
 		if ((*i)->isDirect())
 			ss << "[D]";
 		else

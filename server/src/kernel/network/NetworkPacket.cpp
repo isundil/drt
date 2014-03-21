@@ -413,7 +413,7 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 		{
 			if (pi == *i)
 				continue;
-			if ((*i)->getId() < m.getNetwork()->getMe()->getId())
+			if ((*i)->getId() <= m.getNetwork()->getMe()->getId())
 			{
 				unsigned short newId = m.getNetwork()->incBiggerId();
 				(*i)->setId(newId);
