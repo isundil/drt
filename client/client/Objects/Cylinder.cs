@@ -27,33 +27,30 @@ namespace client
             return new Cylinder(p1, d, tmp);
         }
 
-        override public void draw_x(Image b, Viewport vp, bool selected)
+        private void draw_points(Image b, Viewport vp, bool selected, Util.eView view)
         {
             var points_f1 = new Point[points_top.Count];
             var points_f2 = new Point[points_bottom.Count];
             var g = System.Drawing.Graphics.FromImage(b);
-            var i = 0;
 
-            foreach (var p in points_top)
+            for (var i = 0; i < points_f1.Length; i++)
             {
-                Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
-                Util.convertToGe(t, vp, b, Util.eView.x);
-                points_f1[i] = new Point(t.Y, t.Z);
-                i++;
-            }
-            i = 0;
-            foreach (var p in points_bottom)
-            {
-                Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
-                Util.convertToGe(t, vp, b, Util.eView.x);
-                points_f2[i] = new Point(t.Y, t.Z);
-                i++;
+                Points t1 = (Points)points_top[i].Clone();
+                Points t2 = (Points)points_bottom[i].Clone();
+                t1.X += centerPoint.X;
+                t1.Y += centerPoint.Y;
+                t1.Z += centerPoint.Z;
+                t2.X += centerPoint.X;
+                t2.Y += centerPoint.Y;
+                t2.Z += centerPoint.Z;
+                Util.convertToGe(t1, vp, b, view);
+                Util.convertToGe(t2, vp, b, view);
+                if (view == Util.eView.x) points_f1[i] = new Point(t1.Y, t1.Z);
+                if (view == Util.eView.y) points_f1[i] = new Point(t1.X, t1.Z);
+                if (view == Util.eView.z) points_f1[i] = new Point(t1.X, t1.Y);
+                if (view == Util.eView.x) points_f2[i] = new Point(t2.Y, t2.Z);
+                if (view == Util.eView.y) points_f2[i] = new Point(t2.X, t2.Z);
+                if (view == Util.eView.z) points_f2[i] = new Point(t2.X, t2.Y);
             }
 
             using (var pen = new Pen((selected ? System.Drawing.Color.White : Color.toColor())))
@@ -66,106 +63,94 @@ namespace client
                 g.DrawClosedCurve(pen, points_f2);
             }
         }
+
+        override public void draw_x(Image b, Viewport vp, bool selected)
+        {
+            draw_points(b, vp, selected, Util.eView.x);
+        }
+
         override public void draw_y(Image b, Viewport vp, bool selected)
         {
-            var points_f1 = new Point[points_top.Count];
-            var points_f2 = new Point[points_bottom.Count];
-            var g = System.Drawing.Graphics.FromImage(b);
-            var i = 0;
-
-            foreach (var p in points_top)
-            {
-                Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
-                Util.convertToGe(t, vp, b, Util.eView.y);
-                points_f1[i] = new Point(t.X, t.Z);
-                i++;
-            }
-            i = 0;
-            foreach (var p in points_bottom)
-            {
-                Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
-                Util.convertToGe(t, vp, b, Util.eView.y);
-                points_f2[i] = new Point(t.X, t.Z);
-                i++;
-            }
-
-            using (var pen = new Pen((selected ? System.Drawing.Color.White : Color.toColor())))
-            {
-                for (var id = 0; id < points_f1.Length; id++)
-                {
-                    g.DrawLine(pen, points_f1[id], points_f2[id]);
-                }
-                g.DrawClosedCurve(pen, points_f1);
-                g.DrawClosedCurve(pen, points_f2);
-            }
+            draw_points(b, vp, selected, Util.eView.y);
         }
         override public void draw_z(Image b, Viewport vp, bool selected)
         {
-            var points_f1 = new Point[points_top.Count];
-            var points_f2 = new Point[points_bottom.Count];
-            var g = System.Drawing.Graphics.FromImage(b);
-            var i = 0;
+            draw_points(b, vp, selected, Util.eView.z);
+        }
 
-            foreach (var p in points_top)
-            {
-                Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
-                Util.convertToGe(t, vp, b, Util.eView.z);
-                points_f1[i] = new Point(t.X, t.Y);
-                i++;
-            }
-            i = 0;
-            foreach (var p in points_bottom)
-            {
-                Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
-                Util.convertToGe(t, vp, b, Util.eView.z);
-                points_f2[i] = new Point(t.X, t.Y);
-                i++;
-            }
+        bool is_between (float x, float bound1, float bound2, float delta)
+        {
+           return (((x >= (bound1 - delta)) && (x <= (bound2 + delta))) || ((x >= (bound2 - delta)) && (x <= (bound1 + delta))));
+        }
 
-            using (var pen = new Pen((selected ? System.Drawing.Color.White : Color.toColor())))
+        private bool _isInSegment(float delta, int pY, int pZ, int p0Y, int p0Z, int p1Y, int p1Z)
+        {
+            if (is_between(pY, p0Y, p1Y, delta) && is_between(pZ, p0Z, p1Z, delta))
             {
-                for (var id = 0; id < points_f1.Length; id++)
+                if (Math.Abs(p1Y - p0Y) <= delta)
                 {
-                    g.DrawLine(pen, points_f1[id], points_f2[id]);
+                    return (true);
                 }
-                g.DrawClosedCurve(pen, points_f1);
-                g.DrawClosedCurve(pen, points_f2);
+
+                float M = (float)(p1Z - p0Z) / (p1Y - p0Y);
+                float C = -(M * pY) + pZ;
+
+                return (Math.Abs(C) <= delta);
             }
+            return false;
+        }
+
+        bool isInSegment(Points p, Points p2, Points p3, Util.eView view)
+        {
+            float delta = 10f;
+            Points p0 = (Points)p2.Clone();
+            Points p1 = (Points)p3.Clone();
+            p0.X += centerPoint.X;
+            p1.X += centerPoint.X;
+            p0.Y += centerPoint.Y;
+            p1.Y += centerPoint.Y;
+            p0.Z += centerPoint.Z;
+            p1.Z += centerPoint.Z;
+
+            if (view == Util.eView.x)
+            {
+                return _isInSegment(delta, p.Y, p.Z, p0.Y, p0.Z, p1.Y, p1.Z);
+            }
+            if (view == Util.eView.y)
+            {
+                return _isInSegment(delta, p.X, p.Z, p0.X, p0.Z, p1.X, p1.Z);
+            }
+            if (view == Util.eView.z)
+            {
+                return _isInSegment(delta, p.X, p.Y, p0.X, p0.Y, p1.X, p1.Y);
+            }
+            return false;
+        }
+
+        bool isInWireframe(Points p, Util.eView view)
+        {
+            if (isInSegment(p, points_top[0], points_bottom[0], view)) return true;
+            for (var i = 1; i < points_top.Count; i++)
+            {
+                if (isInSegment(p, points_top[i - 1], points_top[i], view)
+                    || isInSegment(p, points_bottom[i - 1], points_bottom[i], view)
+                    || isInSegment(p, points_bottom[i], points_top[i], view))
+                    return true;
+            }
+            return false;
         }
 
         public override bool solve_equation_x(Points p)
         {
-            var _rsq = Math.Pow(this.centerPoint.Y - p.Y, 2) + Math.Pow(this.centerPoint.Z - p.Z, 2);
-            if (_rsq >= Math.Pow(this.Radius - 5, 2) && _rsq <= Math.Pow(this.Radius + 5, 2)) return true;
-            return false;
+            return isInWireframe(p, Util.eView.x);
         }
         public override bool solve_equation_y(Points p)
         {
-            var _rsq = Math.Pow(this.centerPoint.X - p.X, 2) + Math.Pow(this.centerPoint.Z - p.Z, 2);
-            var rsq = Math.Pow(this.Radius, 2);
-
-            if (_rsq >= Math.Pow(this.Radius - 5, 2) && _rsq <= Math.Pow(this.Radius + 5, 2)) return true;
-            return false;
+            return isInWireframe(p, Util.eView.y);
         }
         public override bool solve_equation_z(Points p)
         {
-            var _rsq = Math.Pow(this.centerPoint.X - p.X, 2) + Math.Pow(this.centerPoint.Y - p.Y, 2);
-            var rsq = Math.Pow(this.Radius, 2);
-
-            if (_rsq >= Math.Pow(this.Radius - 5, 2) && _rsq <= Math.Pow(this.Radius + 5, 2)) return true;
-            return false;
+            return isInWireframe(p, Util.eView.z);
         }
 
         static protected int count = 0;
