@@ -308,7 +308,10 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 			manager.send(peer, new IdCh(-1, manager.getNetwork()->getMe()->getId()));
 		}
 		else
-			manager.broadcast(new IdCh(peer->getId(), -1), peer);
+		{
+			//manager.broadcast(new IdCh(peer->getId(), -1), peer);
+			manager.broadcast(new SAuth(peer->getId(), 0), peer);
+		}
 	}
 	else
 	{
