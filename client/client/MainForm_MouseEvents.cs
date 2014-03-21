@@ -303,12 +303,8 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                double angle = 0;
-                if (p3.Y - ol.Selected.Y != 0) angle = Math.Atan((double)(p3.Z - ol.Selected.Z) / (p3.Y - ol.Selected.Y));
-                else if (p3.Z < ol.Selected.Z) angle = -Math.PI / 2;
-                else if (p3.Z > ol.Selected.Z) angle = Math.PI / 2;
-
-                ol.Selected.RotX = angle;
+                double angle = Math.Atan2((p3.Z - ol.Selected.Z), (p3.Y - ol.Selected.Y));
+                ol.Selected.dRotX = angle;
 
                 ol.Selected.Refresh();
                 redraw();
@@ -351,12 +347,9 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                double angle = 0;
-                if (p3.X - ol.Selected.X != 0) angle = Math.Atan((double)(p3.Z - ol.Selected.Z) / (p3.X - ol.Selected.X));
-                else if (p3.Z < ol.Selected.Z) angle = -Math.PI / 2;
-                else if (p3.Z > ol.Selected.Z) angle = Math.PI / 2;
+                double angle = Math.Atan2((p3.Z - ol.Selected.Z), (p3.X - ol.Selected.X));
 
-                ol.Selected.RotY = angle;
+                ol.Selected.dRotY = angle;
 
                 ol.Selected.Refresh();
                 redraw();
@@ -399,12 +392,9 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                double angle = 0;
-                if (p3.X - ol.Selected.X != 0) angle = Math.Atan((double)(p3.Y - ol.Selected.Y) / (p3.X - ol.Selected.X));
-                else if (p3.Y < ol.Selected.Y) angle = -Math.PI / 2;
-                else if (p3.Y > ol.Selected.Y) angle = Math.PI / 2;
+                double angle = Math.Atan2((p3.Y - ol.Selected.Y), (p3.X - ol.Selected.X));
 
-                ol.Selected.RotZ = angle;
+                ol.Selected.dRotZ = angle;
 
                 ol.Selected.Refresh();
                 redraw();

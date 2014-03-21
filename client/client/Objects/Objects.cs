@@ -181,10 +181,47 @@ namespace client
         internal MatrixY matrixY;
         internal MatrixZ matrixZ;
 
-        private double _rotX;
-        private double _rotY;
-        private double _rotZ;
-        public double RotX
+        protected double _rotX;
+        protected double _rotY;
+        protected double _rotZ;
+        public int RotX
+        {
+            get
+            {
+                return (int)((_rotX * 180) / Math.PI);
+            }
+            set
+            {
+                _rotX = (value * Math.PI) / 180;
+                matrixX = new MatrixX(_rotX);
+            }
+        }
+        public int RotY
+        {
+            get
+            {
+                return (int)((_rotY * 180) / Math.PI);
+            }
+            set
+            {
+                _rotY = (value * Math.PI) / 180;
+                matrixY = new MatrixY(_rotY);
+            }
+        }
+        public int RotZ
+        {
+            get
+            {
+                return (int)((_rotZ * 180) / Math.PI);
+            }
+            set
+            {
+                _rotZ = (value * Math.PI) / 180;
+                matrixZ = new MatrixZ(_rotZ);
+            }
+        }
+
+        internal double dRotX
         {
             get
             {
@@ -196,7 +233,7 @@ namespace client
                 matrixX = new MatrixX(value);
             }
         }
-        public double RotY
+        internal double dRotY
         {
             get
             {
@@ -208,7 +245,7 @@ namespace client
                 matrixY = new MatrixY(value);
             }
         }
-        public double RotZ
+        internal double dRotZ
         {
             get
             {
