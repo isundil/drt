@@ -303,10 +303,9 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                double angle = 0;
-                if (p3.Y - ol.Selected.Y != 0) angle = Math.Atan((double)(p3.Z - ol.Selected.Z) / (p3.Y - ol.Selected.Y));
-                else if (p3.Z < ol.Selected.Z) angle = -Math.PI / 2;
-                else if (p3.Z > ol.Selected.Z) angle = Math.PI / 2;
+                var d = Math.Sqrt(Math.Pow(p3.Y - ol.Selected.Y, 2) + Math.Pow(p3.Z - ol.Selected.Z, 2));
+                if (d == 0) return;
+                var angle = Math.Acos(((double)Math.Abs(p3.Y - ol.Selected.Y) / d));
 
                 ol.Selected.RotX = angle;
 
@@ -351,10 +350,9 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                double angle = 0;
-                if (p3.X - ol.Selected.X != 0) angle = Math.Atan((double)(p3.Z - ol.Selected.Z) / (p3.X - ol.Selected.X));
-                else if (p3.Z < ol.Selected.Z) angle = -Math.PI / 2;
-                else if (p3.Z > ol.Selected.Z) angle = Math.PI / 2;
+                var d = Math.Sqrt(Math.Pow(p3.X - ol.Selected.X, 2) + Math.Pow(p3.Z - ol.Selected.Z, 2));
+                if (d == 0) return;
+                var angle = Math.Acos((p3.X - ol.Selected.X) / d);
 
                 ol.Selected.RotY = angle;
 
@@ -399,10 +397,9 @@ namespace client
             }
             if (e.Button == System.Windows.Forms.MouseButtons.Left && this.drawMode == eDrawMode.ROTATE)
             {
-                double angle = 0;
-                if (p3.X - ol.Selected.X != 0) angle = Math.Atan((double)(p3.Y - ol.Selected.Y) / (p3.X - ol.Selected.X));
-                else if (p3.Y < ol.Selected.Y) angle = -Math.PI / 2;
-                else if (p3.Y > ol.Selected.Y) angle = Math.PI / 2;
+                var d = Math.Sqrt(Math.Pow(p3.X - ol.Selected.X, 2) + Math.Pow(p3.Y - ol.Selected.Y, 2));
+                if (d == 0) return;
+                var angle = Math.Acos((p3.X - ol.Selected.X) / d);
 
                 ol.Selected.RotZ = angle;
 

@@ -9,6 +9,8 @@ namespace client
 {
     public class Cylinder : AObjects
     {
+        public int Height { get; set; }
+
         new static public AObjects create_x(Points p1, Points p2, Viewport vp, bool tmp = false)
         {
             var d = (int)Math.Sqrt(Math.Pow(p2.Y - p1.Y, 2) + Math.Pow(p2.Z - p1.Z, 2));
@@ -30,16 +32,14 @@ namespace client
         override public void draw_x(Image b, Viewport vp, bool selected)
         {
             var points_f1 = new Point[points_top.Count];
-            var points_f2 = new Point[points_bottom.Count];
+            var points_f2 = new Point[points_top.Count];
             var g = System.Drawing.Graphics.FromImage(b);
+            
             var i = 0;
-
+            double c = 100;
             foreach (var p in points_top)
             {
                 Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
                 Util.convertToGe(t, vp, b, Util.eView.x);
                 points_f1[i] = new Point(t.Y, t.Z);
                 i++;
@@ -48,9 +48,6 @@ namespace client
             foreach (var p in points_bottom)
             {
                 Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
                 Util.convertToGe(t, vp, b, Util.eView.x);
                 points_f2[i] = new Point(t.Y, t.Z);
                 i++;
@@ -58,27 +55,25 @@ namespace client
 
             using (var pen = new Pen((selected ? System.Drawing.Color.White : Color.toColor())))
             {
-                for (var id = 0; id < points_f1.Length; id++)
+                g.DrawClosedCurve(pen, points_f1);
+                g.DrawClosedCurve(pen, points_f2);
+
+                for (var id = 0; id < points_f1.Length; id++ )
                 {
                     g.DrawLine(pen, points_f1[id], points_f2[id]);
                 }
-                g.DrawClosedCurve(pen, points_f1);
-                g.DrawClosedCurve(pen, points_f2);
             }
         }
         override public void draw_y(Image b, Viewport vp, bool selected)
         {
             var points_f1 = new Point[points_top.Count];
-            var points_f2 = new Point[points_bottom.Count];
+            var points_f2 = new Point[points_top.Count];
             var g = System.Drawing.Graphics.FromImage(b);
-            var i = 0;
 
+            var i = 0;
             foreach (var p in points_top)
             {
                 Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
                 Util.convertToGe(t, vp, b, Util.eView.y);
                 points_f1[i] = new Point(t.X, t.Z);
                 i++;
@@ -87,9 +82,6 @@ namespace client
             foreach (var p in points_bottom)
             {
                 Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
                 Util.convertToGe(t, vp, b, Util.eView.y);
                 points_f2[i] = new Point(t.X, t.Z);
                 i++;
@@ -97,27 +89,25 @@ namespace client
 
             using (var pen = new Pen((selected ? System.Drawing.Color.White : Color.toColor())))
             {
+                g.DrawClosedCurve(pen, points_f1);
+                g.DrawClosedCurve(pen, points_f2);
+
                 for (var id = 0; id < points_f1.Length; id++)
                 {
                     g.DrawLine(pen, points_f1[id], points_f2[id]);
                 }
-                g.DrawClosedCurve(pen, points_f1);
-                g.DrawClosedCurve(pen, points_f2);
             }
         }
         override public void draw_z(Image b, Viewport vp, bool selected)
         {
             var points_f1 = new Point[points_top.Count];
-            var points_f2 = new Point[points_bottom.Count];
+            var points_f2 = new Point[points_top.Count];
             var g = System.Drawing.Graphics.FromImage(b);
-            var i = 0;
 
+            var i = 0;
             foreach (var p in points_top)
             {
                 Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
                 Util.convertToGe(t, vp, b, Util.eView.z);
                 points_f1[i] = new Point(t.X, t.Y);
                 i++;
@@ -126,9 +116,6 @@ namespace client
             foreach (var p in points_bottom)
             {
                 Points t = (Points)p.Clone();
-                t.X += centerPoint.X;
-                t.Y += centerPoint.Y;
-                t.Z += centerPoint.Z;
                 Util.convertToGe(t, vp, b, Util.eView.z);
                 points_f2[i] = new Point(t.X, t.Y);
                 i++;
@@ -136,12 +123,13 @@ namespace client
 
             using (var pen = new Pen((selected ? System.Drawing.Color.White : Color.toColor())))
             {
+                g.DrawClosedCurve(pen, points_f1);
+                g.DrawClosedCurve(pen, points_f2);
+
                 for (var id = 0; id < points_f1.Length; id++)
                 {
                     g.DrawLine(pen, points_f1[id], points_f2[id]);
                 }
-                g.DrawClosedCurve(pen, points_f1);
-                g.DrawClosedCurve(pen, points_f2);
             }
         }
 
@@ -181,40 +169,37 @@ namespace client
 
             while (angle < 2 * Math.PI)
             {
-                points_top.Add(
-                    new Points()
+                var p1 = new Points()
                     {
-                        X = (int)(this.Radius * Math.Cos(angle)),
-                        Y = (int)(this.Radius * Math.Sin(angle)),
-                        Z = (int)(Height / 2)
-                    }
-                    );
-                points_bottom.Add(
-                    new Points()
+                        X = (int)(this.Radius * Math.Cos(angle)) + centerPoint.X,
+                        Y = (int)(this.Radius * Math.Sin(angle)) + centerPoint.Y,
+                        Z = Height / 2 + centerPoint.Z
+                    };
+                var p2 = new Points()
                     {
-                        X = (int)(this.Radius * Math.Cos(angle)),
-                        Y = (int)(this.Radius * Math.Sin(angle)),
-                        Z = (int)(-Height / 2)
-                    }
-                    );
+                        X = (int)(this.Radius * Math.Cos(angle)) + centerPoint.X,
+                        Y = (int)(this.Radius * Math.Sin(angle)) + centerPoint.Y,
+                        Z = -Height / 2 + centerPoint.Z
+                    };
 
-                matrixX.ApplyOnPoint(points_top[points_top.Count - 1]);
-                matrixX.ApplyOnPoint(points_bottom[points_bottom.Count - 1]);
-                matrixY.ApplyOnPoint(points_top[points_top.Count - 1]);
-                matrixY.ApplyOnPoint(points_bottom[points_bottom.Count - 1]);
-                matrixZ.ApplyOnPoint(points_top[points_top.Count - 1]);
-                matrixZ.ApplyOnPoint(points_bottom[points_bottom.Count - 1]);
+                this.matrixX.ApplyOnPoint(p1);
+                this.matrixX.ApplyOnPoint(p2);
+                this.matrixY.ApplyOnPoint(p1);
+                this.matrixY.ApplyOnPoint(p2);
+                this.matrixZ.ApplyOnPoint(p1);
+                this.matrixZ.ApplyOnPoint(p2);
+
+                points_top.Add(p1);
+                points_bottom.Add(p2);
                 angle += delta;
             }
         }
-
-        public uint Height { get; set; }
 
         Cylinder()
         {
             this.centerPoint = new Points();
             base.AddOneToCount(typeof(Cylinder));
-            generate_points();
+            //generate_points();
         }
 
         private Cylinder(Points c, int d, bool tmp)

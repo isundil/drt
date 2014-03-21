@@ -1,4 +1,5 @@
-﻿using System;
+﻿using client.Objects;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -91,14 +92,12 @@ namespace client
         {
             return new Points() { X = this.X, Y = this.Y, Z = this.Z };
         }
-
-        public override string ToString()
-        {
-            return "{ X = " + X + ", Y = " + Y + ", Z = " + Z + " }"; 
-        }
     }
 
     [XmlInclude(typeof(Sphere))]
+    [XmlInclude(typeof(Cylinder))]
+    [XmlInclude(typeof(Light))]
+
     abstract public class AObjects
     {
         protected AObjects()
