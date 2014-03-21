@@ -146,9 +146,9 @@ bool NetworkWorker::connectToPeers()
 	if (time(nullptr) - lastConnectAtempt < 5)
 		return false;
 	sendCpuUsage();
-	lastConnectAtempt = time(nullptr);
 	if (connectingTo)
 		return false;
+	lastConnectAtempt = time(nullptr);
 	clients.remove_if(d);
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
 	{

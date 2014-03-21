@@ -1,13 +1,15 @@
 
+#comment2
+
 [peers]
-Server 127.0.0.1:8541
+Server localhost:8141
 
 [server]
-#Listen 8540
+Listen 8140
 MaxClient unlimited
 
-NoListen
+#NoListen
 
 [worker]
-MaxThreads 1
+MaxThreads 2
 
