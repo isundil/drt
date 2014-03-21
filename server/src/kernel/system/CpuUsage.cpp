@@ -25,7 +25,7 @@ int CpuUsage::evalLine(std::ifstream &stream)
 	}
 	usage_sum = (stats.user - lastData[cpuName].user) + (stats.nice - lastData[cpuName].nice) + (stats.system - lastData[cpuName].system);
 	total_sum = usage_sum + (stats.idle - lastData[cpuName].idle);
-	usage_percent = total_sum == 0 ? 0 : ((255 * usage_sum) / total_sum);
+	usage_percent = ((255 * usage_sum) / total_sum);
 	lastData[cpuName] = stats;
 	return usage_percent;
 }
