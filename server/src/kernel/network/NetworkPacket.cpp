@@ -308,7 +308,10 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 			manager.send(peer, new IdCh(-1, manager.getNetwork()->getMe()->getId()));
 		}
 		else
-			manager.broadcast(new IdCh(peer->getId(), -1), peer);
+		{
+			//manager.broadcast(new IdCh(peer->getId(), -1), peer);
+			manager.broadcast(new SAuth(peer->getId(), 0), peer);
+		}
 	}
 	else
 	{
@@ -367,6 +370,8 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 		m.getNetwork()->getMe()->setId(newId);
 		m.broadcast(new IdCh(*this), p);
 	}
+	else if (oldId == 0xFFFF && newId == p->getId())
+			return;
 	else
 	{
 		PeerInfo *pi = m.getNetwork()->getPeer(oldId);
@@ -399,9 +404,11 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 			return;
 		m.send(newServ, new Confirm(*this));
 		m.send(newServ, new IdCh(-1, m.getNetwork()->getMe()->getId()));
-		//for (auto i = m.getNetwork()->getPeers().cbegin(); i != m.getNetwork()->getPeers().cend(); i++)
-		//	if (!(*i)->getConfirmed() && (*i)->getSocket() != newServ->getSocket())
-		//		m.send(newServ, new SAuth((*i)->getId(), 0));
+		if (!newServ->isDirect())
+			return;
+		for (auto i = m.getNetwork()->getPeers().cbegin(); i != m.getNetwork()->getPeers().cend(); i++)
+			if (!(*i)->getConfirmed() && (*i)->getSocket() != newServ->getSocket())
+				m.send(newServ, new SAuth((*i)->getId(), 0));
 	}
 	else
 	{
