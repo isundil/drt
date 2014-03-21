@@ -7,36 +7,38 @@ using System.Threading.Tasks;
 
 namespace client
 {
-    public class Cylinder : AObjects
+    public class Cone : AObjects
     {
         new static public AObjects create_x(Points p1, Points p2, Viewport vp, bool tmp = false)
         {
             var d = (int)Math.Sqrt(Math.Pow(p2.Y - p1.Y, 2) + Math.Pow(p2.Z - p1.Z, 2));
-            return new Cylinder(p1, d, tmp);
+            return new Cone(p1, d, tmp);
         }
         new static public AObjects create_y(Points p1, Points p2, Viewport vp, bool tmp = false)
         {
             var d = (int)Math.Sqrt(Math.Pow(p1.Z - p2.Z, 2) + Math.Pow(p1.X - p2.X, 2));
 
-            return new Cylinder(p1, d, tmp);
+            return new Cone(p1, d, tmp);
         }
         new static public AObjects create_z(Points p1, Points p2, Viewport vp, bool tmp = false)
         {
             var d = (int)Math.Sqrt(Math.Pow(p1.Y - p2.Y, 2) + Math.Pow(p1.X - p2.X, 2));
 
-            return new Cylinder(p1, d, tmp);
+            return new Cone(p1, d, tmp);
         }
 
         private void draw_points(Image b, Viewport vp, bool selected, Util.eView view)
         {
             var points_f1 = new Point[points_top.Count];
             var points_f2 = new Point[points_bottom.Count];
+            Point cp = new Point();
             var g = System.Drawing.Graphics.FromImage(b);
 
             for (var i = 0; i < points_f1.Length; i++)
             {
                 Points t1 = (Points)points_top[i].Clone();
                 Points t2 = (Points)points_bottom[i].Clone();
+                Points c = (Points)centerPoint.Clone();
                 t1.X += centerPoint.X;
                 t1.Y += centerPoint.Y;
                 t1.Z += centerPoint.Z;
@@ -45,6 +47,10 @@ namespace client
                 t2.Z += centerPoint.Z;
                 Util.convertToGe(t1, vp, b, view);
                 Util.convertToGe(t2, vp, b, view);
+                Util.convertToGe(c, vp, b, view);
+                if (view == Util.eView.x) cp = new Point(c.Y, c.Z);
+                if (view == Util.eView.y) cp = new Point(c.X, c.Z);
+                if (view == Util.eView.z) cp = new Point(c.X, c.Y);
                 if (view == Util.eView.x) points_f1[i] = new Point(t1.Y, t1.Z);
                 if (view == Util.eView.y) points_f1[i] = new Point(t1.X, t1.Z);
                 if (view == Util.eView.z) points_f1[i] = new Point(t1.X, t1.Y);
@@ -57,7 +63,8 @@ namespace client
             {
                 for (var id = 0; id < points_f1.Length; id++)
                 {
-                    g.DrawLine(pen, points_f1[id], points_f2[id]);
+                    g.DrawLine(pen, points_f1[id], cp);
+                    g.DrawLine(pen, points_f2[id], cp);
                 }
                 g.DrawClosedCurve(pen, points_f1);
                 g.DrawClosedCurve(pen, points_f2);
@@ -114,15 +121,18 @@ namespace client
 
             if (view == Util.eView.x)
             {
-                return _isInSegment(delta, p.Y, p.Z, p0.Y, p0.Z, p1.Y, p1.Z);
+                return _isInSegment(delta, p.Y, p.Z, centerPoint.Y, centerPoint.Z, p0.Y, p0.Z)
+                    || _isInSegment(delta, p.Y, p.Z, p1.Y, p1.Z, centerPoint.Y, centerPoint.Z);
             }
             if (view == Util.eView.y)
             {
-                return _isInSegment(delta, p.X, p.Z, p0.X, p0.Z, p1.X, p1.Z);
+                return _isInSegment(delta, p.X, p.Z, p0.X, p0.Z, centerPoint.X, centerPoint.Z)
+                    || _isInSegment(delta, p.X, p.Z, centerPoint.X, centerPoint.Z, p1.X, p1.Z);
             }
             if (view == Util.eView.z)
             {
-                return _isInSegment(delta, p.X, p.Y, p0.X, p0.Y, p1.X, p1.Y);
+                return _isInSegment(delta, p.X, p.Y, p0.X, p0.Y, centerPoint.X, centerPoint.Y)
+                    || _isInSegment(delta, p.X, p.Y, centerPoint.X, centerPoint.Y, p1.X, p1.Y);
             }
             return false;
         }
@@ -195,25 +205,25 @@ namespace client
 
         public uint Height { get; set; }
 
-        Cylinder()
+        Cone()
         {
             this.centerPoint = new Points();
-            base.AddOneToCount(typeof(Cylinder));
+            base.AddOneToCount(typeof(Cone));
         }
 
-        private Cylinder(Points c, int d, bool tmp)
+        private Cone(Points c, int d, bool tmp)
             : base(tmp)
         {
             this.centerPoint = c;
             this.Radius = d;
             this.Height = 100;
-            this.Color = new MyColor(System.Drawing.Color.Red.ToArgb());
+            this.Color = new MyColor(System.Drawing.Color.Aquamarine.ToArgb());
 
             generate_points();
 
             if (!tmp)
             {
-                this.Name = "Cylinder" + base.AddOneToCount(typeof(Cylinder));
+                this.Name = "Cone" + base.AddOneToCount(typeof(Cone));
             }
         }
 
@@ -224,7 +234,7 @@ namespace client
 
         override public int getSubModule()
         {
-            return (int)eSubModules.CYLINDER;
+            return (int)eSubModules.CONE;
         }
 
         override public byte[] getBytes()

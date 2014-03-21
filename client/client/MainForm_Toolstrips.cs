@@ -33,16 +33,21 @@ namespace client
         {
             if (currentfile.Nlong != null)
             {
-                var x = new XmlSerializer(ol.GetType());
-                TextWriter tw = new StreamWriter(currentfile.Nlong);
-                try { x.Serialize(tw, ol); }
-                catch { MessageBox.Show("An error occured saving the file"); }
+                try
+                {
+                    var x = new XmlSerializer(ol.GetType());
+                    TextWriter tw = new StreamWriter(currentfile.Nlong);
+                    x.Serialize(tw, ol);
+
+                    tw.Close();
+                }
+                catch (Exception ex) { MessageBox.Show("An error occured saving the file : " + ex.Message); }
 
                 saveAsToolStripMenuItem.Enabled = true;
             }
             else
             {
-                loadToolStripMenuItem_Click(sender, e);
+                saveAsToolStripMenuItem_Click(sender, e);
             }
         }
 
@@ -56,12 +61,13 @@ namespace client
             f.CustomPlaces.Add(new FileDialogCustomPlace(Environment.CurrentDirectory));
             if (f.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
-                TextReader tr = new StreamReader(f.FileName);
                 AObjects.Reinit();
 
                 try
                 {
+                    TextReader tr = new StreamReader(f.FileName);
                     ol = x.Deserialize(tr) as ObjectsList;
+                    tr.Close();
 
                     currentfile.Nlong = f.FileName;
                     FileInfo ff = new FileInfo(currentfile.Nlong);
@@ -84,8 +90,6 @@ namespace client
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var x = new XmlSerializer(ol.GetType());
-
             var f = new SaveFileDialog();
             f.AddExtension = true;
 
@@ -95,20 +99,20 @@ namespace client
 
             if (f.ShowDialog(this) == System.Windows.Forms.DialogResult.OK)
             {
-                TextWriter tw = new StreamWriter(f.FileName);
                 try
                 {
+                    var x = new XmlSerializer(ol.GetType());
+                    TextWriter tw = new StreamWriter(f.FileName);
                     x.Serialize(tw, ol);
 
                     currentfile.Nlong = f.FileName;
                     FileInfo ff = new FileInfo(currentfile.Nlong);
                     currentfile.Nshort = ff.Name;
                     this.Text = currentfile.Nshort;
+
+                    tw.Close();
                 }
-                catch
-                {
-                    MessageBox.Show("An error occured saving the file");
-                }
+                catch (Exception ex) { MessageBox.Show("An error occured saving the file : " + ex.Message); }
             }
         }
 
@@ -178,6 +182,13 @@ namespace client
             this.drawMode = eDrawMode.LIGHT;
 
             this.Cursor = new Cursor(Properties.Resources.light_ptr.GetHicon());
+        }
+
+        private void cone_toolstrip_Click(object sender, EventArgs e)
+        {
+            this.drawMode = eDrawMode.CONE;
+
+            this.Cursor = new Cursor(Properties.Resources.cone_ptr.GetHicon());
         }
     }
 

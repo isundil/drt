@@ -90,6 +90,7 @@
     <Compile Include="Connection.Designer.cs">
       <DependentUpon>Connection.cs</DependentUpon>
     </Compile>
+    <Compile Include="Objects\Cone.cs" />
     <Compile Include="Objects\Cylinder.cs" />
     <Compile Include="Custom Controls\ListenerWorker.cs">
       <SubType>Component</SubType>
@@ -241,6 +242,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ulight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cone_btn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cone_ptr.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

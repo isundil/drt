@@ -1,4 +1,5 @@
-﻿using System;
+﻿using client.Objects;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -13,7 +14,8 @@ namespace client
     {
         CAMERA      = 0,
         SPHERE      = 1,
-        CYLINDER    = 2
+        CYLINDER    = 2,
+        CONE        = 3
     }
 
     public class ObjectsListB : BindingList<AObjects>
@@ -55,7 +57,7 @@ namespace client
         }
     }
 
-    [XmlRoot]
+    [XmlRoot("Scene")]
     public class ObjectsList
     {
         private ObjectsListB collection;
@@ -70,7 +72,14 @@ namespace client
         public AObjects[] Items
         {
             get { return collection.ToArray(); }
-            set { foreach (var o in value) collection.Add(o); }
+            set
+            {
+                foreach (var o in value)
+                {
+                    o.Refresh();
+                    collection.Add(o);
+                }
+            }
         }
 
         [XmlIgnore]
@@ -98,7 +107,11 @@ namespace client
         }
     }
 
+    [XmlInclude(typeof(Camera))]
+    [XmlInclude(typeof(Light))]
     [XmlInclude(typeof(Sphere))]
+    [XmlInclude(typeof(Cylinder))]
+    [XmlInclude(typeof(Cone))]
     abstract public class AObjects
     {
         protected AObjects()

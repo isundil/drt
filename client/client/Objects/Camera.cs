@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace client
 {
-    class Camera : AObjects
+    public class Camera : AObjects
     {
         public Camera()
         {
@@ -14,8 +15,7 @@ namespace client
             this.Name = "Camera";
             this.Distance = 1000;
         }
-
-        public short Distance { get; set; }
+        public ushort Distance { get; set; }
 
         public override void Refresh() { }
         public override bool solve_equation_x(Points p) { return false; }

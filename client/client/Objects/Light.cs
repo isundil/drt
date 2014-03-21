@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace client.Objects
 {
-    class Light : AObjects
+    public class Light : AObjects
     {
         public override void Refresh()
         { }

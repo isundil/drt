@@ -11,6 +11,7 @@ namespace client
         {
             SPHERE,
             CYLINDER,
+            CONE,
             LIGHT,
             NONE,
             GRAB,
@@ -183,6 +184,9 @@ namespace client
                 case eDrawMode.LIGHT:
                     s = Light.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
+                case eDrawMode.CONE:
+                    s = Cone.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
             }
             if (s != null)
             {
@@ -218,6 +222,9 @@ namespace client
                 case eDrawMode.LIGHT:
                     s = Light.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
+                case eDrawMode.CONE:
+                    s = Cone.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
             }
             if (s != null)
             {
@@ -252,6 +259,9 @@ namespace client
                     break;
                 case eDrawMode.LIGHT:
                     s = Light.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
+                case eDrawMode.CONE:
+                    s = Cone.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
             }
             if (s != null)

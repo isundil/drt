@@ -56,6 +56,7 @@
             this.light_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.sphere_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.cylinder_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.cone_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -70,11 +71,11 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel9 = new System.Windows.Forms.Panel();
             this.panel10 = new System.Windows.Forms.Panel();
-            this.monitoring1 = new client.Monitoring();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.show_server_mapping = new System.Windows.Forms.CheckBox();
+            this.monitoring1 = new client.Monitoring();
             this.calculusWorker = new client.CalculusWorker();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -242,7 +243,8 @@
             this.toolStripSeparator2,
             this.light_toolstrip,
             this.sphere_toolstrip,
-            this.cylinder_toolstrip});
+            this.cylinder_toolstrip,
+            this.cone_toolstrip});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -351,6 +353,16 @@
             this.cylinder_toolstrip.Size = new System.Drawing.Size(23, 22);
             this.cylinder_toolstrip.Text = "toolStripButton2";
             this.cylinder_toolstrip.Click += new System.EventHandler(this.cylinder_toolstrip_Click);
+            // 
+            // cone_toolstrip
+            // 
+            this.cone_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cone_toolstrip.Image = global::client.Properties.Resources.cone_btn;
+            this.cone_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cone_toolstrip.Name = "cone_toolstrip";
+            this.cone_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.cone_toolstrip.Text = "toolStripButton1";
+            this.cone_toolstrip.Click += new System.EventHandler(this.cone_toolstrip_Click);
             // 
             // panel1
             // 
@@ -502,14 +514,6 @@
             this.panel10.Size = new System.Drawing.Size(200, 59);
             this.panel10.TabIndex = 1;
             // 
-            // monitoring1
-            // 
-            this.monitoring1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.monitoring1.Location = new System.Drawing.Point(0, 0);
-            this.monitoring1.Name = "monitoring1";
-            this.monitoring1.Size = new System.Drawing.Size(200, 59);
-            this.monitoring1.TabIndex = 0;
-            // 
             // propertyGrid
             // 
             this.propertyGrid.CommandsVisibleIfAvailable = false;
@@ -553,6 +557,14 @@
             this.show_server_mapping.Text = "Show server mapping";
             this.show_server_mapping.UseVisualStyleBackColor = true;
             this.show_server_mapping.CheckedChanged += new System.EventHandler(this.show_server_mapping_CheckedChanged);
+            // 
+            // monitoring1
+            // 
+            this.monitoring1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.monitoring1.Location = new System.Drawing.Point(0, 0);
+            this.monitoring1.Name = "monitoring1";
+            this.monitoring1.Size = new System.Drawing.Size(200, 59);
+            this.monitoring1.TabIndex = 0;
             // 
             // calculusWorker
             // 
@@ -656,6 +668,7 @@
         private System.Windows.Forms.ToolStripMenuItem connectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem redraw3DToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton light_toolstrip;
+        private System.Windows.Forms.ToolStripButton cone_toolstrip;
     }
 }
 
