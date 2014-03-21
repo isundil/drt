@@ -371,7 +371,7 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 	{
 		PeerInfo *pi = m.getNetwork()->getPeer(oldId);
 
-		if (pi == nullptr && newId != p->getId())
+		if (pi == nullptr || newId != p->getId())
 		{
 			m.getNetwork()->addServer(p->getSocket(), newId);
 			m.broadcast(new IdCh(*this), p);
