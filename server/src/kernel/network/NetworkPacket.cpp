@@ -408,12 +408,12 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 		//Our server is now confirmed
 		pi->setConfirmed(0);
 		m.getNetwork()->confirm();
-		std::list<PeerInfo *> clientList = m.getNetwork()->getPeers();
+		const std::list<PeerInfo *> clientList = m.getNetwork()->getPeers();
 		for (auto i = clientList.cbegin(); i != clientList.cend(); i++)
 		{
 			if (pi == *i)
 				continue;
-			if ((*i)->getId() < m.getNetwork()->getMe()->getId())
+			if ((*i)->getId() <= m.getNetwork()->getMe()->getId())
 			{
 				unsigned short newId = m.getNetwork()->incBiggerId();
 				(*i)->setId(newId);
