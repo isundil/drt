@@ -104,16 +104,6 @@ class IdCh: public ANetworkPacket
 		unsigned short newId;
 };
 
-class Relog: public ANetworkPacket
-{
-	public:
-		static ANetworkPacket *create(Socket * socket);
-		std::stringstream *getStream(size_t *buflen) const;
-
-		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
-		const std::string getName() const;
-};
-
 class Confirm: public ANetworkPacket
 {
 	public:
@@ -225,14 +215,6 @@ class Monitor: public ANetworkPacket
 		std::list<float> cpuStat;
 		memInfo ramLevel;
 		memInfo swapLevel;
-};
-
-class Proc: public ANetworkPacket
-{
-	public:
-		static ANetworkPacket *create(Socket * socket);
-		std::stringstream *getStream(size_t *buflen) const;
-		const std::string getName() const;
 };
 
 class Calc: public ANetworkPacket

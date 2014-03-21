@@ -20,15 +20,15 @@ void	Rotation::xRotation(Camera * camera, Ray * ray)
   double	x = camera->getX();
   double	y = camera->getY() * cosx - camera->getZ() * sinx;
   double	z = camera->getY() * cosx - camera->getZ() * sinx;
-  camera->setX(x);
-  camera->setY(y);
-  camera->setZ(z);
+  camera->setX(x - camera->getX());
+  camera->setY(y - camera->getY());
+  camera->setZ(z - camera->getZ());
   x = ray->getX();
   y = ray->getY() * cosx - ray->getZ() * sinx;
   z = ray->getY() * cosx - ray->getZ() * sinx;
-  ray->setX(x);
-  ray->setY(y);
-  ray->setZ(z);
+  ray->setX(x - ray->getX());
+  ray->setY(y - ray->getY());
+  ray->setZ(z - ray->getZ());
 }
 
 void	Rotation::yRotation(Camera * camera, Ray * ray)
@@ -40,15 +40,15 @@ void	Rotation::yRotation(Camera * camera, Ray * ray)
   double	x = camera->getX() * cosy - camera->getZ() * siny;
   double	y = camera->getY();
   double	z = camera->getY() * cosy - camera->getZ() * siny;
-  camera->setX(x);
-  camera->setY(y);
-  camera->setZ(z);
+  camera->setX(x - camera->getX());
+  camera->setY(y - camera->getY());
+  camera->setZ(z - camera->getZ());
   x = ray->getX() * cosy - ray->getZ() * siny;
   y = ray->getY();
   z = ray->getY() * cosy - ray->getZ() * siny;
-  ray->setX(x);
-  ray->setY(y);
-  ray->setZ(z);
+  ray->setX(x - ray->getX());
+  ray->setY(y - ray->getY());
+  ray->setZ(z - ray->getZ());
 }
 
 void	Rotation::zRotation(Camera * camera, Ray * ray)
@@ -60,15 +60,15 @@ void	Rotation::zRotation(Camera * camera, Ray * ray)
   double	x = camera->getX() * cosz - camera->getZ() * sinz;
   double	y = camera->getY() * cosz - camera->getZ() * sinz;
   double	z = camera->getY();
-  camera->setX(x);
-  camera->setY(y);
-  camera->setZ(z);
+  camera->setX(x - camera->getX());
+  camera->setY(y - camera->getY());
+  camera->setZ(z - camera->getZ());
   x = ray->getX() * cosz - camera->getZ() * sinz;
   y = ray->getY() * cosz - camera->getZ() * sinz;
   z = ray->getY();
-  ray->setX(x);
-  ray->setY(y);
-  ray->setZ(z);
+  ray->setX(x - ray->getX());
+  ray->setY(y - ray->getY());
+  ray->setZ(z - ray->getZ());
 }
 
 void	Rotation::preProcess(Camera * camera, Ray * ray)

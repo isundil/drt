@@ -1,12 +1,14 @@
 
+
+
 [peers]
-Server 127.0.0.1:8541
+#Server l:port
 
 [server]
-#Listen 8540
+Listen 8542
 MaxClient unlimited
 
-NoListen
+#NoListen
 
 [worker]
 MaxThreads 1

@@ -5,10 +5,10 @@
 
 using namespace drt::parser;
 
-ServerSection::ServerSection(): port(0), maxClient((unsigned int) -1), maxClient_set(false), noListen(false)
+ServerSection::ServerSection(unsigned short _port): port(0), maxClient((unsigned int) -1), maxClient_set(false), noListen(false), realPort(_port)
 { }
 
-ServerSection::ServerSection(const ServerSection &o): port(o.port), maxClient(o.maxClient), maxClient_set(o.maxClient_set), noListen(o.noListen)
+ServerSection::ServerSection(const ServerSection &o): port(o.port), maxClient(o.maxClient), maxClient_set(o.maxClient_set), noListen(o.noListen), realPort(o.realPort)
 { }
 
 ServerSection::~ServerSection()
@@ -68,7 +68,11 @@ bool ServerSection::exists(const std::string &name) const
 }
 
 unsigned short ServerSection::getPort() const
-{ return port == 0 ? DEFAULT_PORT : port; }
+{
+	if (realPort)
+		return realPort;
+	return port == 0 ? DEFAULT_PORT : port;
+}
 
 unsigned int ServerSection::getMaxClient() const
 { return maxClient; }

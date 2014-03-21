@@ -111,24 +111,17 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 
 	for (auto i = objects.cbegin(); i != objects.cend(); i++)
 	  {
-	    // here I need to apply transformation on the camera and then apply rotation on ray
 	    // objects[i]->preProcess(); // I don't think the object will need a preProcess func.
-	    // camera->reset();
-	    // ray->reset();
-	    for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++)
+	    for (auto a = objects[(*i).first]->subItems.cbegin(); a != objects[(*i).first]->subItems.cend(); a++)
 	      (*a)->object->preProcess(camera, ray);
 	    tmpk = (*i).second->object->computeEquation(camera, ray);
 	    if ((tmpk < k || k == -1) && tmpk >= 0)
 	      {
 	    	k = tmpk;
-	    	color = (*i).second->object->getColor();
-		// std::cout << "at [" << x << ", " << y << "] k = " << k << std::endl;
-		// here I need to apply post calc effects such as light
+	    	color = objects[(*i).first]->object->getColor();
 	      }
-	    // color |= 0x00FF0000;
 	  }
 	delete ray;
-	// return 0x1155ee;
 	return color;
 }
 

@@ -1,3 +1,4 @@
+#include <sstream>
 #include <iostream>
 #include <fstream>
 #include <exception>
@@ -32,7 +33,10 @@ template <class T> void Config::eval(int ac, char **av)
 		}
 	}
 	else
+	{
+		valid = false;
 		printUsage();
+	}
 }
 
 void Config::printUsage() const
@@ -71,11 +75,6 @@ bool Config::parseParam(int ac, char **av)
 			else if (result == 1)
 				i++;
 		}
-		else if (av[i][0] == '-')
-		{
-			if (!parseParamShort(av[i] +1))
-				return false;
-		}
 		else
 		{
 			std::cerr << "Unrecognized parameter: " << av[i] << std::endl;
@@ -89,6 +88,9 @@ template <class Parser>
 void Config::parseFile()
 {
 	drt::ConfigParam::StringValue *configFile = dynamic_cast<drt::ConfigParam::StringValue *>(usage.get("config-file"));
+	drt::ConfigParam::StringValue *defaultPort = dynamic_cast<drt::ConfigParam::StringValue *>(usage.get("port"));
+	std::stringstream port_ss;
+	unsigned short port_value;
 	std::ifstream in;
 
 	in.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -100,7 +102,9 @@ void Config::parseFile()
 	{
 		throw std::runtime_error("Failed opening file");
 	}
-	Parser *p = new Parser();
+	port_ss.str(defaultPort->getValue());
+	port_ss >> port_value;
+	Parser *p = new Parser(port_value);
 	p->parseFile(in);
 	infos = p->getSections();
 	delete p;
@@ -129,14 +133,6 @@ int Config::parseParamFull(char **str)
 	else if (dynamic_cast<ConfigParam::BooleanValue *> (p) != nullptr)
 		((ConfigParam::BooleanValue *)p)->setValue(true);
 	return 0;
-}
-
-bool Config::parseParamShort(char *str)
-{
-#warning "Unimplemented method"
-	//TODO parse
-	(void)str;
-	return true;
 }
 
 template void drt::Config::eval<drt::parser::UnixParser>(int, char**);

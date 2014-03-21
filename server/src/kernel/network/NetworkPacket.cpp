@@ -25,14 +25,12 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	ctors[ 1] = CAuth::create;
 	ctors[ 2] = Welcome::create;
 	ctors[ 3] = IdCh::create;
-	ctors[ 4] = Relog::create;
 	ctors[ 5] = Confirm::create;
 	ctors[ 6] = Quit::create;
 	ctors[ 7] = Netsplit::create;
 	ctors[ 8] = NewJob::create;
 	ctors[ 9] = EndJob::create;
 	ctors[10] = Ready::create;
-	ctors[11] = Proc::create;
 	ctors[12] = Calc::create;
 	ctors[13] = Result::create;
 	ctors[14] = CompilFail::create;
@@ -87,7 +85,6 @@ NewJob::NewJob(
 		size_t len  ):id( _id )
 {
 	char* filename = tempnam( nullptr, nullptr );
-	network::PeerInfo *client = nullptr;
 	std::ofstream file( filename );
 	std::ifstream filein;
 
@@ -200,11 +197,6 @@ ANetworkPacket * IdCh::create(network::Socket * socket)
 	return new IdCh(ids[0], ids[1]);
 }
 
-ANetworkPacket * Relog::create(network::Socket * socket)
-{
-	return new Relog();
-}
-
 ANetworkPacket * Confirm::create(network::Socket * socket)
 {
 	unsigned short id;
@@ -270,11 +262,6 @@ ANetworkPacket * Monitor::create(network::Socket *socket)
 	socket->read(&max, sizeof(max));
 	swap = std::make_pair(min, max);
 	return new Monitor(src, cpus, ram, swap);
-}
-
-ANetworkPacket * Proc::create(network::Socket * socket)
-{
-	return new Proc();
 }
 
 ANetworkPacket * Calc::create(network::Socket * socket)
@@ -397,11 +384,6 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 	}
 }
 
-void Relog::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
-{
-	m.broadcast(new Relog(), pi);
-}
-
 void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 {
 	if (id != m.getNetwork()->getMe()->getId())
@@ -426,12 +408,12 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 		//Our server is now confirmed
 		pi->setConfirmed(0);
 		m.getNetwork()->confirm();
-		std::list<PeerInfo *> clientList = m.getNetwork()->getPeers();
+		const std::list<PeerInfo *> clientList = m.getNetwork()->getPeers();
 		for (auto i = clientList.cbegin(); i != clientList.cend(); i++)
 		{
 			if (pi == *i)
 				continue;
-			if ((*i)->getId() < m.getNetwork()->getMe()->getId())
+			if ((*i)->getId() <= m.getNetwork()->getMe()->getId())
 			{
 				unsigned short newId = m.getNetwork()->incBiggerId();
 				(*i)->setId(newId);
@@ -535,15 +517,6 @@ std::stringstream * IdCh::getStream(size_t *buflen) const
 	return ss;
 }
 
-std::stringstream * Relog::getStream(size_t *buflen) const
-{
-	std::stringstream *ss = new std::stringstream();
-	char c = 0x04;
-	ss->write((char *) &c, sizeof(c));
-	*buflen = sizeof(c);
-	return ss;
-}
-
 std::stringstream * Confirm::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
@@ -631,12 +604,6 @@ std::stringstream *ClientMonitor::getStream(size_t *buflen) const
 	return ss;
 }
 
-std::stringstream * Proc::getStream(size_t *buflen) const
-{
-	std::stringstream *ss = nullptr;
-	return ss;
-}
-
 std::stringstream * Calc::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = nullptr;
@@ -694,9 +661,6 @@ const std::string IdCh::getName() const
 	return ss.str();
 }
 
-const std::string Relog::getName() const
-{ return "Relog"; }
-
 const std::string Confirm::getName() const
 {
 	std::stringstream ss;
@@ -728,9 +692,6 @@ const std::string Monitor::getName() const
 
 const std::string ClientMonitor::getName() const
 { return "ClientMonitor"; }
-
-const std::string Proc::getName() const
-{ return "Proc"; }
 
 const std::string Calc::getName() const
 { return "Calc"; }

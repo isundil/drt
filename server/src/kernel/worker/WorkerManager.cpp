@@ -106,7 +106,6 @@ worker::AWorker::Operation *WorkerManager::pickNext(const worker::AWorker *threa
 	}
 	worker::AWorker::Operation *next = operationList.front();
 	operationList.erase(operationList.begin());
-	unsigned int r = runningOp.size();
 	runningOp[thread] = next;
 	pthread_mutex_unlock(&queueMutex);
 	return next;
