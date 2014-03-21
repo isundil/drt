@@ -91,6 +91,11 @@ namespace client
         {
             return new Points() { X = this.X, Y = this.Y, Z = this.Z };
         }
+
+        public override string ToString()
+        {
+            return "{ X = " + X + ", Y = " + Y + ", Z = " + Z + " }"; 
+        }
     }
 
     [XmlInclude(typeof(Sphere))]

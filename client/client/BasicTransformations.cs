@@ -15,9 +15,11 @@ namespace client
 
         public void ApplyOnPoint(Points p)
         {
-            p.X = (int)(p.X * values[0] + p.Y * values[1] + p.Z * values[2]);
-            p.Y = (int)(p.X * values[3] + p.Y * values[4] + p.Z * values[5]);
-            p.Z = (int)(p.X * values[6] + p.Y * values[7] + p.Z * values[8]);
+            Points tmp = (Points)p.Clone();
+
+            p.X = (int)(tmp.X * values[0] + tmp.Y * values[1] + tmp.Z * values[2]);
+            p.Y = (int)(tmp.X * values[3] + tmp.Y * values[4] + tmp.Z * values[5]);
+            p.Z = (int)(tmp.X * values[6] + tmp.Y * values[7] + tmp.Z * values[8]);
         }
     }
 
@@ -29,8 +31,8 @@ namespace client
 
             values[0] = 1;
             values[4] = Math.Cos(angle);
-            values[5] = Math.Sin(angle);
-            values[7] = - Math.Sin(angle);
+            values[5] = - Math.Sin(angle);
+            values[7] = Math.Sin(angle);
             values[8] = Math.Cos(angle);
         }
     }
@@ -42,9 +44,9 @@ namespace client
             values = new double[9];
 
             values[0] = Math.Cos(angle);
-            values[2] = - Math.Sin(angle);
+            values[2] = Math.Sin(angle);
             values[4] = 1;
-            values[6] = Math.Sin(angle);
+            values[6] = - Math.Sin(angle);
             values[8] = Math.Cos(angle);
         }
     }
@@ -56,8 +58,8 @@ namespace client
             values = new double[9];
 
             values[0] = Math.Cos(angle);
-            values[1] = Math.Sin(angle);
-            values[3] = - Math.Sin(angle);
+            values[1] = - Math.Sin(angle);
+            values[3] = Math.Sin(angle);
             values[4] = Math.Cos(angle);
             values[8] = 1;
         }
