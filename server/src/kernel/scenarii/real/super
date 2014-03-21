@@ -8,5 +8,5 @@ MaxClient unlimited
 #NoListen
 
 [worker]
-MaxThreads 0
+MaxThreads 1
 
