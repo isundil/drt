@@ -14,26 +14,26 @@ Rotation::Rotation(double x, double y, double z)
 void	Rotation::xRotation(Camera * camera, Ray * ray)
 {
   // rotation en x
-  double	rotx = this->_x - camera->getRX();
+  double	rotx = - this->_x + camera->getRX();
   double	cosx = cos(rotx);
   double	sinx = sin(rotx);
   double	x;
   double	y;
   double	z;
 
-  x = camera->getX();
-  y = camera->getY() * cosx - camera->getZ() * sinx;
-  z = camera->getY() * sinx + camera->getZ() * cosx;
-  camera->setX(x - camera->getX());
-  camera->setY(y - camera->getY());
-  camera->setZ(z - camera->getZ());
+  x = (double)camera->getX();
+  y = (double)camera->getY() * (double)cosx - (double)camera->getZ() * (double)sinx;
+  z = (double)camera->getY() * (double)sinx + (double)camera->getZ() * (double)cosx;
+  camera->setX((double)x - (double)camera->getX());
+  camera->setY((double)y - (double)camera->getY());
+  camera->setZ((double)z - (double)camera->getZ());
 
-  x = ray->getX();
-  y = ray->getY() * cosx - ray->getZ() * sinx;
-  z = ray->getY() * sinx + ray->getZ() * cosx;
-  ray->setX(x - ray->getX());
-  ray->setY(y - ray->getY());
-  ray->setZ(z - ray->getZ());
+  x = (double)ray->getX();
+  y = (double)ray->getY() * (double)cosx - (double)ray->getZ() * (double)sinx;
+  z = (double)ray->getY() * (double)sinx + (double)ray->getZ() * (double)cosx;
+  ray->setX((double)x - (double)ray->getX());
+  ray->setY((double)y - (double)ray->getY());
+  ray->setZ((double)z - (double)ray->getZ());
 }
 
 void	Rotation::yRotation(Camera * camera, Ray * ray)
