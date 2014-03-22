@@ -5,10 +5,10 @@
 Server localhost:8141
 
 [server]
-Listen 8140
+#Listen 8140
 MaxClient unlimited
 
-#NoListen
+NoListen
 
 [worker]
 MaxThreads 2

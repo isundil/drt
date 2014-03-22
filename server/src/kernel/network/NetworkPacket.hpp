@@ -169,9 +169,16 @@ class EndJob: public ANetworkPacket
 class Ready: public ANetworkPacket
 {
 	public:
+		Ready(unsigned short id, bool r);
+
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+
+	private:
+		unsigned short id;
+		bool ready;
 };
 
 class ClientMonitor: public ANetworkPacket

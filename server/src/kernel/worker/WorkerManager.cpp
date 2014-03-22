@@ -89,10 +89,16 @@ bool WorkerManager::isDone() const
 
 void WorkerManager::addOperation(worker::AWorker::Operation *next)
 {
+	network::PeerInfo * const pi = getNetwork()->getMe();
+
 	pthread_mutex_lock(&queueMutex);
 	operationList.push_back(next);
-	ready = false;
 	pthread_mutex_unlock(&queueMutex);
+	if (pi->ready() == true)
+	{
+		pi->ready(false);
+		this->broadcast(new network::Ready(pi->getId(), false));
+	}
 }
 
 worker::AWorker::Operation *WorkerManager::pickNext(const worker::AWorker *thread)
@@ -100,8 +106,14 @@ worker::AWorker::Operation *WorkerManager::pickNext(const worker::AWorker *threa
 	pthread_mutex_lock(&queueMutex);
 	if (operationList.size() == 0)
 	{
-		ready = true;
 		pthread_mutex_unlock(&queueMutex);
+
+		network::PeerInfo * const pi = getNetwork()->getMe();
+		if (pi->ready() == false)
+		{
+			pi->ready(true);
+			this->broadcast(new network::Ready(pi->getId(), true));
+		}
 		return nullptr;
 	}
 	worker::AWorker::Operation *next = operationList.front();
@@ -234,7 +246,7 @@ void WorkerManager::addScene(network::PeerInfo *pi, render::Scene *s)
 
 	for (unsigned int x =0; x < s->getWidth(); x++)
 		for (unsigned int y =0; y < s->getHeight(); y++)
-			operationList.push_back(new worker::AWorker::Operation(pi, s, x, y));
+			addOperation(new worker::AWorker::Operation(pi, s, x, y));
 }
 
 worker::NetworkWorker *WorkerManager::getNetwork()
