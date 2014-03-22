@@ -20,8 +20,8 @@ double		Cylindre::computeEquation(Camera *camera, Ray *ray)
 
   res = UtilSdeg::getRoots(a, b, c);
 
-  std::cout << res.first << std::endl;
-  std::cout << res.second << std::endl;
+  // std::cout << res.first << std::endl;
+  // std::cout << res.second << std::endl;
 
   return UtilSdeg::getK(res, d);
 }
