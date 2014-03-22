@@ -5,7 +5,7 @@
 #Server l:port
 
 [server]
-Listen 8542
+Listen 8142
 MaxClient unlimited
 
 #NoListen

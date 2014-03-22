@@ -45,6 +45,9 @@ namespace network
 			unsigned short getId() const;
 			unsigned short getOldId() const;
 
+			bool ready() const;
+			bool ready(bool);
+
 			static PeerInfo *getMe();
 			void sendData(std::stringstream &ss, size_t len);
 
@@ -64,6 +67,7 @@ namespace network
 			std::string ip;
 			unsigned short port;
 
+			bool _ready;
 			bool closing;
 			Socket *socket;
 			unsigned short id;
