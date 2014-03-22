@@ -56,6 +56,7 @@ class WorkerManager
 
 		void releaseScene(render::Scene *);
 		void addScene(network::PeerInfo *, render::Scene *);
+		void computeScene(render::Scene *);
 		bool getNextBroadcast(network::ANetworkPacket **packet, network::Socket **avoid);
 		bool getNextSend(network::ANetworkPacket **packet, network::PeerInfo **dst);
 		bool broadcastQueueEmpty();

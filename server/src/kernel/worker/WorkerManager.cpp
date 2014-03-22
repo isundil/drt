@@ -249,6 +249,10 @@ void WorkerManager::addScene(network::PeerInfo *pi, render::Scene *s)
 			addOperation(new worker::AWorker::Operation(pi, s, x, y));
 }
 
+void WorkerManager::computeScene(render::Scene *)
+{
+}
+
 worker::NetworkWorker *WorkerManager::getNetwork()
 { return (worker::NetworkWorker *) networkWorker; }
 

@@ -465,16 +465,20 @@ void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 		m.broadcast(new Netsplit(*this), pi);
 }
 
-void 
-NewJob::doMagic( drt::WorkerManager &m,
+void NewJob::doMagic( drt::WorkerManager &m,
 		drt::network::PeerInfo * pi)
 {
 	if (id == 0xFFFF)
+	{
 		pi->setScene(scene);
+		m.addScene(pi, pi->getScene());
+		m.computeScene(scene);
+	}
 	else
+	{
 		m.getNetwork()->getPeer(id)->setScene(scene);
-	//TODO this is debug
-	m.addScene(pi, pi->getScene());
+		m.addScene(pi, pi->getScene());
+	}
 }
 
 void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
