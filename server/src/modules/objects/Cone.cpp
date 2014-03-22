@@ -15,8 +15,7 @@ double		Cone::computeEquation(Camera *camera, Ray *ray)
 
   std::cout << "je suis une conne d'angle: " << this->r << std::endl;
 
-  a = SQ(ray->getX()) + SQ(ray->getY()) + SQ(ray->getZ() * this->r);
-  // a = SQ(ray->getX()) + SQ(ray->getY()) - SQ(ray->getZ()) * this->r;
+  a = SQ(ray->getX()) + SQ(ray->getY()) - SQ(ray->getZ()) * this->r;
   b = 2.f * (camera->getX() * ray->getX() + camera->getY() * ray->getY() - camera->getZ() * ray->getZ() * this->r);
   c = SQ(camera->getX()) + SQ(camera->getY()) - SQ(camera->getZ()) * this->r;
 
