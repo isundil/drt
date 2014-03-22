@@ -84,6 +84,19 @@ void PeerInfo::sendData(std::stringstream &ss, size_t len)
 	}
 }
 
+void PeerInfo::sendData(std::ifstream &in, size_t len)
+{
+	size_t sent =0;
+	char buffer[512];
+
+	while (sent < len)
+	{
+		in.read(buffer, len -sent < 512 ? len -sent : 512);
+		socket->write(buffer, len -sent < 512 ? len -sent : 512);
+		sent += len -sent < 512 ? len -sent : 512;
+	}
+}
+
 std::pair<std::string, unsigned short> PeerInfo::getConInfo() const
 { return std::pair<std::string, unsigned short>(ip, port); }
 

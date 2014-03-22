@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <list>
 
 namespace drt
@@ -50,6 +51,7 @@ namespace network
 
 			static PeerInfo *getMe();
 			void sendData(std::stringstream &ss, size_t len);
+			void sendData(std::ifstream &ss, size_t len);
 
 			std::pair<std::string, unsigned short> getConInfo() const;
 			void setStats(const stats &stats);

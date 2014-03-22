@@ -82,7 +82,7 @@ Netsplit::Netsplit(unsigned short _id): id(_id)
 NewJob::NewJob(
 		network::Socket *socket,
 		unsigned short _id,
-		size_t len  ):id( _id )
+		size_t len  ):id( _id ), size(len)
 {
 	char* filename = tempnam( nullptr, nullptr );
 	std::ofstream file( filename );
@@ -115,6 +115,9 @@ NewJob::NewJob(
 	filein.close();
 	free(filename);
 }
+
+NewJob::NewJob(const NewJob &other): id(other.id), size(other.size), scene(other.scene)
+{ }
 
 CompilFail::CompilFail(unsigned short _id): id(_id), from(WorkerManager::getSingleton()->getNetwork()->getMe()->getId())
 { }
@@ -470,6 +473,7 @@ void NewJob::doMagic( drt::WorkerManager &m,
 {
 	if (id == 0xFFFF)
 	{
+		id = pi->getId();
 		pi->setScene(scene);
 		m.addScene(pi, pi->getScene());
 		m.computeScene(scene);
@@ -479,6 +483,8 @@ void NewJob::doMagic( drt::WorkerManager &m,
 		m.getNetwork()->getPeer(id)->setScene(scene);
 		m.addScene(pi, pi->getScene());
 	}
+	scene->setId(id);
+	m.broadcast(new NewJob(*this), pi);
 }
 
 void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
@@ -577,7 +583,13 @@ std::stringstream * Netsplit::getStream(size_t *buflen) const
 
 std::stringstream * NewJob::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char code = 0x08;
+
+	ss->write(&code, sizeof(code));
+	ss->write((char *) &id, sizeof(id));
+	ss->write((char *) &size, sizeof(size));
+	*buflen = sizeof(code) +sizeof(size) +sizeof(id);
 	return ss;
 }
 
@@ -741,4 +753,10 @@ const std::string Result::getName() const
 
 const std::string CompilFail::getName() const
 { return "CompilFail"; }
+
+const drt::render::Scene *NewJob::getScene() const
+{ return scene; }
+
+unsigned int NewJob::getSize() const
+{ return size; }
 

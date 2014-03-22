@@ -1,4 +1,5 @@
 #include <set>
+#include <fstream>
 #include <sstream>
 #include <iostream>
 #include <unistd.h>
@@ -14,6 +15,7 @@
 #include "network/NetworkPacket.hpp"
 #include "system/CpuUsage.hpp"
 #include "system/MemUsage.hpp"
+#include "render/Scene.hpp"
 
 using namespace drt::worker;
 
@@ -341,6 +343,7 @@ bool NetworkWorker::sendBroadcast()
 		for (auto i = clients.begin(); i != clients.end(); i++)
 		{
 			std::stringstream *ss;
+			network::NewJob *job;
 			size_t packet_len;
 
 			if (!*i || (*i)->getConfirmed() || (alreadySent.find((*i)->getSocket()) != alreadySent.end()))
@@ -349,8 +352,14 @@ bool NetworkWorker::sendBroadcast()
 				continue;
 			ss = packet->getStream(&packet_len);
 			(*i)->sendData(*ss, packet_len);
-			alreadySent.insert((*i)->getSocket());
 			delete ss;
+			alreadySent.insert((*i)->getSocket());
+			if ((job = dynamic_cast<network::NewJob *>(packet)) != nullptr)
+			{
+				std::ifstream file(job->getScene()->getPath().c_str());
+				(*i)->sendData(file, job->getSize());
+				file.close();
+			}
 		}
 		delete packet;
 	}

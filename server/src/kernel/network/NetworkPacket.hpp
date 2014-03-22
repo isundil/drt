@@ -146,15 +146,20 @@ class NewJob: public ANetworkPacket
 {
 	public:
 		NewJob( network::Socket *, unsigned short, size_t );
+		NewJob(const network::NewJob &);
+
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		void doMagic(
 				drt::WorkerManager &, 
 				drt::network::PeerInfo *);
 		const std::string getName() const;
+		const render::Scene *getScene() const;
+		unsigned int getSize() const;
 
 	private:
 		unsigned short id;
+		size_t size;
 		render::Scene *scene;
 };
 

@@ -240,17 +240,18 @@ void WorkerManager::releaseScene(render::Scene *s)
 	::pthread_mutex_unlock(&queueMutex);
 }
 
-void WorkerManager::addScene(network::PeerInfo *pi, render::Scene *s)
+void WorkerManager::addScene(network::PeerInfo *, render::Scene *s)
 {
 	scenes.push_back(s);
+}
+
+void WorkerManager::computeScene(render::Scene *s)
+{
+	network::PeerInfo * const pi = getNetwork()->getPeer(s->getId());
 
 	for (unsigned int x =0; x < s->getWidth(); x++)
 		for (unsigned int y =0; y < s->getHeight(); y++)
 			addOperation(new worker::AWorker::Operation(pi, s, x, y));
-}
-
-void WorkerManager::computeScene(render::Scene *)
-{
 }
 
 worker::NetworkWorker *WorkerManager::getNetwork()
