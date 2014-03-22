@@ -224,7 +224,7 @@ namespace client
 
         override public int getSubModule()
         {
-            return (int)eSubModules.CYLINDER;
+            return Modules.Submodules[getModule()]["CYLINDER"];
         }
 
         override public byte[] getBytes()

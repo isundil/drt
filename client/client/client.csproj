@@ -81,6 +81,7 @@
     <Compile Include="MainForm_Toolstrips.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Modules.cs" />
     <Compile Include="Objects\Camera.cs" />
     <Compile Include="Custom Controls\ColorPicker.cs" />
     <Compile Include="ConConnect.cs" />

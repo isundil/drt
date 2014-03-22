@@ -115,7 +115,7 @@ namespace client
 
         override public int getSubModule()
         {
-            return (int)eSubModules.SPHERE;
+            return Modules.Submodules[getModule()]["SPHERE"];
         }
 
         override public byte[] getBytes()

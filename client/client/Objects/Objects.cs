@@ -10,14 +10,6 @@ using System.Xml.Serialization;
 
 namespace client
 {
-    public enum eSubModules
-    {
-        CAMERA      = 0,
-        SPHERE      = 1,
-        CYLINDER    = 2,
-        CONE        = 3
-    }
-
     public class ObjectsListB : BindingList<AObjects>
     {
         public MainForm form { get; set; }
@@ -288,7 +280,7 @@ namespace client
         abstract public bool solve_equation_y(Points p);
         abstract public bool solve_equation_z(Points p);
 
-        public eModules getModule() { return eModules.BASIC_SHAPE; }
+        public Modules.eModules getModule() { return Modules.eModules.BASIC_SHAPE; }
         public abstract int getSubModule();
 
         public abstract byte[] getBytes();
@@ -300,6 +292,28 @@ namespace client
             else
                 counts[type] = 1;
             return counts[type];
+        }
+
+        public SceneItem getSceneItem()
+        {
+            var sc = new SceneItem(this);
+
+            sc.Module = (byte)getModule();
+            sc.SubModule = (byte)getSubModule();
+            sc.addRange(this.getBytes());
+
+            var translation = new SceneItem(this);
+            translation.Module = (byte)Modules.eModules.BASIC_TRANSFORM;
+            translation.SubModule = (byte)Modules.Submodules[Modules.eModules.BASIC_TRANSFORM]["TRANSLATION"];
+            translation.addRange(BasicTransformations.getTranslation(translation));
+            sc.addItem(translation);
+
+            //var rotate = new SceneItem(this);
+            //rotate.Module = (byte)Modules.eModules.BASIC_TRANSFORM;
+            //rotate.SubModule = (byte)Modules.Submodules[Modules.eModules.BASIC_TRANSFORM]["ROTATION"];
+            //sc.addItem(rotate);
+
+            return sc;
         }
     }
 }

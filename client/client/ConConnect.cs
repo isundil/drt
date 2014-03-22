@@ -38,42 +38,33 @@ namespace client
 
         private void write_header(Scene s, System.Drawing.Size size, List<byte> buf)
         {
-            var n = con.GetStream();
-
             byte nbr = (byte)s.RequestedModules.Count;
 
             buf.Add(nbr);
             foreach (var m in s.RequestedModules)
-                buf.AddRange(SceneTransform.Modules[m]);
+                buf.AddRange(Modules.ModuleNames[m]);
 
             buf.AddRange(BitConverter.GetBytes((UInt16)size.Width));
             buf.AddRange(BitConverter.GetBytes((UInt16)size.Height));
             buf.AddRange(s.Items[0].refObject.getBytes());
             s.Items.RemoveAt(0);
+            buf.AddRange(BitConverter.GetBytes((UInt32)s.Items.Count));
+        }
+
+        private void _write_item(SceneItem i, List<byte> buf)
+        {
+            buf.AddRange(i.getBytes());
+            foreach (var si in i.Items)
+            {
+                _write_item(si, buf);
+            }
         }
 
         private void write_items(Scene s, List<byte> buf)
         {
-            buf.AddRange(BitConverter.GetBytes((UInt32)s.Items.Count));
             foreach (var i in s.Items)
             {
-                buf.Add((byte) s.RequestedModules.IndexOf(i.Module));
-                buf.Add((byte) i.SubModule);
-
-                // header size
-                var h = i.refObject.getBytes();
-                buf.AddRange(BitConverter.GetBytes((UInt16) h.Length));
-
-                // nb sub items
-                buf.AddRange(BitConverter.GetBytes((UInt32)i.Items.Count));
-
-                // header
-                buf.AddRange(h);
-
-                // sub items
-                // translation
-                var res = BasicTransformations.getTranslation(i.Items[0]);
-                buf.AddRange(res);
+                _write_item(i, buf);
             }
         }
 

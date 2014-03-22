@@ -24,7 +24,7 @@ namespace client
         public override void draw_x(System.Drawing.Image b, Viewport vp, bool selected) { }
         public override void draw_y(System.Drawing.Image b, Viewport vp, bool selected) { }
         public override void draw_z(System.Drawing.Image b, Viewport vp, bool selected) { }
-        public override int getSubModule() { return (int)eSubModules.CAMERA; }
+        public override int getSubModule() { return 0; }
         override public byte[] getBytes()
         {
             List<byte> b = new List<byte>();

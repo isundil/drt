@@ -109,17 +109,27 @@ namespace client.Objects
 
         override public int getSubModule()
         {
-            return 0;
+            return Modules.Submodules[Modules.eModules.BASIC_LIGHT]["LIGHT"];
         }
 
         override public byte[] getBytes()
         {
-            List<byte> b = new List<byte>();
+            return new byte[] { };
+        }
 
-            //b.AddRange(BitConverter.GetBytes((UInt32)Color.GetARGB()));
-            //b.AddRange(BitConverter.GetBytes((UInt16)Radius));
+        new public SceneItem getSceneItem()
+        {
+            var sc = new SceneItem(this);
 
-            return b.ToArray();
+            sc.Module = (byte)getModule();
+            sc.SubModule = (byte)getSubModule();
+
+            var translation = new SceneItem(this);
+            translation.Module = (byte)Modules.eModules.BASIC_TRANSFORM;
+            translation.SubModule = (byte)Modules.Submodules[Modules.eModules.BASIC_TRANSFORM]["TRANSLATION"];
+            sc.addItem(translation);
+
+            return sc;
         }
     }
 }

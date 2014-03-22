@@ -234,7 +234,7 @@ namespace client
 
         override public int getSubModule()
         {
-            return (int)eSubModules.CONE;
+            return Modules.Submodules[getModule()]["CONE"];
         }
 
         override public byte[] getBytes()
