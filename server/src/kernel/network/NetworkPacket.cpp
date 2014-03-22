@@ -367,6 +367,7 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 		m.getNetwork()->getMe()->setId(newId);
 		m.broadcast(new IdCh(*this), p);
 	}
+	else if (oldId == 0xFFFF && newId == p->getId()) ;
 	else
 	{
 		PeerInfo *pi = m.getNetwork()->getPeer(oldId);
