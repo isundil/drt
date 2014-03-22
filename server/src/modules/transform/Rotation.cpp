@@ -23,10 +23,10 @@ void	Rotation::xRotation(Camera * camera, Ray * ray)
 
   x = ray->getX();
   y = ray->getY() * cosx - ray->getZ() * sinx;
-  z = ray->getY() * sinx - ray->getZ() * cosx;
+  z = ray->getY() * sinx + ray->getZ() * cosx;
   x = camera->getX();
   y = camera->getY() * cosx - camera->getZ() * sinx;
-  z = camera->getY() * sinx - camera->getZ() * cosx;
+  z = camera->getY() * sinx + camera->getZ() * cosx;
 
   camera->setX(x - camera->getX());
   camera->setY(y - camera->getY());
