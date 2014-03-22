@@ -157,6 +157,9 @@ ClientMonitor::ClientMonitor(): cpuSum(0), nbCpu(0), ramUsage(0), ramMax(0)
 ClientMonitor::ClientMonitor(const ClientMonitor &o): cpuSum(o.cpuSum), nbCpu(o.nbCpu), ramUsage(o.ramUsage), ramMax(o.ramMax)
 { }
 
+Ready::Ready(unsigned short _id, bool r): id(_id), ready(r)
+{ }
+
 bool Result::sendToClient(PeerInfo *pi) const
 { return id == pi->getId(); }
 
@@ -225,7 +228,7 @@ ANetworkPacket * NewJob::create(network::Socket * socket)
 
 	socket -> read( &id, sizeof( id ) );
 	socket -> read( &len, sizeof( len ) );
-		return new NewJob( socket, id, len );
+	return new NewJob( socket, id, len );
 }
 
 ANetworkPacket * EndJob::create(network::Socket * socket)
@@ -235,7 +238,12 @@ ANetworkPacket * EndJob::create(network::Socket * socket)
 
 ANetworkPacket * Ready::create(network::Socket * socket)
 {
-	return new Ready();
+	unsigned short id;
+	char r;
+
+	socket -> read( &id, sizeof( id ) );
+	socket -> read( &r, sizeof( r ) );
+	return new Ready(id, r == 'R');
 }
 
 ANetworkPacket * Monitor::create(network::Socket *socket)
@@ -306,6 +314,7 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 		{
 			manager.send(peer, new Confirm(peer->getId()));
 			manager.send(peer, new IdCh(-1, manager.getNetwork()->getMe()->getId()));
+			manager.send(peer, new Ready(manager.getNetwork()->getMe()->getId(), manager.getNetwork()->getMe()->ready()));
 		}
 		else
 			manager.broadcast(new IdCh(peer->getId(), -1), peer);
@@ -333,11 +342,10 @@ CAuth::doMagic(
 	}
 	else
 	{
-		m.getNetwork() -> addServer( peer -> getSocket(), id );
-		peer -> setClient();
+		PeerInfo *p = m.getNetwork() -> addServer( peer -> getSocket(), id );
+		p -> setClient();
 	}
 	m.broadcast( new CAuth( id ), peer );
-
 }
 
 void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
@@ -400,15 +408,21 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 			return;
 		m.send(newServ, new Confirm(*this));
 		m.send(newServ, new IdCh(-1, m.getNetwork()->getMe()->getId()));
+		m.send(newServ, new Ready(m.getNetwork()->getMe()->getId(), m.getNetwork()->getMe()->ready()));
 		if (!newServ->isDirect())
 			return;
 		for (auto i = m.getNetwork()->getPeers().cbegin(); i != m.getNetwork()->getPeers().cend(); i++)
 			if (!(*i)->getConfirmed() && (*i)->getSocket() != newServ->getSocket())
+			{
 				m.send(newServ, new SAuth((*i)->getId(), 0));
+				m.send(newServ, new Ready((*i)->getId(), (*i)->ready()));
+			}
 	}
 	else
 	{
 		//Our server is now confirmed
+		PeerInfo * const me = m.getNetwork()->getMe();
+
 		pi->setConfirmed(0);
 		m.getNetwork()->confirm();
 		std::list<PeerInfo *> clientList = m.getNetwork()->getPeers();
@@ -421,10 +435,12 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 				unsigned short newId = m.getNetwork()->incBiggerId();
 				(*i)->setId(newId);
 				m.broadcast(new IdCh((*i)->getOldId(), (*i)->getId()), pi);
+				m.broadcast(new Ready((*i)->getId(), (*i)->ready()));
 			}
 			m.send(pi, new IdCh(0xFFFF, (*i)->getId()));
 		}
-		m.broadcast(new IdCh(m.getNetwork()->getMe()->getOldId(), id), pi);
+		m.broadcast(new IdCh(me->getOldId(), id), pi);
+		m.broadcast(new Ready(me->getId(), me->ready()));
 	}
 }
 
@@ -457,9 +473,9 @@ NewJob::doMagic( drt::WorkerManager &m,
 		pi->setScene(scene);
 	else
 		m.getNetwork()->getPeer(id)->setScene(scene);
+	//TODO this is debug
 	m.addScene(pi, pi->getScene());
 }
-
 
 void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
 {
@@ -475,6 +491,16 @@ void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
 	st.swap = swapLevel.first;
 	st.maxSwap = swapLevel.second;
 	pi->setStats(st);
+}
+
+void Ready::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
+{
+	PeerInfo * const pi = m.getNetwork()->getPeer(id);
+
+	if (!pi)
+		return;
+	pi->ready(ready);
+	m.broadcast(new Ready(*this), p);
 }
 
 std::stringstream * SAuth::getStream(size_t *buflen) const
@@ -559,7 +585,14 @@ std::stringstream * EndJob::getStream(size_t *buflen) const
 
 std::stringstream * Ready::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	char code = 0xA;
+	char ready = this->ready ? 'R' : '!';
+
+	ss->write(&code, sizeof(code));
+	ss->write((char *)&id, sizeof(id));
+	ss->write(&ready, sizeof(ready));
+	*buflen = sizeof(code) +sizeof(id) +sizeof(ready);
 	return ss;
 }
 

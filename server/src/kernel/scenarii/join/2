@@ -1,10 +1,10 @@
 
 
 [peers]
-Server localhost:8542
+Server localhost:8142
 
 [server]
-Listen 8541
+Listen 8141
 MaxClient unlimited
 
 #NoListen
