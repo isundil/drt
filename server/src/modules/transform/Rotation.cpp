@@ -73,9 +73,9 @@ void	Rotation::zRotation(Camera * camera, Ray * ray)
 
 void	Rotation::preProcess(Camera * camera, Ray * ray)
 {
-  xRotation(camera, ray);
-  yRotation(camera, ray);
-  zRotation(camera, ray);
+  // xRotation(camera, ray);
+  // yRotation(camera, ray);
+  // zRotation(camera, ray);
 }
 
 double	Rotation::computeEquation(Camera * camera, Ray * ray)
