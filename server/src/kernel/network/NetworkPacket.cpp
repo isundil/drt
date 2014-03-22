@@ -399,6 +399,8 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 			return;
 		m.send(newServ, new Confirm(*this));
 		m.send(newServ, new IdCh(-1, m.getNetwork()->getMe()->getId()));
+		if (!newServ->isDirect())
+			return;
 		for (auto i = m.getNetwork()->getPeers().cbegin(); i != m.getNetwork()->getPeers().cend(); i++)
 			if (!(*i)->getConfirmed() && (*i)->getSocket() != newServ->getSocket())
 				m.send(newServ, new SAuth((*i)->getId(), 0));
