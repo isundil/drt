@@ -22,7 +22,7 @@ extern "C"
 	ret = new Cylindre(d->color, d->r);
 	break;
       case CONE:
-	ret = new Cone(a->color, a->a);
+	ret = new Cone(a->color, (double)a->a);
 	break;
       case PLAN:
 	ret = new Plan((int) *data);
