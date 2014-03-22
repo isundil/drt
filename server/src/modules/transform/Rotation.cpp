@@ -14,7 +14,7 @@ Rotation::Rotation(double x, double y, double z)
 void	Rotation::xRotation(Camera * camera, Ray * ray)
 {
   // rotation en x
-  double	rotx = ((this->_x - camera->getX()) * M_PI) / 180;
+  double	rotx = ((this->_x - camera->getRX()) * M_PI) / 180;
   double	cosx = cos(rotx);
   double	sinx = sin(rotx);
   double	x = camera->getX();
@@ -34,7 +34,7 @@ void	Rotation::xRotation(Camera * camera, Ray * ray)
 void	Rotation::yRotation(Camera * camera, Ray * ray)
 {
   // rotation en y
-  double	roty = ((this->_y - camera->getY()) * M_PI) / 180;
+  double	roty = ((this->_y - camera->getRY()) * M_PI) / 180;
   double	cosy = cos(roty);
   double	siny = sin(roty);
   double	x = camera->getX() * cosy - camera->getZ() * siny;
@@ -54,7 +54,7 @@ void	Rotation::yRotation(Camera * camera, Ray * ray)
 void	Rotation::zRotation(Camera * camera, Ray * ray)
 {
   // rotation en z
-  double	rotz = ((this->_z - camera->getZ()) * M_PI) / 180;
+  double	rotz = ((this->_z - camera->getRZ()) * M_PI) / 180;
   double	cosz = cos(rotz);
   double	sinz = sin(rotz);
   double	x = camera->getX() * cosz - camera->getZ() * sinz;
@@ -73,9 +73,9 @@ void	Rotation::zRotation(Camera * camera, Ray * ray)
 
 void	Rotation::preProcess(Camera * camera, Ray * ray)
 {
-  // xRotation(camera, ray);
-  // yRotation(camera, ray);
-  // zRotation(camera, ray);
+  xRotation(camera, ray);
+  yRotation(camera, ray);
+  zRotation(camera, ray);
 }
 
 double	Rotation::computeEquation(Camera * camera, Ray * ray)
