@@ -297,7 +297,7 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 	{
 		std::cout << "DEBUG client handshake detected (peer->" << peer->getId() << "), (id->" << id << ")" << std::endl;
 
-		peer->setConfirmed(manager.getNetwork()->nbClient() -1);
+		peer->setConfirmed(manager.getNetwork()->nbSocket() -1);
 		peer->setId(manager.getNetwork()->incBiggerId());
 		manager.send(peer, new Welcome(peer->getId()));
 		//for (size_t i = 0; i < nbServer; i++)
