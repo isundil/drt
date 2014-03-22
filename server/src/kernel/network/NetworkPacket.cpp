@@ -346,7 +346,6 @@ CAuth::doMagic(
 		p -> setClient();
 	}
 	m.broadcast( new CAuth( id ), peer );
-
 }
 
 void Welcome::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
@@ -474,9 +473,9 @@ NewJob::doMagic( drt::WorkerManager &m,
 		pi->setScene(scene);
 	else
 		m.getNetwork()->getPeer(id)->setScene(scene);
+	//TODO this is debug
 	m.addScene(pi, pi->getScene());
 }
-
 
 void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
 {
