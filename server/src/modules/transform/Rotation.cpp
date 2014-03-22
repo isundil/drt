@@ -14,7 +14,7 @@ Rotation::Rotation(double x, double y, double z)
 void	Rotation::xRotation(Camera * camera, Ray * ray)
 {
   // rotation en x
-  double	rotx = this->_x - camera->getRX();
+  double	rotx = this->_x;// - camera->getRX();
   double	cosx = cos(rotx);
   double	sinx = sin(rotx);
   double	x = camera->getX();
