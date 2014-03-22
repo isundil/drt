@@ -31,6 +31,8 @@ namespace client
 
         public void UpdateMonitor(byte cpu, UInt32 ramuse, UInt32 rammax)
         {
+            if (ramuse > rammax) return;
+
             string u = "MB";
             if (rammax > 1024 * 1024)
             {

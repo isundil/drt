@@ -240,9 +240,10 @@ namespace client
         override public byte[] getBytes()
         {
             List<byte> b = new List<byte>();
+            double a = Math.Atan2(Radius, (double)Height / 2);
 
             b.AddRange(BitConverter.GetBytes((UInt32)Color.GetARGB()));
-            b.AddRange(BitConverter.GetBytes((UInt16)Radius));
+            b.AddRange(BitConverter.GetBytes((double)a));
 
             return b.ToArray();
         }

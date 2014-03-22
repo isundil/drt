@@ -308,10 +308,11 @@ namespace client
             translation.addRange(BasicTransformations.getTranslation(translation));
             sc.addItem(translation);
 
-            //var rotate = new SceneItem(this);
-            //rotate.Module = (byte)Modules.eModules.BASIC_TRANSFORM;
-            //rotate.SubModule = (byte)Modules.Submodules[Modules.eModules.BASIC_TRANSFORM]["ROTATION"];
-            //sc.addItem(rotate);
+            var rotate = new SceneItem(this);
+            rotate.Module = (byte)Modules.eModules.BASIC_TRANSFORM;
+            rotate.SubModule = (byte)Modules.Submodules[Modules.eModules.BASIC_TRANSFORM]["ROTATION"];
+            rotate.addRange(BasicTransformations.getRotation(rotate));
+            sc.addItem(rotate);
 
             return sc;
         }

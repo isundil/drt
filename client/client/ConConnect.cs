@@ -198,6 +198,7 @@ namespace client
         public bool isAvailable()
         {
             if (con == null) return false;
+            if (con.Client == null) return false;
             return !((con.Client.Poll(1000, SelectMode.SelectRead) && (con.Available == 0)) || !con.Connected);
         }
 

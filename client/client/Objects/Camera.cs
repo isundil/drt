@@ -33,9 +33,9 @@ namespace client
             b.AddRange(BitConverter.GetBytes((Int16)this.Y));
             b.AddRange(BitConverter.GetBytes((Int16)this.Z));
 
-            b.AddRange(BitConverter.GetBytes((double)this.RotX));
-            b.AddRange(BitConverter.GetBytes((double)this.RotY));
-            b.AddRange(BitConverter.GetBytes((double)this.RotZ));
+            b.AddRange(BitConverter.GetBytes((double)this.dRotX));
+            b.AddRange(BitConverter.GetBytes((double)this.dRotY));
+            b.AddRange(BitConverter.GetBytes((double)this.dRotZ));
 
             b.AddRange(BitConverter.GetBytes((UInt16)this.Distance));
             return b.ToArray();
