@@ -297,7 +297,7 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 	{
 		std::cout << "DEBUG client handshake detected (peer->" << peer->getId() << "), (id->" << id << ")" << std::endl;
 
-		peer->setConfirmed(manager.getNetwork()->nbClient() -1);
+		peer->setConfirmed(manager.getNetwork()->nbSocket() -1);
 		peer->setId(manager.getNetwork()->incBiggerId());
 		manager.send(peer, new Welcome(peer->getId()));
 		//for (size_t i = 0; i < nbServer; i++)
@@ -367,6 +367,7 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 		m.getNetwork()->getMe()->setId(newId);
 		m.broadcast(new IdCh(*this), p);
 	}
+	else if (oldId == 0xFFFF && newId == p->getId()) ;
 	else
 	{
 		PeerInfo *pi = m.getNetwork()->getPeer(oldId);
@@ -399,6 +400,8 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 			return;
 		m.send(newServ, new Confirm(*this));
 		m.send(newServ, new IdCh(-1, m.getNetwork()->getMe()->getId()));
+		if (!newServ->isDirect())
+			return;
 		for (auto i = m.getNetwork()->getPeers().cbegin(); i != m.getNetwork()->getPeers().cend(); i++)
 			if (!(*i)->getConfirmed() && (*i)->getSocket() != newServ->getSocket())
 				m.send(newServ, new SAuth((*i)->getId(), 0));
