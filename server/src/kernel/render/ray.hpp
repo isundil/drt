@@ -15,13 +15,14 @@ public:
   virtual void		postProcess() {};
   virtual unsigned int	getColor() {return 0;}
 
-  double	getX() const;
-  double	getY() const;
-  double	getZ() const;
+  double	getX();
+  double	getY();
+  double	getZ();
 
   void		setX(double _x);
   void		setY(double _y);
   void		setZ(double _z);
+
   void		reset();
 
 private:

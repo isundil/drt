@@ -21,9 +21,9 @@ void	Rotation::xRotation(Camera * camera, Ray * ray)
   double	y;
   double	z;
 
-  // x = ray->getX();
-  // y = ray->getY() * cosx - ray->getZ() * sinx;
-  // z = ray->getY() * sinx + ray->getZ() * cosx;
+  x = ray->getX();
+  y = ray->getY() * cosx - ray->getZ() * sinx;
+  z = ray->getY() * sinx + ray->getZ() * cosx;
   x = camera->getX();
   y = camera->getY() * cosx - camera->getZ() * sinx;
   z = camera->getY() * sinx + camera->getZ() * cosx;
@@ -31,9 +31,9 @@ void	Rotation::xRotation(Camera * camera, Ray * ray)
   camera->setX(x - camera->getX());
   camera->setY(y - camera->getY());
   camera->setZ(z - camera->getZ());
-  // ray->setX(x - ray->getX());
-  // ray->setY(y - ray->getY());
-  // ray->setZ(z - ray->getZ());
+  ray->setX(x - ray->getX());
+  ray->setY(y - ray->getY());
+  ray->setZ(z - ray->getZ());
 }
 
 void	Rotation::yRotation(Camera * camera, Ray * ray)
