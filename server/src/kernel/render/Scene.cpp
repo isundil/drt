@@ -112,8 +112,8 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	for (auto i = objects.cbegin(); i != objects.cend(); i++)
 	  {
 	    // objects[i]->preProcess(); // I don't think the object will need a preProcess func.
-	    for (auto a = objects[(*i).first]->subItems.cbegin(); a != objects[(*i).first]->subItems.cend(); a++)
-	      (*a)->object->preProcess(camera, ray);
+	    // for (auto a = objects[(*i).first]->subItems.cbegin(); a != objects[(*i).first]->subItems.cend(); a++)
+	    //   (*a)->object->preProcess(camera, ray);
 	    tmpk = (*i).second->object->computeEquation(camera, ray);
 	    if ((tmpk < k || k == -1) && tmpk >= 0)
 	      {
