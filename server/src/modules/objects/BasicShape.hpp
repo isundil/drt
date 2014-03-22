@@ -13,12 +13,12 @@
 #define CONE		3
 #define PLAN		4
 
-typedef	struct		s_rayon {
+typedef	struct		__attribute__ ((packed)) s_rayon {
   unsigned int		color;
   short			r;
 }			t_rayon;
 
-typedef	struct		s_angle {
+typedef	struct		__attribute__ ((packed)) s_angle {
   unsigned int		color;
   double		a;
 }			t_angle;
