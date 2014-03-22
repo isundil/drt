@@ -14,7 +14,7 @@ Rotation::Rotation(double x, double y, double z)
 void	Rotation::xRotation(Camera * camera, Ray * ray)
 {
   // rotation en x
-  double	rotx = ((this->_x - camera->getRX()) * M_PI) / 180;
+  double	rotx = this->_x - camera->getRX();
   double	cosx = cos(rotx);
   double	sinx = sin(rotx);
   double	x = camera->getX();
@@ -74,8 +74,8 @@ void	Rotation::zRotation(Camera * camera, Ray * ray)
 void	Rotation::preProcess(Camera * camera, Ray * ray)
 {
   xRotation(camera, ray);
-  yRotation(camera, ray);
-  zRotation(camera, ray);
+  // yRotation(camera, ray);
+  // zRotation(camera, ray);
 }
 
 double	Rotation::computeEquation(Camera * camera, Ray * ray)
