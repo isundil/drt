@@ -21,6 +21,7 @@ class ModuleManager;
 namespace worker
 {
 class NetworkWorker;
+class ManagedScene;
 }
 namespace network
 {
@@ -74,6 +75,7 @@ class WorkerManager
 		std::list<worker::AWorker *> workers;
 		std::list<render::Scene *> scenes;
 		std::list<render::Scene *> endedScenes;
+		std::list<worker::ManagedScene *> managedScenes;
 		worker::AWorker *networkWorker;
 
 		std::list<worker::AWorker::Operation *>operationList;

@@ -2,6 +2,7 @@
 #include <iostream>
 #include "WorkerManager.hpp"
 #include "Worker.hpp"
+#include "ManagedScene.hpp"
 #include "NetworkWorker.hpp"
 #include "config/Config.hpp"
 #include "config/WorkerSection.hpp"
@@ -221,6 +222,14 @@ void WorkerManager::releaseScene(render::Scene *s)
 	for (auto i = runningOp.cbegin(); i != runningOp.cend() && !contains; i++)
 		if ((*i).second && (*i).second->scene == s)
 			contains = true;
+	for (auto i = managedScenes.begin(); i != managedScenes.end(); i++)
+		if ((**i) == *s)
+		{
+			worker::ManagedScene *ms = *i;
+			managedScenes.remove(*i);
+			delete ms;
+			break;
+		}
 	if (contains)
 	{
 		std::cout << "running scene " <<std::endl;
@@ -249,9 +258,8 @@ void WorkerManager::computeScene(render::Scene *s)
 {
 	network::PeerInfo * const pi = getNetwork()->getPeer(s->getId());
 
-	for (unsigned int x =0; x < s->getWidth(); x++)
-		for (unsigned int y =0; y < s->getHeight(); y++)
-			addOperation(new worker::AWorker::Operation(pi, s, x, y));
+	worker::ManagedScene *scene = new worker::ManagedScene(*this, pi, s);
+	managedScenes.push_back(scene);
 }
 
 worker::NetworkWorker *WorkerManager::getNetwork()
@@ -263,3 +271,4 @@ module::ModuleManager	*WorkerManager::getModuleManager()
 {
   return modules;
 }
+

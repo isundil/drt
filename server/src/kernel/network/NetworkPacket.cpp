@@ -471,19 +471,19 @@ void Netsplit::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 void NewJob::doMagic( drt::WorkerManager &m,
 		drt::network::PeerInfo * pi)
 {
-	if (id == 0xFFFF)
+	if (id == 0xFFFF || pi->isAClient())
 	{
-		id = pi->getId();
 		pi->setScene(scene);
+		scene->setId(pi->getId());
 		m.addScene(pi, pi->getScene());
 		m.computeScene(scene);
 	}
 	else
 	{
 		m.getNetwork()->getPeer(id)->setScene(scene);
+		scene->setId(id);
 		m.addScene(pi, pi->getScene());
 	}
-	scene->setId(id);
 	m.broadcast(new NewJob(*this), pi);
 }
 
