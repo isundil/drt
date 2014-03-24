@@ -254,6 +254,24 @@ void WorkerManager::addScene(network::PeerInfo *, render::Scene *s)
 	scenes.push_back(s);
 }
 
+void WorkerManager::compilFail(const network::PeerInfo *src, render::Scene *s)
+{
+	for (auto i = managedScenes.cbegin(); i != managedScenes.cend(); i++)
+		if ((**i) == *s)
+		{
+			try
+			{
+				(*i)->compilFail(src);
+			}
+			catch (drt::network::CompilFail &e)
+			{
+				this->releaseScene(s);
+				throw e;
+			}
+			break;
+		}
+}
+
 void WorkerManager::computeScene(render::Scene *s)
 {
 	network::PeerInfo * const pi = getNetwork()->getPeer(s->getId());

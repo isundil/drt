@@ -260,10 +260,12 @@ class CompilFail: public ANetworkPacket, public std::exception
 {
 	public:
 		CompilFail(unsigned short id);
+		CompilFail(unsigned short id, unsigned short from);
 		CompilFail(const PeerInfo &);
 		CompilFail(const CompilFail &);
 		CompilFail();
 
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;

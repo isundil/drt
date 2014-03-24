@@ -122,6 +122,9 @@ NewJob::NewJob(const NewJob &other): id(other.id), size(other.size), scene(other
 CompilFail::CompilFail(unsigned short _id): id(_id), from(WorkerManager::getSingleton()->getNetwork()->getMe()->getId())
 { }
 
+CompilFail::CompilFail(unsigned short _id, unsigned short _from): id(_id), from(_from)
+{ }
+
 CompilFail::CompilFail(const PeerInfo &pi): id(pi.getId()), from(WorkerManager::getSingleton()->getNetwork()->getMe()->getId())
 { }
 
@@ -297,9 +300,11 @@ ANetworkPacket * Result::create(network::Socket * socket)
 ANetworkPacket * CompilFail::create(network::Socket * socket)
 {
 	unsigned short id;
+	unsigned short from;
 
 	socket->read(&id, sizeof(id));
-	return new CompilFail(id);
+	socket->read(&from, sizeof(from));
+	return new CompilFail(id, from);
 }
 
 void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
@@ -475,8 +480,16 @@ void NewJob::doMagic( drt::WorkerManager &m,
 	{
 		pi->setScene(scene);
 		scene->setId(pi->getId());
-		m.addScene(pi, pi->getScene());
-		m.computeScene(scene);
+		try
+		{
+			m.addScene(pi, pi->getScene());
+			m.computeScene(scene);
+		}
+		catch (CompilFail &e)
+		{
+			if (m.getNetwork()->getSrv().size() == 0)
+				throw e;
+		}
 	}
 	else
 	{
@@ -501,6 +514,20 @@ void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
 	st.swap = swapLevel.first;
 	st.maxSwap = swapLevel.second;
 	pi->setStats(st);
+}
+
+void CompilFail::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
+{
+	network::PeerInfo *src = m.getNetwork()->getPeer(from);
+	network::PeerInfo *dst = m.getNetwork()->getPeer(id);
+
+	if (dst->isDirect())
+	{
+		m.compilFail(src, dst->getScene());
+		//TODO manage except
+	}
+	else
+		m.send(dst, new CompilFail(*this));
 }
 
 void Ready::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)

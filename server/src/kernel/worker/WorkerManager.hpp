@@ -43,6 +43,7 @@ class WorkerManager
 		worker::AWorker::Operation *pickNext(const worker::AWorker *);
 		void releaseThread(const worker::AWorker *);
 		void addOperation(worker::AWorker::Operation *);
+		void compilFail(const network::PeerInfo *src, render::Scene *s);
 		void start();
 		void stop();
 		const drt::Config * config() const;
@@ -65,7 +66,7 @@ class WorkerManager
 
 		worker::NetworkWorker *getNetwork();
 
-  module::ModuleManager	*getModuleManager();
+		module::ModuleManager	*getModuleManager();
 
 	private:
 		WorkerManager(drt::Config * const);

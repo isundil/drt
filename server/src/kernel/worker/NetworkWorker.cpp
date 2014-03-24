@@ -458,6 +458,15 @@ unsigned int NetworkWorker::nbClient() const
 drt::network::PeerInfo *NetworkWorker::getMe()
 { return myself; }
 
+const std::list<drt::network::PeerInfo *> NetworkWorker::getSrv() const
+{
+	std::list<drt::network::PeerInfo *> r;
+	for (auto i = clients.cbegin(); i != clients.cend(); i++)
+		if ((*i)->isAClient())
+			r.push_back(*i);
+	return r;
+}
+
 const std::list<drt::network::PeerInfo *> &NetworkWorker::getPeers() const
 { return clients; }
 
