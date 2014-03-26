@@ -194,12 +194,13 @@ bool WorkerManager::getNextSend(network::ANetworkPacket **packet, network::PeerI
 bool WorkerManager::checkNextOp(drt::network::PeerInfo *p)
 {
 	network::PeerInfo * const peer = p ? p : getNetwork()->getMe();
+	bool use = false;
 
 	if (managedScenes.size() == 0)
 		return false;
 	for (auto i = managedScenes.cbegin(); i != managedScenes.cend(); i++)
-		(*i)->ready(peer);
-	return true;
+		use |= (*i)->ready(peer);
+	return use;
 }
 
 bool WorkerManager::broadcastQueueEmpty()
