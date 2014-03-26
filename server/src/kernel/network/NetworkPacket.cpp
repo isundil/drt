@@ -40,7 +40,8 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	auto f = ctors.find(code);
 	if (f == ctors.end())
 		return nullptr;
-	return (*f).second(socket);
+	ANetworkPacket *r = (*f).second(socket);
+	return r;
 }
 
 SAuth::SAuth(unsigned short _id, unsigned short nserv): id(_id), nbServer(nserv)
@@ -117,6 +118,9 @@ NewJob::NewJob(
 }
 
 NewJob::NewJob(const NewJob &other): id(other.id), size(other.size), scene(other.scene)
+{ }
+
+Calc::Calc(unsigned short _job, unsigned short _dst, drt::worker::AWorker::Operation _op): op(_op), job(_job), dst(_dst)
 { }
 
 CompilFail::CompilFail(unsigned short _id): id(_id), from(WorkerManager::getSingleton()->getNetwork()->getMe()->getId())
@@ -280,7 +284,16 @@ ANetworkPacket * Monitor::create(network::Socket *socket)
 
 ANetworkPacket * Calc::create(network::Socket * socket)
 {
-	return new Calc();
+	unsigned short jobId;
+	unsigned short dst;
+	unsigned short x;
+	unsigned short y;
+
+	socket->read(&jobId, sizeof(jobId));
+	socket->read(&dst, sizeof(dst));
+	socket->read(&x, sizeof(x));
+	socket->read(&y, sizeof(y));
+	return new Calc(jobId, dst, drt::worker::AWorker::Operation(nullptr, nullptr, x, y));
 }
 
 ANetworkPacket * Result::create(network::Socket * socket)
@@ -311,8 +324,6 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 {
 	if (peer->getId() == (unsigned short)-1 && id == (unsigned short)-1)
 	{
-		std::cout << "DEBUG client handshake detected (peer->" << peer->getId() << "), (id->" << id << ")" << std::endl;
-
 		peer->setConfirmed(manager.getNetwork()->nbSocket() -1);
 		peer->setId(manager.getNetwork()->incBiggerId());
 		manager.send(peer, new Welcome(peer->getId()));
@@ -483,7 +494,6 @@ void NewJob::doMagic( drt::WorkerManager &m,
 		try
 		{
 			m.addScene(pi, pi->getScene());
-			m.computeScene(scene);
 		}
 		catch (CompilFail &e)
 		{
@@ -498,6 +508,8 @@ void NewJob::doMagic( drt::WorkerManager &m,
 		m.addScene(pi, pi->getScene());
 	}
 	m.broadcast(new NewJob(*this), pi);
+	if (pi->isAClient())
+		m.computeScene(scene);
 }
 
 void Monitor::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *s)
@@ -537,7 +549,25 @@ void Ready::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 	if (!pi)
 		return;
 	pi->ready(ready);
+	m.checkNextOp(pi);
 	m.broadcast(new Ready(*this), p);
+}
+
+void Result::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
+{
+	PeerInfo *const pi = m.getNetwork()->getPeer(id);
+	m.send(pi, new Result(*this));
+}
+
+void Calc::doMagic(drt::WorkerManager &m, PeerInfo *)
+{
+	if (dst == m.getNetwork()->getMe()->getId())
+	{
+		PeerInfo *client = m.getNetwork()->getPeer(job);
+		m.addOperation(new drt::worker::AWorker::Operation(client, client->getScene(), op.x, op.y));
+	}
+	else
+		m.send(m.getNetwork()->getPeer(dst), new Calc(*this));
 }
 
 std::stringstream * SAuth::getStream(size_t *buflen) const
@@ -671,7 +701,7 @@ std::stringstream *Monitor::getStream(size_t *buflen) const
 std::stringstream *ClientMonitor::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
-	char code = 16;
+	char code = 0x10;
 	unsigned char cpu;
 
 	cpu = (nbCpu == 0) ? 0 : (cpuSum / nbCpu);
@@ -685,7 +715,18 @@ std::stringstream *ClientMonitor::getStream(size_t *buflen) const
 
 std::stringstream * Calc::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = nullptr;
+	std::stringstream *ss = new std::stringstream();
+	const char code = 0x0C;
+	unsigned short px, py;
+
+	px = op.x;
+	py = op.y;
+	ss->write(&code, sizeof(code));
+	ss->write((char *)&job, sizeof(job));
+	ss->write((char *)&dst, sizeof(dst));
+	ss->write((char *)&px, sizeof(px));
+	ss->write((char *)&py, sizeof(py));
+	*buflen = sizeof(code) +sizeof(px) +sizeof(py) +sizeof(job) +sizeof(dst);
 	return ss;
 }
 
@@ -693,6 +734,7 @@ std::stringstream * Result::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
 	char code = 0x0D;
+
 	ss->write(&code, sizeof(code));
 	ss->write((char *)&id, sizeof(id));
 	ss->write((char *)&src, sizeof(src));
@@ -708,7 +750,7 @@ std::stringstream * CompilFail::getStream(size_t *buflen) const
 	std::stringstream *ss = new std::stringstream();
 	char code;
 
-	code = 14;
+	code = 0x0E;
 	ss->write(&code, sizeof(code));
 	ss->write((char *)&id, sizeof(id));
 	ss->write((char *)&from, sizeof(from));

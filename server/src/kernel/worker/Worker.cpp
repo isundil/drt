@@ -1,3 +1,5 @@
+#include <iostream>
+#include <sstream>
 #include "worker/Worker.hpp"
 #include "worker/WorkerManager.hpp"
 #include "render/Scene.hpp"
@@ -23,7 +25,7 @@ void Worker::stop()
 
 void Worker::nextOp(Operation *op)
 {
-	render::Scene * const s = op->scene;
+	render::Scene *const s = op->scene;
 	unsigned int color = 0xFFFFFF;
 
 	if (s)

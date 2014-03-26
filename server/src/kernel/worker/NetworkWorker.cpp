@@ -74,6 +74,7 @@ void NetworkWorker::start()
 		use |= readAll();
 		use |= connectToPeers();
 		use |= sendAll();
+		use |= (getMe()->ready() && manager.checkNextOp());;
 		if (!use)
 			usleep(500);
 	}
@@ -323,8 +324,8 @@ bool NetworkWorker::sendAll()
 {
 	bool usage = false;
 
-	usage |= sendUnique();
 	usage |= sendBroadcast();
+	usage |= sendUnique();
 	return usage;
 }
 
@@ -462,7 +463,7 @@ const std::list<drt::network::PeerInfo *> NetworkWorker::getSrv() const
 {
 	std::list<drt::network::PeerInfo *> r;
 	for (auto i = clients.cbegin(); i != clients.cend(); i++)
-		if ((*i)->isAClient())
+		if (!(*i)->isAClient())
 			r.push_back(*i);
 	return r;
 }

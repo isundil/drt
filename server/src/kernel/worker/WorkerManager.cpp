@@ -191,6 +191,17 @@ bool WorkerManager::getNextSend(network::ANetworkPacket **packet, network::PeerI
 	return true;
 }
 
+bool WorkerManager::checkNextOp(drt::network::PeerInfo *p)
+{
+	network::PeerInfo * const peer = p ? p : getNetwork()->getMe();
+
+	if (managedScenes.size() == 0)
+		return false;
+	for (auto i = managedScenes.cbegin(); i != managedScenes.cend(); i++)
+		(*i)->ready(peer);
+	return true;
+}
+
 bool WorkerManager::broadcastQueueEmpty()
 {
 	bool r;
@@ -219,9 +230,6 @@ void WorkerManager::releaseScene(render::Scene *s)
 	if (!s)
 		return;
 	::pthread_mutex_lock(&queueMutex);
-	for (auto i = runningOp.cbegin(); i != runningOp.cend() && !contains; i++)
-		if ((*i).second && (*i).second->scene == s)
-			contains = true;
 	for (auto i = managedScenes.begin(); i != managedScenes.end(); i++)
 		if ((**i) == *s)
 		{
@@ -230,6 +238,9 @@ void WorkerManager::releaseScene(render::Scene *s)
 			delete ms;
 			break;
 		}
+	for (auto i = runningOp.cbegin(); i != runningOp.cend() && !contains; i++)
+		if ((*i).second && (*i).second->scene == s)
+			contains = true;
 	if (contains)
 	{
 		std::cout << "running scene " <<std::endl;

@@ -64,6 +64,8 @@ class WorkerManager
 		bool broadcastQueueEmpty();
 		bool sendQueueEmpty();
 
+		bool checkNextOp(drt::network::PeerInfo *peer=nullptr);
+
 		worker::NetworkWorker *getNetwork();
 
 		module::ModuleManager	*getModuleManager();
