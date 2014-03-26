@@ -83,13 +83,13 @@ drt::worker::AWorker::Operation *ManagedScene::getNextOp()
 	return op;
 }
 
-void ManagedScene::ready(drt::network::PeerInfo *pi)
+bool ManagedScene::ready(drt::network::PeerInfo *pi)
 {
 	if (elligiblePeers.find(pi) == elligiblePeers.end())
-		return;
+		return false;
 	drt::worker::AWorker::Operation * op = getNextOp();
 	if (!op)
-		return;
+		return false;
 	pixels[op->y][op->x] = std::make_pair(pi, false);
 	if (pi == manager.getNetwork()->getMe())
 		manager.addOperation(op);
@@ -98,5 +98,6 @@ void ManagedScene::ready(drt::network::PeerInfo *pi)
 		manager.send(pi, new drt::network::Calc(scene->getId(), pi->getId(), *op));
 		delete op;
 	}
+	return true;
 }
 

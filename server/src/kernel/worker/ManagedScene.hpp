@@ -30,7 +30,7 @@ class ManagedScene
 
 		bool operator==(const render::Scene &) const;
 
-		void ready(drt::network::PeerInfo *);
+		bool ready(drt::network::PeerInfo *);
 
 	private:
 		std::set<drt::network::PeerInfo *> elligiblePeers;
