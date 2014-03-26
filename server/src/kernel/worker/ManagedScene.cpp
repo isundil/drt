@@ -67,14 +67,16 @@ drt::worker::AWorker::Operation *ManagedScene::getNextOp()
 {
 	if (done)
 		return nullptr;
-	drt::worker::AWorker::Operation *op = new drt::worker::AWorker::Operation(peer, scene, px, py);
-	px++;
+	drt::worker::AWorker::Operation *op = new drt::worker::AWorker::Operation(peer, scene, px, py,
+			scene->getWidth() -px < COMPUTE_SQUARE ? scene->getWidth() -px : COMPUTE_SQUARE,
+			scene->getHeight() -py < COMPUTE_SQUARE ? scene->getHeight()-py : COMPUTE_SQUARE);
+	px += op->width;
 	if (px == scene->getWidth())
 	{
 		px = 0;
-		py++;
+		py += op->height;
 	}
-	if (px == 0 && py == scene->getHeight())
+	if (px == 0 && py >= scene->getHeight())
 	{
 		done = true;
 		delete op;

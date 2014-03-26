@@ -23,9 +23,11 @@ namespace worker
 				render::Scene *scene;
 				unsigned int x;
 				unsigned int y;
+				unsigned char width;
+				unsigned char height;
 
 			public:
-				Operation(network::PeerInfo *pi, render::Scene *s, unsigned int _x, unsigned int _y): client(pi), scene(s), x(_x), y(_y)
+				Operation(network::PeerInfo *pi, render::Scene *s, unsigned int _x, unsigned int _y, unsigned char _w, unsigned char _h): client(pi), scene(s), x(_x), y(_y), width(_w), height(_h)
 				{ };
 			};
 
