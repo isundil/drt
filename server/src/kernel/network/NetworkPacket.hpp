@@ -6,6 +6,7 @@
 #include <list>
 
 #include "PeerInfo.hpp"
+#include "worker/AWorker.hpp"
 
 #define NETWORK_MAXCODE  *create(14)
 
@@ -146,15 +147,20 @@ class NewJob: public ANetworkPacket
 {
 	public:
 		NewJob( network::Socket *, unsigned short, size_t );
+		NewJob(const network::NewJob &);
+
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		void doMagic(
 				drt::WorkerManager &, 
 				drt::network::PeerInfo *);
 		const std::string getName() const;
+		const render::Scene *getScene() const;
+		unsigned int getSize() const;
 
 	private:
 		unsigned short id;
+		size_t size;
 		render::Scene *scene;
 };
 
@@ -227,21 +233,31 @@ class Monitor: public ANetworkPacket
 class Calc: public ANetworkPacket
 {
 	public:
+		Calc(unsigned short job, unsigned short dst, const drt::worker::AWorker::Operation);
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;
+
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+
+	private:
+		drt::worker::AWorker::Operation op;
+		unsigned short job;
+		unsigned short dst;
 };
 
 class Result: public ANetworkPacket
 {
 	public:
+		Result(unsigned short id, unsigned short x, unsigned short y, unsigned int color, unsigned short src=0xFFFF);
+		Result(const Result &);
+
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;
 		bool sendToClient(PeerInfo *) const;
 
-		Result(unsigned short id, unsigned short x, unsigned short y, unsigned int color, unsigned short src=0xFFFF);
-		Result(const Result &);
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
 
 	private:
 		unsigned short id;
@@ -255,10 +271,12 @@ class CompilFail: public ANetworkPacket, public std::exception
 {
 	public:
 		CompilFail(unsigned short id);
+		CompilFail(unsigned short id, unsigned short from);
 		CompilFail(const PeerInfo &);
 		CompilFail(const CompilFail &);
 		CompilFail();
 
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
 		static ANetworkPacket *create(Socket * socket);
 		std::stringstream *getStream(size_t *buflen) const;
 		const std::string getName() const;

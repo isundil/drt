@@ -21,6 +21,7 @@ class ModuleManager;
 namespace worker
 {
 class NetworkWorker;
+class ManagedScene;
 }
 namespace network
 {
@@ -42,6 +43,7 @@ class WorkerManager
 		worker::AWorker::Operation *pickNext(const worker::AWorker *);
 		void releaseThread(const worker::AWorker *);
 		void addOperation(worker::AWorker::Operation *);
+		void compilFail(const network::PeerInfo *src, render::Scene *s);
 		void start();
 		void stop();
 		const drt::Config * config() const;
@@ -56,14 +58,17 @@ class WorkerManager
 
 		void releaseScene(render::Scene *);
 		void addScene(network::PeerInfo *, render::Scene *);
+		void computeScene(render::Scene *);
 		bool getNextBroadcast(network::ANetworkPacket **packet, network::Socket **avoid);
 		bool getNextSend(network::ANetworkPacket **packet, network::PeerInfo **dst);
 		bool broadcastQueueEmpty();
 		bool sendQueueEmpty();
 
+		bool checkNextOp(drt::network::PeerInfo *peer=nullptr);
+
 		worker::NetworkWorker *getNetwork();
 
-  module::ModuleManager	*getModuleManager();
+		module::ModuleManager	*getModuleManager();
 
 	private:
 		WorkerManager(drt::Config * const);
@@ -73,6 +78,7 @@ class WorkerManager
 		std::list<worker::AWorker *> workers;
 		std::list<render::Scene *> scenes;
 		std::list<render::Scene *> endedScenes;
+		std::list<worker::ManagedScene *> managedScenes;
 		worker::AWorker *networkWorker;
 
 		std::list<worker::AWorker::Operation *>operationList;

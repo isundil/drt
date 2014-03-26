@@ -66,7 +66,6 @@ void PeerInfo::read(WorkerManager &manager)
 		delete packet;
 		return;
 	}
-	std::cerr << "Packet in (" << manager.getNetwork()->getMe()->getId() << "): " << packet->getName() << std::endl;
 	packet->doMagic(manager, this);
 	delete packet;
 }
@@ -81,6 +80,19 @@ void PeerInfo::sendData(std::stringstream &ss, size_t len)
 		ss.read(buffer, ((len - current_pos > 512) ? 512 : len - current_pos));
 		socket->write(buffer, ((len - current_pos > 512) ? 512 : len - current_pos));
 		current_pos += ((len - current_pos > 512) ? 512 : len - current_pos);
+	}
+}
+
+void PeerInfo::sendData(std::ifstream &in, size_t len)
+{
+	size_t sent =0;
+	char buffer[512];
+
+	while (sent < len)
+	{
+		in.read(buffer, len -sent < 512 ? len -sent : 512);
+		socket->write(buffer, len -sent < 512 ? len -sent : 512);
+		sent += len -sent < 512 ? len -sent : 512;
 	}
 }
 

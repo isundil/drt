@@ -88,9 +88,17 @@ char Socket::getc()
 int Socket::write(void *buf, size_t len)
 {
 	struct pollfd pollfd = { .fd = socket, .events = POLLERR };
+	int wr, l;
+
+	l = len;
 
 	if (poll(&pollfd, 1, 0) < 0 || pollfd.revents & POLLERR)
 		return 0;
-	return ::write(socket, buf, len);
+	wr = ::write(socket, buf, len);
+	if (wr < l)
+	{
+		return 0;
+	}
+	return len;
 }
 

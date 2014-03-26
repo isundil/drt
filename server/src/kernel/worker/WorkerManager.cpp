@@ -2,6 +2,7 @@
 #include <iostream>
 #include "WorkerManager.hpp"
 #include "Worker.hpp"
+#include "ManagedScene.hpp"
 #include "NetworkWorker.hpp"
 #include "config/Config.hpp"
 #include "config/WorkerSection.hpp"
@@ -190,6 +191,17 @@ bool WorkerManager::getNextSend(network::ANetworkPacket **packet, network::PeerI
 	return true;
 }
 
+bool WorkerManager::checkNextOp(drt::network::PeerInfo *p)
+{
+	network::PeerInfo * const peer = p ? p : getNetwork()->getMe();
+
+	if (managedScenes.size() == 0)
+		return false;
+	for (auto i = managedScenes.cbegin(); i != managedScenes.cend(); i++)
+		(*i)->ready(peer);
+	return true;
+}
+
 bool WorkerManager::broadcastQueueEmpty()
 {
 	bool r;
@@ -218,6 +230,14 @@ void WorkerManager::releaseScene(render::Scene *s)
 	if (!s)
 		return;
 	::pthread_mutex_lock(&queueMutex);
+	for (auto i = managedScenes.begin(); i != managedScenes.end(); i++)
+		if ((**i) == *s)
+		{
+			worker::ManagedScene *ms = *i;
+			managedScenes.remove(*i);
+			delete ms;
+			break;
+		}
 	for (auto i = runningOp.cbegin(); i != runningOp.cend() && !contains; i++)
 		if ((*i).second && (*i).second->scene == s)
 			contains = true;
@@ -240,13 +260,35 @@ void WorkerManager::releaseScene(render::Scene *s)
 	::pthread_mutex_unlock(&queueMutex);
 }
 
-void WorkerManager::addScene(network::PeerInfo *pi, render::Scene *s)
+void WorkerManager::addScene(network::PeerInfo *, render::Scene *s)
 {
 	scenes.push_back(s);
+}
 
-	for (unsigned int x =0; x < s->getWidth(); x++)
-		for (unsigned int y =0; y < s->getHeight(); y++)
-			addOperation(new worker::AWorker::Operation(pi, s, x, y));
+void WorkerManager::compilFail(const network::PeerInfo *src, render::Scene *s)
+{
+	for (auto i = managedScenes.cbegin(); i != managedScenes.cend(); i++)
+		if ((**i) == *s)
+		{
+			try
+			{
+				(*i)->compilFail(src);
+			}
+			catch (drt::network::CompilFail &e)
+			{
+				this->releaseScene(s);
+				throw e;
+			}
+			break;
+		}
+}
+
+void WorkerManager::computeScene(render::Scene *s)
+{
+	network::PeerInfo * const pi = getNetwork()->getPeer(s->getId());
+
+	worker::ManagedScene *scene = new worker::ManagedScene(*this, pi, s);
+	managedScenes.push_back(scene);
 }
 
 worker::NetworkWorker *WorkerManager::getNetwork()
@@ -258,3 +300,4 @@ module::ModuleManager	*WorkerManager::getModuleManager()
 {
   return modules;
 }
+

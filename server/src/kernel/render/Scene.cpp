@@ -127,3 +127,12 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	return color;
 }
 
+void Scene::setId(unsigned short _i)
+{ id = _i; }
+
+unsigned short Scene::getId() const
+{ return id; }
+
+const std::string Scene::getPath() const
+{ return scenePath; }
+

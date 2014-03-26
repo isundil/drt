@@ -13,6 +13,7 @@ SRC=	main.cpp					\
 		worker/AWorker.cpp			\
 		worker/Worker.cpp			\
 		worker/NetworkWorker.cpp	\
+		worker/ManagedScene.cpp		\
 		\
 		network/Socket.cpp			\
 		network/ServerSocket.cpp	\
