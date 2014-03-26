@@ -286,14 +286,14 @@ ANetworkPacket * Calc::create(network::Socket * socket)
 {
 	unsigned short jobId;
 	unsigned short dst;
-	unsigned short x;
-	unsigned short y;
+	unsigned short xy[2];
+	unsigned char square[2];
 
 	socket->read(&jobId, sizeof(jobId));
 	socket->read(&dst, sizeof(dst));
-	socket->read(&x, sizeof(x));
-	socket->read(&y, sizeof(y));
-	return new Calc(jobId, dst, drt::worker::AWorker::Operation(nullptr, nullptr, x, y));
+	socket->read(xy, sizeof(xy));
+	socket->read(square, sizeof(square));
+	return new Calc(jobId, dst, drt::worker::AWorker::Operation(nullptr, nullptr, xy[0], xy[1], square[0], square[1]));
 }
 
 ANetworkPacket * Result::create(network::Socket * socket)
@@ -564,7 +564,7 @@ void Calc::doMagic(drt::WorkerManager &m, PeerInfo *)
 	if (dst == m.getNetwork()->getMe()->getId())
 	{
 		PeerInfo *client = m.getNetwork()->getPeer(job);
-		m.addOperation(new drt::worker::AWorker::Operation(client, client->getScene(), op.x, op.y));
+		m.addOperation(new drt::worker::AWorker::Operation(client, client->getScene(), op.x, op.y, op.width, op.height));
 	}
 	else
 		m.send(m.getNetwork()->getPeer(dst), new Calc(*this));
@@ -726,7 +726,9 @@ std::stringstream * Calc::getStream(size_t *buflen) const
 	ss->write((char *)&dst, sizeof(dst));
 	ss->write((char *)&px, sizeof(px));
 	ss->write((char *)&py, sizeof(py));
-	*buflen = sizeof(code) +sizeof(px) +sizeof(py) +sizeof(job) +sizeof(dst);
+	ss->write((char *)&op.width, sizeof(op.width));
+	ss->write((char *)&op.height, sizeof(op.height));
+	*buflen = sizeof(code) +sizeof(px) +sizeof(py) +sizeof(job) +sizeof(dst) +sizeof(op.height) +sizeof(op.width);
 	return ss;
 }
 
