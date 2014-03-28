@@ -19,6 +19,7 @@ namespace client
             MONITOR     = 16,
             NEWJOB      = 8,
             RESULT      = 13,
+            CHUNKRESULT = 17,
             COMPILFAIL  = 14
         };
 
