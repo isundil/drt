@@ -36,6 +36,7 @@ ANetworkPacket *ANetworkPacket::fromSocket(char code, network::Socket *socket)
 	ctors[14] = CompilFail::create;
 	ctors[15] = Monitor::create;
 	//ctors[16] = Monitor::ClientMonitor; //-> will NEVER be received by server
+	ctors[17] = ChunkResult::create;
 
 	auto f = ctors.find(code);
 	if (f == ctors.end())
@@ -74,7 +75,13 @@ Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigne
 		src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
 }
 
+ChunkResult::ChunkResult(const ChunkResult &o): id(o.id), src(o.src), minx(o.minx), miny(o.miny), maxx(o.maxx), maxy(o.maxy), pixList(o.pixList)
+{ }
+
 Result::Result(const Result &o): id(o.id), src(o.src), x(o.x), y(o.y), color(o.color)
+{ }
+
+ChunkResult::ChunkResult(unsigned short _id, unsigned short _src): id(_id), src(_src)
 { }
 
 Netsplit::Netsplit(unsigned short _id): id(_id)
@@ -171,6 +178,9 @@ Ready::Ready(unsigned short _id, bool r): id(_id), ready(r)
 { }
 
 bool Result::sendToClient(PeerInfo *pi) const
+{ return id == pi->getId(); }
+
+bool ChunkResult::sendToClient(PeerInfo *pi) const
 { return id == pi->getId(); }
 
 bool CompilFail::sendToClient(PeerInfo *pi) const
@@ -308,6 +318,29 @@ ANetworkPacket * Result::create(network::Socket * socket)
 	socket->read(&pos, sizeof(pos));
 	socket->read(&color, sizeof(color));
 	return new Result(id, pos[0], pos[1], color, src);
+}
+
+ANetworkPacket * ChunkResult::create(network::Socket * socket)
+{
+	unsigned short id;
+	unsigned short src;
+	unsigned short xy[2];
+	unsigned char wh[2];
+	ChunkResult *result;
+	unsigned int c;
+
+	socket->read(&id, sizeof(id));
+	socket->read(&src, sizeof(src));
+	socket->read(&xy, sizeof(xy));
+	socket->read(&wh, sizeof(wh));
+	result = new ChunkResult(id, src);
+	for (unsigned int i = xy[0]; i < xy[0] +wh[0]; i++)
+		for (unsigned int j = xy[1]; j < xy[1] +wh[1]; j++)
+		{
+			socket->read(&c, sizeof(c));
+			*result += std::make_tuple(i, j, c);
+		}
+	return result;
 }
 
 ANetworkPacket * CompilFail::create(network::Socket * socket)
@@ -559,6 +592,12 @@ void Result::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 	m.send(pi, new Result(*this));
 }
 
+void ChunkResult::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
+{
+	PeerInfo *const pi = m.getNetwork()->getPeer(id);
+	m.send(pi, new ChunkResult(*this));
+}
+
 void Calc::doMagic(drt::WorkerManager &m, PeerInfo *)
 {
 	if (dst == m.getNetwork()->getMe()->getId())
@@ -747,6 +786,32 @@ std::stringstream * Result::getStream(size_t *buflen) const
 	return ss;
 }
 
+std::stringstream * ChunkResult::getStream(size_t *buflen) const
+{
+	std::stringstream *ss = new std::stringstream();
+	char code = 0x11;
+	char wh[2];
+
+	wh[0] = maxx -minx;
+	wh[1] = maxy -miny;
+
+	ss->write(&code, sizeof(code));
+	ss->write((char *)&id, sizeof(id));
+	ss->write((char *)&src, sizeof(src));
+	ss->write((char *)&minx, sizeof(minx));
+	ss->write((char *)&minx, sizeof(minx));
+	ss->write((char *)&wh, sizeof(wh));
+	*buflen = sizeof(code) +sizeof(id) +sizeof(src) +sizeof(minx) +sizeof(miny) +sizeof(wh);
+	for (unsigned int i = minx; i < maxx; i++)
+		for (unsigned int j = miny; j < maxy; j++)
+		{
+			unsigned int color = (*this)[std::make_pair(i, j)];
+			ss->write((char *)&color, sizeof(color));
+			*buflen += sizeof(color);
+		}
+	return ss;
+}
+
 std::stringstream * CompilFail::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
@@ -822,6 +887,9 @@ const std::string Calc::getName() const
 const std::string Result::getName() const
 { return "Result"; }
 
+const std::string ChunkResult::getName() const
+{ return "Chunked Result"; }
+
 const std::string CompilFail::getName() const
 { return "CompilFail"; }
 
@@ -830,4 +898,25 @@ const drt::render::Scene *NewJob::getScene() const
 
 unsigned int NewJob::getSize() const
 { return size; }
+
+ChunkResult &ChunkResult::operator+=(std::tuple<unsigned short, unsigned short, unsigned int>item)
+{
+	pixList[std::make_pair(std::get<0>(item), std::get<1>(item))] = std::get<2>(item);
+	return *this;
+}
+
+unsigned int ChunkResult::operator[](std::pair<unsigned short, unsigned short> e) const
+{
+	unsigned int result;
+
+	try
+	{
+		result = pixList.at(e);
+	}
+	catch (std::exception &e)
+	{
+		return 0xff000000;
+	}
+	return result;
+}
 
