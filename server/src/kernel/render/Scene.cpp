@@ -55,6 +55,8 @@ Scene::s_Item::~s_Item()
 {
 	delete [] data;
 	delete object;
+	for (auto i = subItems.cbegin(); i != subItems.cend(); i++)
+		delete (*i);
 }
 
 Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *modules, std::map<unsigned int, char[20]>moduleArray)
@@ -124,4 +126,13 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	delete ray;
 	return color;
 }
+
+void Scene::setId(unsigned short _i)
+{ id = _i; }
+
+unsigned short Scene::getId() const
+{ return id; }
+
+const std::string Scene::getPath() const
+{ return scenePath; }
 

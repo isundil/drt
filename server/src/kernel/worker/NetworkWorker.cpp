@@ -1,4 +1,5 @@
 #include <set>
+#include <fstream>
 #include <sstream>
 #include <iostream>
 #include <unistd.h>
@@ -14,6 +15,7 @@
 #include "network/NetworkPacket.hpp"
 #include "system/CpuUsage.hpp"
 #include "system/MemUsage.hpp"
+#include "render/Scene.hpp"
 
 using namespace drt::worker;
 
@@ -72,6 +74,7 @@ void NetworkWorker::start()
 		use |= readAll();
 		use |= connectToPeers();
 		use |= sendAll();
+		use |= (getMe()->ready() && manager.checkNextOp());;
 		if (!use)
 			usleep(500);
 	}
@@ -321,8 +324,8 @@ bool NetworkWorker::sendAll()
 {
 	bool usage = false;
 
-	usage |= sendUnique();
 	usage |= sendBroadcast();
+	usage |= sendUnique();
 	return usage;
 }
 
@@ -341,6 +344,7 @@ bool NetworkWorker::sendBroadcast()
 		for (auto i = clients.begin(); i != clients.end(); i++)
 		{
 			std::stringstream *ss;
+			network::NewJob *job;
 			size_t packet_len;
 
 			if (!*i || (*i)->getConfirmed() || (alreadySent.find((*i)->getSocket()) != alreadySent.end()))
@@ -349,8 +353,14 @@ bool NetworkWorker::sendBroadcast()
 				continue;
 			ss = packet->getStream(&packet_len);
 			(*i)->sendData(*ss, packet_len);
-			alreadySent.insert((*i)->getSocket());
 			delete ss;
+			alreadySent.insert((*i)->getSocket());
+			if ((job = dynamic_cast<network::NewJob *>(packet)) != nullptr)
+			{
+				std::ifstream file(job->getScene()->getPath().c_str());
+				(*i)->sendData(file, job->getSize());
+				file.close();
+			}
 		}
 		delete packet;
 	}
@@ -448,6 +458,15 @@ unsigned int NetworkWorker::nbClient() const
 
 drt::network::PeerInfo *NetworkWorker::getMe()
 { return myself; }
+
+const std::list<drt::network::PeerInfo *> NetworkWorker::getSrv() const
+{
+	std::list<drt::network::PeerInfo *> r;
+	for (auto i = clients.cbegin(); i != clients.cend(); i++)
+		if (!(*i)->isAClient())
+			r.push_back(*i);
+	return r;
+}
 
 const std::list<drt::network::PeerInfo *> &NetworkWorker::getPeers() const
 { return clients; }

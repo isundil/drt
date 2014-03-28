@@ -57,17 +57,22 @@ namespace drt
 				} t_metadata;
 
 			public:
-				Scene( std::ifstream &, const std::string &path );
+				Scene( std::ifstream &, const std::string &path);
 				virtual ~Scene();
 
 				unsigned int calc(WorkerManager &, unsigned int x, unsigned int y);
 				unsigned int getWidth() const;
 				unsigned int getHeight() const;
 
+				const std::string getPath() const;
+				unsigned short getId() const;
+				void setId(unsigned short id);
+
 			private:
 				unsigned int height, width;
 				Camera	*camera;
 				short	d;
+				unsigned short id;
 
 				std::map<unsigned int, t_Item *>		objects;
 

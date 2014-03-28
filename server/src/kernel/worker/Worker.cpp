@@ -1,6 +1,9 @@
+#include <iostream>
+#include <sstream>
 #include "worker/Worker.hpp"
 #include "worker/WorkerManager.hpp"
 #include "render/Scene.hpp"
+#include "network/NetworkPacket.hpp"
 
 using namespace drt::worker;
 
@@ -23,21 +26,23 @@ void Worker::stop()
 
 void Worker::nextOp(Operation *op)
 {
-	render::Scene * const s = op->scene;
+	std::list<drt::network::Result *>rList;
+	render::Scene *const s = op->scene;
 	unsigned int color = 0xFFFFFF;
+	const int maxX = op->x +op->width;
+	const int maxY = op->y +op->height;
 
-	if (s)
-	{
-		color = s->calc(manager, op->x, op->y);
-		color |= 0xff000000;
-		//color = rand(); //s->calc(manager, op->x, op->y);
-		//char *c = (char *)&color;
-		//c[0] = 0xff;
-		//c[1] = rand() % 255;
-		//c[2] = rand() % 255;
-		//c[3] = rand() % 255;
-	}
-	manager.send(op, color);
+	if (!s)
+		return;
+	for (int i = op->x; i < maxX; i++)
+		for (int j = op->y; j < maxY; j++)
+		{
+			color = s->calc(manager, i, j);
+			color |= 0xff000000;
+			rList.push_back(new drt::network::Result(s->getId(), i, j, color));
+		}
+	for (auto i = rList.cbegin(); i != rList.cend(); i++)
+		manager.send(op->client, (*i));
 }
 
 unsigned int Worker::getId() const
