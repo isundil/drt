@@ -901,7 +901,14 @@ unsigned int NewJob::getSize() const
 
 ChunkResult &ChunkResult::operator+=(std::tuple<unsigned short, unsigned short, unsigned int>item)
 {
-	pixList[std::make_pair(std::get<0>(item), std::get<1>(item))] = std::get<2>(item);
+	unsigned short x = std::get<0>(item);
+	unsigned short y = std::get<1>(item);
+
+	pixList[std::make_pair(x, y)] = std::get<2>(item);
+	minx = x < minx ? x : minx;
+	maxx = x > maxx ? x : maxx;
+	miny = y < miny ? y : miny;
+	maxy = y > maxy ? y : maxy;
 	return *this;
 }
 

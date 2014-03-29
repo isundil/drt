@@ -15,4 +15,7 @@ $(NAME):	$(OBJ)
 clean:
 	rm $(OBJ)
 
-re:	clean $(NAME)
+fclean: clean
+	rm $(NAME)
+
+re:	fclean $(NAME)

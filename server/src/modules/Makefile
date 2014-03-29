@@ -10,8 +10,14 @@ all:
 	done
 
 clean:
+	for fileList in $(SRC) ; do \
+		make clean -C $$fileList ; \
+	done
 
 fclean:
+	for fileList in $(SRC) ; do \
+		make fclean -C $$fileList ; \
+	done
 
 re:	fclean all
 
