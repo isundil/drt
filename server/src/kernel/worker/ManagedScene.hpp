@@ -4,7 +4,7 @@
 #include "AWorker.hpp"
 
 #ifndef  COMPUTE_SQUARE
-# define COMPUTE_SQUARE (50)
+# define COMPUTE_SQUARE (1)
 #endif
 
 namespace drt
