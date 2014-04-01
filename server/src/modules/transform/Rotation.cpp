@@ -7,8 +7,8 @@
 Rotation::Rotation(double x, double y, double z)
 {
   _x = x;
-  _y = y;
-  _z = z;
+  _y = z;
+  _z = y;
 }
 
 void	Rotation::xRotation(Camera * camera, Ray * ray)
