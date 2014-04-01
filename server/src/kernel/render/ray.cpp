@@ -18,6 +18,15 @@ double Ray::getY()
 double Ray::getZ()
 { return (double)((double)z + (double)mod_z); }
 
+double	Ray::getModX()
+{return mod_x;}
+
+double	Ray::getModY()
+{return mod_y;}
+
+double	Ray::getModZ()
+{return mod_z;}
+
 void Ray::setX(double _x)
 { mod_x = (double)_x; }
 

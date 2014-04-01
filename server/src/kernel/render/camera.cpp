@@ -8,9 +8,9 @@ Camera::Camera(short x, short y, short z, double rx, double ry, double rz) : AOb
   this->rx = (double)rx;
   this->ry = (double)ry;
   this->rz = (double)rz;
-  mod_x = (double)0;
-  mod_y = (double)0;
-  mod_z = (double)0;
+  mod_x = (double)0.f;
+  mod_y = (double)0.f;
+  mod_z = (double)0.f;
 }
 
 Camera::Camera(Camera &cam) {
@@ -20,13 +20,16 @@ Camera::Camera(Camera &cam) {
   this->rx = (double)cam.getRX();
   this->ry = (double)cam.getRY();
   this->rz = (double)cam.getRZ();
+  mod_x = (double)0.f;
+  mod_y = (double)0.f;
+  mod_z = (double)0.f;
 }
 
 void	Camera::reset()
 {
-  mod_x = (double)0;
-  mod_y = (double)0;
-  mod_z = (double)0;
+  mod_x = (double)0.f;
+  mod_y = (double)0.f;
+  mod_z = (double)0.f;
 }
 
 double	Camera::getX()
@@ -46,6 +49,15 @@ double	Camera::getRY()
 
 double	Camera::getRZ()
 {return (double)rz;}
+
+double	Camera::getModX()
+{return mod_x;}
+
+double	Camera::getModY()
+{return mod_y;}
+
+double	Camera::getModZ()
+{return mod_z;}
 
 void		Camera::setX(double _x)
 {mod_x = (double)_x;}

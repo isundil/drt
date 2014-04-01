@@ -13,8 +13,9 @@ public:
     return -1;
   }
   virtual void		preProcess(Camera * camera, Ray * ray) {(void)camera; (void)ray;};
-  virtual void		postProcess() {};
+  virtual unsigned int	postProcess(drt::render::Scene *, Camera *, Ray *, AObject *, double, unsigned int) {return 0;}
   virtual unsigned int	getColor() {return 0;}
+  virtual t_pt		getNormale(t_pt, t_pt) {t_pt t; return t;}
 
   double	getX();
   double	getY();
@@ -22,6 +23,10 @@ public:
   double	getRX();
   double	getRY();
   double	getRZ();
+
+  double	getModX();
+  double	getModY();
+  double	getModZ();
 
   void		setX(double _x);
   void		setY(double _y);
