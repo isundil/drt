@@ -81,7 +81,7 @@ ChunkResult::ChunkResult(const ChunkResult &o): id(o.id), src(o.src), minx(o.min
 Result::Result(const Result &o): id(o.id), src(o.src), x(o.x), y(o.y), color(o.color)
 { }
 
-ChunkResult::ChunkResult(unsigned short _id, unsigned short _src): id(_id), src(_src)
+ChunkResult::ChunkResult(unsigned short _id, unsigned short _src): id(_id), src(_src), minx(-1), miny(-1), maxx(0), maxy(0)
 { }
 
 Netsplit::Netsplit(unsigned short _id): id(_id)
@@ -789,25 +789,27 @@ std::stringstream * Result::getStream(size_t *buflen) const
 std::stringstream * ChunkResult::getStream(size_t *buflen) const
 {
 	std::stringstream *ss = new std::stringstream();
+	const unsigned short mx = minx;
+	const unsigned short my = miny;
 	char code = 0x11;
 	char wh[2];
 
-	wh[0] = maxx -minx;
-	wh[1] = maxy -miny;
+	wh[0] = maxx -minx +1;
+	wh[1] = maxy -miny +1;
 
 	ss->write(&code, sizeof(code));
 	ss->write((char *)&id, sizeof(id));
 	ss->write((char *)&src, sizeof(src));
-	ss->write((char *)&minx, sizeof(minx));
-	ss->write((char *)&minx, sizeof(minx));
+	ss->write((char *)&mx, sizeof(mx));
+	ss->write((char *)&my, sizeof(my));
 	ss->write((char *)&wh, sizeof(wh));
-	*buflen = sizeof(code) +sizeof(id) +sizeof(src) +sizeof(minx) +sizeof(miny) +sizeof(wh);
-	for (unsigned int i = minx; i < maxx; i++)
-		for (unsigned int j = miny; j < maxy; j++)
+	*buflen = sizeof(code) +sizeof(id) +sizeof(src) +sizeof(mx) +sizeof(my) +sizeof(wh);
+	*buflen += (sizeof(unsigned int) * wh[0] * wh[1]);
+	for (unsigned int i = minx; i <= maxx; i++)
+		for (unsigned int j = miny; j <= maxy; j++)
 		{
 			unsigned int color = (*this)[std::make_pair(i, j)];
 			ss->write((char *)&color, sizeof(color));
-			*buflen += sizeof(color);
 		}
 	return ss;
 }
@@ -901,7 +903,18 @@ unsigned int NewJob::getSize() const
 
 ChunkResult &ChunkResult::operator+=(std::tuple<unsigned short, unsigned short, unsigned int>item)
 {
-	pixList[std::make_pair(std::get<0>(item), std::get<1>(item))] = std::get<2>(item);
+	unsigned short x = std::get<0>(item);
+	unsigned short y = std::get<1>(item);
+
+	pixList[std::make_pair(x, y)] = std::get<2>(item);
+	minx = x < minx ? x : minx;
+	maxx = x > maxx ? x : maxx;
+	miny = y < miny ? y : miny;
+	maxy = y > maxy ? y : maxy;
+	if (minx == -1)
+		minx = x;
+	if (miny == -1)
+		miny = y;
 	return *this;
 }
 
