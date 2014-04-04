@@ -287,8 +287,8 @@ class ChunkResult: public ANetworkPacket
 	private:
 		unsigned short id;
 		unsigned short src;
-		unsigned short minx;
-		unsigned short miny;
+		int minx;
+		int miny;
 		unsigned short maxx;
 		unsigned short maxy;
 
