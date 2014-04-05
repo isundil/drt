@@ -162,20 +162,16 @@ namespace client
 
         private void DrawChunk3DView(ushort src, ushort W, ushort H, int minx, int miny, byte [] bufpels)
         {
-            ushort x = 0;
-            ushort y = 0;
             int i = 0;
-            while (i < bufpels.Length)
-            {
-                if (minx + x < td_bitmap.Width && miny + y < td_bitmap.Height)
-                td_bitmap.SetPixel(minx + x, miny + y, Color.FromArgb((Int32) BitConverter.ToInt32(bufpels, i)));
 
-                i += 4;
-                y++;
-                if (y >= H)
+            for (var x = 0; x < W; x++)
+            {
+                for (var y = 0; y < H; y++)
                 {
-                    y = 0;
-                    x++;
+                    if (minx + x < td_bitmap.Width && miny + y < td_bitmap.Height)
+                        td_bitmap.SetPixel(minx + x, miny + y, Color.FromArgb((Int32)BitConverter.ToInt32(bufpels, i)));
+
+                    i += 4;
                 }
             }
 
