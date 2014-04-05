@@ -107,6 +107,7 @@ namespace client.Objects
             }
         }
 
+        public Modules.eModules getModule() { return Modules.eModules.BASIC_LIGHT; }
         override public int getSubModule()
         {
             return Modules.Submodules[Modules.eModules.BASIC_LIGHT]["LIGHT"];
