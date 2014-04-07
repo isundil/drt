@@ -84,7 +84,8 @@ namespace client
             {
                 if (!authModules.Contains(o.getModule()))
                     continue;
-
+                if (!s.RequestedModules.Contains(o.getModule()))
+                    s.RequestedModules.Add(o.getModule());
                 s.Items.Add(o.getSceneItem());
             }
 
