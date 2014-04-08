@@ -26,7 +26,7 @@ void Worker::stop()
 
 void Worker::nextOp(Operation *op)
 {
-	std::list<drt::network::Result *>rList;
+	drt::network::ChunkResult *rList;
 	render::Scene *const s = op->scene;
 	unsigned int color = 0xFFFFFF;
 	const int maxX = op->x +op->width;
@@ -34,15 +34,20 @@ void Worker::nextOp(Operation *op)
 
 	if (!s)
 		return;
+	rList = new drt::network::ChunkResult(s->getId());
 	for (int i = op->x; i < maxX; i++)
 		for (int j = op->y; j < maxY; j++)
 		{
 			color = s->calc(manager, i, j);
 			color |= 0xff000000;
-			rList.push_back(new drt::network::Result(s->getId(), i, j, color));
+
+			if (color == 0xff000000)
+				std::cout << "blackos " << i << ":" << j << std::endl;
+
+			(*rList) += std::make_tuple(i, j, color);
+			//*rList += std::make_tuple(i, j, 0xff00ff00);
 		}
-	for (auto i = rList.cbegin(); i != rList.cend(); i++)
-		manager.send(op->client, (*i));
+	manager.send(op->client, rList);
 }
 
 unsigned int Worker::getId() const

@@ -77,11 +77,7 @@ drt::worker::AWorker::Operation *ManagedScene::getNextOp()
 		py += op->height;
 	}
 	if (px == 0 && py >= scene->getHeight())
-	{
 		done = true;
-		delete op;
-		return nullptr;
-	}
 	return op;
 }
 

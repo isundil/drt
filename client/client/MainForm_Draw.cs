@@ -150,10 +150,45 @@ namespace client
             DrawPixel3DView_count++;
             progressbar.Value = DrawPixel3DView_count;
 
-            if (DrawPixel3DView_count % 100 == 0 || DrawPixel3DView_count == progressbar.Maximum)
+            view_3d.Refresh();
+
+            if (DrawPixel3DView_count == progressbar.Maximum)
             {
-                view_3d.Refresh();
+                DrawPixel3DView_count = 0;
+                progressbar.Value = 0;
+                show_server_mapping.Enabled = true;
             }
+        }
+
+        private void DrawChunk3DView(ushort src, ushort W, ushort H, int minx, int miny, byte [] bufpels)
+        {
+            int i = 0;
+
+            for (var x = 0; x < W; x++)
+            {
+                for (var y = 0; y < H; y++)
+                {
+                    if (minx + x < td_bitmap.Width && miny + y < td_bitmap.Height)
+                        td_bitmap.SetPixel(minx + x, miny + y, Color.FromArgb((Int32)BitConverter.ToInt32(bufpels, i)));
+
+                    i += sizeof(Int32);
+                }
+            }
+
+            if (servers_map.ContainsKey(src))
+            {
+                servers_map[src] += W * H;
+            }
+            else
+            {
+                servers_map[src] = W * H;
+            }
+
+            DrawPixel3DView_count += W * H;
+            progressbar.Value = DrawPixel3DView_count;
+
+            view_3d.Refresh();
+
             if (DrawPixel3DView_count == progressbar.Maximum)
             {
                 DrawPixel3DView_count = 0;

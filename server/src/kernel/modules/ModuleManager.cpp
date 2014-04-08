@@ -44,7 +44,7 @@ std::list<std::string> ModuleManager::getFiles(const std::string &dir) const
 
 	if ((d = ::opendir(dir.c_str())) == nullptr)
 	{
-		std::cerr << "Warning: cannot open directory " << dir << ": " << strerror(errno) << "(" << ::dlerror() << ")" << std::endl;
+		std::cerr << "Warning: cannot open directory " << dir << ": " << strerror(errno) << std::endl;
 		return result;
 	}
 	while ((fileinfo = readdir(d)) != nullptr)
@@ -65,7 +65,7 @@ void ModuleManager::loadFile(const std::string &filename)
 
 	if (!handler)
 	{
-		std::cerr << "Warning: failed to load module file " << filename << "(" << dlerror() << ")" <<std::endl;
+		std::cerr << "Warning: failed to load module file " << "(" << dlerror() << ")" <<std::endl;
 		return;
 	}
 	symName = dlsym(handler, "getName");
