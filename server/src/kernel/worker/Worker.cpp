@@ -41,11 +41,7 @@ void Worker::nextOp(Operation *op)
 			color = s->calc(manager, i, j);
 			color |= 0xff000000;
 
-			if (color == 0xff000000)
-				std::cout << "blackos " << i << ":" << j << std::endl;
-
 			(*rList) += std::make_tuple(i, j, color);
-			//*rList += std::make_tuple(i, j, 0xff00ff00);
 		}
 	manager.send(op->client, rList);
 }
