@@ -29,6 +29,8 @@ namespace client
         public ConnectDelegate Connect;
         public delegate void DrawPixelDelegate(ushort src, int x, int y, Color c);
         public DrawPixelDelegate DrawPixel;
+        public delegate void DrawChunkDelegate(ushort src, ushort w, ushort h, int minx, int miny, byte[] bufpels);
+        public DrawChunkDelegate DrawChunk;
         public delegate void MonitorDelegate(byte cpu, UInt32 ramuse, UInt32 rammax);
         public MonitorDelegate Monitor;
 
@@ -63,6 +65,7 @@ namespace client
             vp.GridLevel = 10;
             this.Connect = new ConnectDelegate(ShowConnection);
             this.DrawPixel = new DrawPixelDelegate(DrawPixel3DView);
+            this.DrawChunk = new DrawChunkDelegate(DrawChunk3DView);
             this.Monitor = new MonitorDelegate(UpdateMonitor);
 
             td_bitmap = new Bitmap(view_3d.Width, view_3d.Height);
