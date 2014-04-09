@@ -4,6 +4,7 @@
 #include <sstream>
 #include <stdio.h>
 #include <list>
+#include <map>
 
 #include "PeerInfo.hpp"
 #include "worker/AWorker.hpp"
@@ -265,6 +266,33 @@ class Result: public ANetworkPacket
 		unsigned short x;
 		unsigned short y;
 		unsigned int color;
+};
+
+class ChunkResult: public ANetworkPacket
+{
+	public:
+		ChunkResult(unsigned short id, unsigned short src=0xFFFF);
+		ChunkResult(const ChunkResult &);
+
+		static ANetworkPacket *create(Socket * socket);
+		std::stringstream *getStream(size_t *buflen) const;
+		const std::string getName() const;
+		bool sendToClient(PeerInfo *) const;
+
+		void doMagic(drt::WorkerManager &, drt::network::PeerInfo *);
+		ChunkResult &operator+=(std::tuple<unsigned short, unsigned short, unsigned int>);
+
+		unsigned int operator[](std::pair<unsigned short, unsigned short>) const;
+
+	private:
+		unsigned short id;
+		unsigned short src;
+		int minx;
+		int miny;
+		unsigned short maxx;
+		unsigned short maxy;
+
+		std::map<std::pair<unsigned short, unsigned short>, unsigned int> pixList;
 };
 
 class CompilFail: public ANetworkPacket, public std::exception

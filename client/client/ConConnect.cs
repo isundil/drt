@@ -28,7 +28,8 @@ namespace client
             { eInstruction.IDCH,        4  },
             { eInstruction.COMPILFAIL,  4  },
             { eInstruction.MONITOR,     9  },
-            { eInstruction.RESULT,      12 }
+            { eInstruction.RESULT,      12 },
+            { eInstruction.CHUNKRESULT, 10 }
         };
 
         public void Disconnect()
@@ -166,6 +167,28 @@ namespace client
             Int32 color = BitConverter.ToInt32(buf, 8);
 
             f.Invoke(f.DrawPixel, new object[] { Src, X, Y, System.Drawing.Color.FromArgb(color) });
+        }
+
+        public void CHUNKRESULT(MainForm f, out bool wait_for_instruction)
+        {
+            var bufhead = Read(MessagesSizes[eInstruction.CHUNKRESULT]);
+
+            wait_for_instruction = false;
+
+            UInt16 Src = BitConverter.ToUInt16(bufhead, 0);
+            UInt16 MinX = BitConverter.ToUInt16(bufhead, 4);
+            UInt16 MinY = BitConverter.ToUInt16(bufhead, 6);
+            byte W = bufhead[8];
+            byte H = bufhead[9];
+
+            int s = W * H * sizeof(UInt32);
+
+            // dirty
+            while (con.Available < s)
+            { }
+
+            var bufpels = Read((uint)(s));
+            f.Invoke(f.DrawChunk, new object[] { Src, W, H, MinX, MinY, bufpels });
         }
 
         public void MONITOR(MainForm f, out bool wait_for_instruction)

@@ -75,6 +75,7 @@ namespace client
 
         private void doListen(object o, DoWorkEventArgs e)
         {
+            byte b = 0;
             bool wait_for_instruction = false;
             while (!e.Cancel && !this.Offline)
             {
@@ -85,10 +86,10 @@ namespace client
 
                 try
                 {
-                    byte b = 0;
-
                     if (wait_for_instruction == false)
                     {
+                        b = 0;
+
                         if (Connection.GetByte(out b))
                         {
                             wait_for_instruction = true;
@@ -110,6 +111,9 @@ namespace client
                             break;
                         case ConClient.eInstruction.RESULT:
                             Connection.RESULT(_form, out wait_for_instruction);
+                            break;
+                        case ConClient.eInstruction.CHUNKRESULT:
+                            Connection.CHUNKRESULT(_form, out wait_for_instruction);
                             break;
                         case ConClient.eInstruction.COMPILFAIL:
                             Connection.COMPILFAIL(out wait_for_instruction);
