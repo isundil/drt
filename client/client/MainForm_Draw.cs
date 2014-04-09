@@ -171,7 +171,7 @@ namespace client
                     if (minx + x < td_bitmap.Width && miny + y < td_bitmap.Height)
                         td_bitmap.SetPixel(minx + x, miny + y, Color.FromArgb((Int32)BitConverter.ToInt32(bufpels, i)));
 
-                    i += 4;
+                    i += sizeof(Int32);
                 }
             }
 
