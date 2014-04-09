@@ -17,9 +17,9 @@ public:
   virtual unsigned int	getColor() {return 0;}
   virtual t_pt		getNormale(t_pt, t_pt) {t_pt t; return t;}
 
-  double	getX();
-  double	getY();
-  double	getZ();
+  virtual double	getX();
+  virtual double	getY();
+  virtual double	getZ();
   double	getRX();
   double	getRY();
   double	getRZ();

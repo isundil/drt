@@ -16,6 +16,7 @@ extern "C"
     switch (subModule)
       {
       case SPHERE:
+	std::cout << "initializing Sphere" << std::endl;
 	ret = new Sphere(d->color, d->r);
 	break;
       case CYLINDRE:

@@ -18,11 +18,17 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 	s.read(&nbModules, sizeof(nbModules));
 	for (int n = 0; n < nbModules; n++)
 		s.read(moduleList[n], 20);
+	for (int n = 0; n < nbModules; n++)
+	  std::cout << moduleList[n] << std::endl;
 	//reading scene header (details)
 	s.read((char *)&data, sizeof(data));
 	//reading objects
 	for (unsigned int i = 0; i < data.nbObjects; i++)
+	  {
+	    std::cout << "Item {" << std::endl;
 		this->objects[i] = (parseItem(s, modules, moduleList));
+	    std::cout << "}" << std::endl;
+	  }
 	//setting data
 	this->camera = new Camera(data.camera_x, data.camera_y, data.camera_z, data.camera_rx, data.camera_ry, data.camera_rz);
 	width = data.width;
@@ -67,23 +73,26 @@ Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *module
 	s.read((char *) &(obj->toReceive), sizeof(obj->toReceive));
 	if (obj->toReceive.headerSize > 0)
 	{
-		std::cout << "+--";
+		// std::cout << "+--";
 		obj->data = new char[obj->toReceive.headerSize];
-		if (s.read(obj->data, obj->toReceive.headerSize))
-			std::cout << "  data contain [" << (char *) obj->data << "]" << std::endl;
+		if (s.read(obj->data, obj->toReceive.headerSize));
+			// std::cout << "  data contain [" << (char *) obj->data << "]" << std::endl;
 	}
+	std::string tmpStr = moduleArray[(int) obj->toReceive.moduleID];
+	std::cout << "module : [" << tmpStr << "]" << std::endl;
+	std::cout << "subModule : " << (short) obj->toReceive.subModule << std::endl;
 	std::cout << std::endl << "there is " << obj->toReceive.nbSubItem << " subItems" << std::endl;
 	for (unsigned int a = 0; a < obj->toReceive.nbSubItem; a++)
+	  {
+	    std::cout << "SubItem [" << std::endl;
 		obj->subItems.push_back(parseItem(s, modules, moduleArray));
+	    std::cout << "]" << std::endl;
+	  }
 
-	std::string tmpStr = moduleArray[(int) obj->toReceive.moduleID];
-	std::cout << "module : " << tmpStr << std::endl;
 	module::AModule	*tmpModule = modules->getModule(tmpStr);
 	if (tmpModule == nullptr)
 		throw network::CompilFail();
 	result = tmpModule->getInstance(obj->toReceive.subModule, obj->data);
-	std::cout << "subModule : " << (short) obj->toReceive.subModule << std::endl;
-	std::cout << "getting instance of " << tmpStr << std::endl;
 	obj->object = result;
 	return (obj);
 }
@@ -108,6 +117,8 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	double	tmpk = k;
 	unsigned int  color = 0;
 	Camera	saveCamera(*camera);
+	t_Item	*lastFound = nullptr;
+
 	x = this->width - x;
 	Ray *ray = new Ray(this->d, (double)(this->width / 2) - x, (double)(this->height / 2) - y);
 
@@ -115,16 +126,22 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	  {
 	    saveCamera.reset();
 	    ray->reset();
-	    // objects[i]->preProcess(); // I don't think the object will need a preProcess func.
-	    for (auto a = objects[(*i).first]->subItems.cbegin(); a != objects[(*i).first]->subItems.cend(); a++)
+	    // (*i).second->object->preProcess(); // I don't think the object will need a preProcess func.
+	    for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++)
 	      (*a)->object->preProcess(&saveCamera, ray);
 	    tmpk = (*i).second->object->computeEquation(&saveCamera, ray);
 	    if ((tmpk < k || k == -1) && tmpk >= 0)
 	      {
 	    	k = tmpk;
-	    	color = objects[(*i).first]->object->getColor();
+	    	color = (*i).second->object->getColor();
+		lastFound = (*i).second;
 	      }
 	  }
+	for (auto it = objects.cbegin(); it != objects.cend(); it++)
+	  {
+	    color = (*it).second->object->postProcess(this, &saveCamera, ray, lastFound->object, k, color);
+	  }
+	
 	delete ray;
 	return color;
 }
