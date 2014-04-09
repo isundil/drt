@@ -39,7 +39,13 @@ void Worker::nextOp(Operation *op)
 		for (int j = op->y; j < maxY; j++)
 		{
 			color = s->calc(manager, i, j);
-			*rList += std::make_tuple(i, j, color | 0xff000000);
+			color |= 0xff000000;
+
+			if (color == 0xff000000)
+				std::cout << "blackos " << i << ":" << j << std::endl;
+
+			(*rList) += std::make_tuple(i, j, color);
+			//*rList += std::make_tuple(i, j, 0xff00ff00);
 		}
 	manager.send(op->client, rList);
 }
