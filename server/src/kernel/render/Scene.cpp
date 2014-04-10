@@ -126,16 +126,13 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	x = this->width - x;
 	Ray *ray = new Ray(this->d, (double)(this->width / 2) - x, (double)(this->height / 2) - y);
 
-	// std::cout << "starting calc" << std::endl;
 	for (auto i = objects.cbegin(); i != objects.cend(); i++)
 	  {
-	    // std::cout << "  calculating 1" << std::endl;
 	    saveCamera.reset();
 	    ray->reset();
 	    // (*i).second->object->preProcess(); // I don't think the object will need a preProcess func.
 	    for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++)
 	      (*a)->object->preProcess(&saveCamera, ray);
-	    // std::cout << "   calculating 2" << std::endl;
 	    tmpk = (*i).second->object->computeEquation(&saveCamera, ray);
 	    if ((tmpk < k || k == -1) && tmpk >= 0)
 	      {
@@ -143,24 +140,18 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	    	color = (*i).second->object->getColor();
 		lastFound = (*i).second;
 	      }
-	    // std::cout << "    calculating 3" << std::endl;
 	  }
-	// std::cout << "color = " << color << std::endl;
 	if (lastFound != nullptr)
 	  {
-	    saveCamera.reset();
-	    ray->reset();
-	    for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
-	      (*a)->object->preProcess(&saveCamera, ray);
-	    // std::cout << "lastFound != nullptr" << std::endl;
+	    // saveCamera.reset();
+	    // ray->reset();
+	    // for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
+	    //   (*a)->object->preProcess(&saveCamera, ray);
 	    for (auto it = objects.cbegin(); it != objects.cend(); it++)
 	      {
 		color = (*it).second->object->postProcess(this, &saveCamera, ray, lastFound->object, k, color);
 	      }
-	    // std::cout << "color = " << color << std::endl;
 	  }
-	else
-	  // std::cout << "lastFound == nullptr" << std::endl;
 	
 	delete ray;
 	return color;
