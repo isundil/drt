@@ -10,7 +10,7 @@ public:
 
   virtual double computeEquation(Camera * camera, Ray * ray);
   virtual void		preProcess(Camera * camera, Ray * ray) {(void)camera; (void)ray;};
-  virtual unsigned int	postProcess(drt::render::Scene *, Camera *, Ray *, AObject *, double, unsigned int _color) {std::cout << "Cylindre postProcess" << std::endl; return _color;}
+  virtual unsigned int	postProcess(drt::render::Scene *, Camera *, Ray *, AObject *, double, unsigned int _color) {return _color;}
   virtual unsigned int	getColor(){return color;}
   virtual t_pt		getNormale(t_pt, t_pt);
 

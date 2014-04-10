@@ -27,7 +27,7 @@ namespace drt
 
 		class Scene
 		{
-			private:
+		public:
 				typedef	struct __attribute__ ((packed))			s_Item
 				{
 					struct __attribute__ ((packed)) {
@@ -42,6 +42,7 @@ namespace drt
 
 					~s_Item();
 				}					t_Item;
+			private:
 				typedef struct __attribute__((packed))
 				{
 					unsigned short width;
@@ -63,6 +64,8 @@ namespace drt
 				unsigned int calc(WorkerManager &, unsigned int x, unsigned int y);
 				unsigned int getWidth() const;
 				unsigned int getHeight() const;
+
+		  std::map<unsigned int, t_Item *>	getObjects() const {return objects;};
 
 				const std::string getPath() const;
 				unsigned short getId() const;
