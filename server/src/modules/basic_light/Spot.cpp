@@ -59,6 +59,16 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   drt::render::Scene::t_Item	*light = nullptr;
   unsigned int	tmpcolor;
 
+  for (auto b = objects.cbegin(); b != objects.cend(); b++)
+    {
+      Spot *tmp = dynamic_cast<Spot *> ((*b).second->object);
+      if (tmp)
+	{
+	  if (tmp == this)
+	    color = 0x000000;
+	  break;
+	}
+    }
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
       if ((*i).second->object == obj)

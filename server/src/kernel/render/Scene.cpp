@@ -139,7 +139,7 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	    if ((tmpk < k || k == -1) && tmpk >= 0)
 	      {
 	    	k = tmpk;
-	    	// color = (*i).second->object->getColor();
+	    	color = (*i).second->object->getColor();
 
 		// p.x = camera->getX() + ray->getX() * k;
 		// p.y = camera->getY() + ray->getY() * k;

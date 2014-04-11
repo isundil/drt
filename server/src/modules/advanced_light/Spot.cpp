@@ -8,6 +8,7 @@ Spot::Spot() {
   x = 0;
   y = 0;
   z = 0;
+  color = 0xFFFFFF;
 }
 
 void		Spot::normalize(t_pt *a) {
@@ -123,7 +124,6 @@ bool		Spot::isInShadow(std::map<unsigned int, drt::render::Scene::t_Item *> obje
 	    res = true;
 	}
     }
-  // return false;
   return res;
 }
 
@@ -141,6 +141,16 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   unsigned int	nbSpots = 0;
   bool		shadow = false;
 
+  for (auto b = objects.cbegin(); b != objects.cend(); b++)
+    {
+      Spot *tmp = dynamic_cast<Spot *> ((*b).second->object);
+      if (tmp)
+	{
+	  if (tmp == this)
+	    color = 0x000000;
+	  break;
+	}
+    }
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
       if ((*i).second->object == obj)
@@ -176,12 +186,6 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
     tmpcolor = applyLight(cosa, tmpcolor);
   else
     tmpcolor = 0;
-  // for (auto b = objects.cbegin(); b != objects.cend(); b++)
-  //   {
-  //     Spot *tmp = dynamic_cast<Spot *> ((*b).second->object);
-  //     if (tmp)
-  // 	nbSpots++;
-  //   }
   color = mergeColors(tmpcolor, color);
   return color;
 }
