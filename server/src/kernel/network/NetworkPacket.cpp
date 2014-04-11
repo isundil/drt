@@ -82,7 +82,10 @@ Result::Result(const Result &o): id(o.id), src(o.src), x(o.x), y(o.y), color(o.c
 { }
 
 ChunkResult::ChunkResult(unsigned short _id, unsigned short _src): id(_id), src(_src), minx(-1), miny(-1), maxx(0), maxy(0)
-{ }
+{
+	if (_src == 0xFFFF)
+		src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
+}
 
 Netsplit::Netsplit(unsigned short _id): id(_id)
 { }
@@ -424,7 +427,7 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 	else if (newId == 0xFFFF && oldId != m.getNetwork()->getMe()->getId())
 	{
 		network::PeerInfo *pi = m.getNetwork()->addServer(p->getSocket(), oldId);
-		unsigned int children = m.getNetwork()->nbSocket(p->getSocket());
+		unsigned int children = m.getNetwork()->nbServerSocket(p->getSocket());
 
 		pi->setConfirmed(children);
 		m.broadcast(new IdCh(*this), p);
