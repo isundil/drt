@@ -13,6 +13,18 @@ Camera::Camera(short x, short y, short z, double rx, double ry, double rz) : AOb
   mod_z = (double)0.f;
 }
 
+Camera::Camera(double x, double y, double z) : AObject() {
+  this->x = x;
+  this->y = y;
+  this->z = z;
+  this->rx = 0.f;
+  this->ry = 0.f;
+  this->rz = 0.f;
+  mod_x = 0.f;
+  mod_y = 0.f;
+  mod_z = 0.f;
+}
+
 Camera::Camera(Camera &cam) {
   this->x = (double)cam.getX();
   this->y = (double)cam.getY();

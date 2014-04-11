@@ -57,7 +57,7 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   std::map<unsigned int, drt::render::Scene::t_Item *> objects = scene->getObjects();
   drt::render::Scene::t_Item	*lastFound = nullptr;
   drt::render::Scene::t_Item	*light = nullptr;
-  // Camera	saveCamera(*camera);
+  unsigned int	tmpcolor;
 
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
@@ -66,49 +66,29 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
       if ((*i).second->object == this)
 	light = (*i).second;
     }
+  tmpcolor = lastFound->object->getColor();
   camera->reset();
   ray->reset();
-
-  // std::cout << "camera [" << camera->getX() << ", " << camera->getY() << ", "
-  // 	    << camera->getZ() << "]" << std::endl
-  // 	    << "ray [" << ray->getX() << ", " << ray->getY() << ", " << ray->getZ() << "]"
-  // 	    << std::endl;
   for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
     (*a)->object->preProcess(camera, ray);
-  // std::cout << "camera2 [" << camera->getX() << ", " << camera->getY() << ", "
-  // 	    << camera->getZ() << "]" << std::endl
-  // 	    << "ray2 [" << ray->getX() << ", " << ray->getY() << ", " << ray->getZ() << "]"
-  // 	    << std::endl;
-
   drt::render::Scene::t_Item *i = (*light->subItems.cbegin());
   drt::render::Scene::t_Item *a = (*lastFound->subItems.cbegin());
-
   x = i->object->getX();
   y = i->object->getY();
   z = i->object->getZ();
-
   p.x = camera->getX() + ray->getX() * k;
   p.y = camera->getY() + ray->getY() * k;
   p.z = camera->getZ() + ray->getZ() * k;
-
-  l.x = x - (p.x + a->object->getX());
-  l.y = y - (p.y + a->object->getY());
-  l.z = z - (p.z + a->object->getZ());
-  // std::cout << "light [" << x << ", " << y << ", " << z << "]" << std::endl
-  // 	    << "Object [" << a->object->getX() << ", " << a->object->getY()
-  // 	    << ", " << a->object->getZ() << "]" << std::endl
-  // 	    << "p [" << p.x << ", " << p.y << ", " << p.z << "]" << std::endl
-  // 	    << "l [" << l.x << ", " << l.y << ", " << l.z << "]" << std::endl;
+  l.x = x - p.x - a->object->getX();
+  l.y = y - p.y - a->object->getY();
+  l.z = z - p.z - a->object->getZ();
 
   n = obj->getNormale(p, l);
-
   this->normalize(&n);
   this->normalize(&l);
   cosa = (n.x * l.x) + (n.y * l.y) + (n.z * l.z);
   if (cosa < 0)
     cosa = 0;
-
-  // std::cout << "cosa = " << cosa << std::endl;
-  color = applyLight(cosa, color);
-  return color;
+  tmpcolor = applyLight(cosa, tmpcolor);
+  return tmpcolor;
 }
