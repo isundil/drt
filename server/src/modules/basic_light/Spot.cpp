@@ -4,10 +4,9 @@
 #include "Scene.hpp"
 
 Spot::Spot() {
-  std::cout << "Spot initialized" << std::endl;
-  x = 0;
-  y = 0;
-  z = 0;
+  x = 0.f;
+  y = 0.f;
+  z = 0.f;
 }
 
 void		Spot::normalize(t_pt *a) {
@@ -58,7 +57,7 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   std::map<unsigned int, drt::render::Scene::t_Item *> objects = scene->getObjects();
   drt::render::Scene::t_Item	*lastFound = nullptr;
   drt::render::Scene::t_Item	*light = nullptr;
-  Camera	saveCamera(*camera);
+  // Camera	saveCamera(*camera);
 
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
@@ -67,22 +66,39 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
       if ((*i).second->object == this)
 	light = (*i).second;
     }
-  saveCamera.reset();
+  camera->reset();
   ray->reset();
-  for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
-    (*a)->object->preProcess(&saveCamera, ray);
-  auto i = light->subItems.cbegin();
-  x += (*i)->object->getX();
-  y += (*i)->object->getY();
-  z += (*i)->object->getZ();
 
-  p.x = saveCamera.getX() + ray->getX() * k;
-  p.y = saveCamera.getY() + ray->getY() * k;
-  p.z = saveCamera.getZ() + ray->getZ() * k;
-  auto a = lastFound->subItems.cbegin();
-  l.x = x - (p.x + (*a)->object->getX());
-  l.y = y - (p.y + (*a)->object->getY());
-  l.z = z - (p.z + (*a)->object->getZ());
+  // std::cout << "camera [" << camera->getX() << ", " << camera->getY() << ", "
+  // 	    << camera->getZ() << "]" << std::endl
+  // 	    << "ray [" << ray->getX() << ", " << ray->getY() << ", " << ray->getZ() << "]"
+  // 	    << std::endl;
+  for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
+    (*a)->object->preProcess(camera, ray);
+  // std::cout << "camera2 [" << camera->getX() << ", " << camera->getY() << ", "
+  // 	    << camera->getZ() << "]" << std::endl
+  // 	    << "ray2 [" << ray->getX() << ", " << ray->getY() << ", " << ray->getZ() << "]"
+  // 	    << std::endl;
+
+  drt::render::Scene::t_Item *i = (*light->subItems.cbegin());
+  drt::render::Scene::t_Item *a = (*lastFound->subItems.cbegin());
+
+  x = i->object->getX();
+  y = i->object->getY();
+  z = i->object->getZ();
+
+  p.x = camera->getX() + ray->getX() * k;
+  p.y = camera->getY() + ray->getY() * k;
+  p.z = camera->getZ() + ray->getZ() * k;
+
+  l.x = x - (p.x + a->object->getX());
+  l.y = y - (p.y + a->object->getY());
+  l.z = z - (p.z + a->object->getZ());
+  // std::cout << "light [" << x << ", " << y << ", " << z << "]" << std::endl
+  // 	    << "Object [" << a->object->getX() << ", " << a->object->getY()
+  // 	    << ", " << a->object->getZ() << "]" << std::endl
+  // 	    << "p [" << p.x << ", " << p.y << ", " << p.z << "]" << std::endl
+  // 	    << "l [" << l.x << ", " << l.y << ", " << l.z << "]" << std::endl;
 
   n = obj->getNormale(p, l);
 
@@ -91,6 +107,8 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   cosa = (n.x * l.x) + (n.y * l.y) + (n.z * l.z);
   if (cosa < 0)
     cosa = 0;
+
+  // std::cout << "cosa = " << cosa << std::endl;
   color = applyLight(cosa, color);
   return color;
 }
