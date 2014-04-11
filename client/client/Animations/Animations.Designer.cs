@@ -29,8 +29,12 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.infosanimations = new System.Windows.Forms.ToolStripStatusLabel();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.modifiervalue = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.appliesonobject = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -41,17 +45,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.numberofframes = new System.Windows.Forms.NumericUpDown();
             this.startingframe = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
-            this.modifiervalue = new System.Windows.Forms.NumericUpDown();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.infosanimations = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.modifiervalue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberofframes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.startingframe)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.modifiervalue)).BeginInit();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
@@ -63,6 +63,21 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(731, 429);
             this.panel1.TabIndex = 0;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.infosanimations});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 407);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(731, 22);
+            this.statusStrip1.TabIndex = 2;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // infosanimations
+            // 
+            this.infosanimations.Name = "infosanimations";
+            this.infosanimations.Size = new System.Drawing.Size(0, 17);
             // 
             // dataGridView1
             // 
@@ -97,6 +112,32 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(188, 429);
             this.panel2.TabIndex = 1;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(102, 161);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(73, 13);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Modifier value";
+            // 
+            // modifiervalue
+            // 
+            this.modifiervalue.Location = new System.Drawing.Point(55, 177);
+            this.modifiervalue.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.modifiervalue.Minimum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            -2147483648});
+            this.modifiervalue.Name = "modifiervalue";
+            this.modifiervalue.Size = new System.Drawing.Size(120, 20);
+            this.modifiervalue.TabIndex = 10;
             // 
             // label5
             // 
@@ -182,6 +223,16 @@
             // numberofframes
             // 
             this.numberofframes.Location = new System.Drawing.Point(55, 266);
+            this.numberofframes.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numberofframes.Minimum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            -2147483648});
             this.numberofframes.Name = "numberofframes";
             this.numberofframes.Size = new System.Drawing.Size(120, 20);
             this.numberofframes.TabIndex = 1;
@@ -189,40 +240,19 @@
             // startingframe
             // 
             this.startingframe.Location = new System.Drawing.Point(55, 219);
+            this.startingframe.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.startingframe.Minimum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            -2147483648});
             this.startingframe.Name = "startingframe";
             this.startingframe.Size = new System.Drawing.Size(120, 20);
             this.startingframe.TabIndex = 0;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(102, 161);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(73, 13);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Modifier value";
-            // 
-            // modifiervalue
-            // 
-            this.modifiervalue.Location = new System.Drawing.Point(55, 177);
-            this.modifiervalue.Name = "modifiervalue";
-            this.modifiervalue.Size = new System.Drawing.Size(120, 20);
-            this.modifiervalue.TabIndex = 10;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.infosanimations});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 407);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(731, 22);
-            this.statusStrip1.TabIndex = 2;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // infosanimations
-            // 
-            this.infosanimations.Name = "infosanimations";
-            this.infosanimations.Size = new System.Drawing.Size(0, 17);
             // 
             // Animations
             // 
@@ -237,14 +267,14 @@
             this.Load += new System.EventHandler(this.Animations_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.modifiervalue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numberofframes)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.startingframe)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.modifiervalue)).EndInit();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }

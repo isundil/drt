@@ -134,10 +134,14 @@ namespace client
 
             if (!tmp)
             {
+                UUID = Guid.NewGuid().ToString();
+
                 total++;
                 Id = total;
             }
         }
+
+        internal string UUID { get; set; }
 
         public abstract void Refresh();
 

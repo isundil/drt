@@ -9,7 +9,7 @@ namespace client
 {
     public class CalculusWorker : BackgroundWorker
     {
-        private ObjectsList ol;
+        private AObjects[] ol;
         private Animations.Animatronic animatronic;
         private MainForm form;
 
@@ -34,15 +34,39 @@ namespace client
             if (!this.Offline) Connection.NEWJOB(s, DestinationImage.Size);
         }
 
+        private AObjects getFromUUID(string uuid)
+        {
+            foreach (var o in ol)
+            {
+                if (o.UUID == uuid) return o;
+            }
+            return null;
+        }
+
+        private void apply_transformations()
+        {
+            foreach (var a in animatronic.animations)
+            {
+                if (animatronic.CurrentFrame >= a.StartingFrame && animatronic.CurrentFrame < a.StartingFrame + a.FrameNumber)
+                {
+                    var o = getFromUUID(a.UUID);
+                    a.ApplyOnObject(o);
+                }
+            }
+        }
+
         private void doFinalRenderWithAnimationsCalculus(object o, DoWorkEventArgs e)
         {
             if (mode != MODE.ANIM) return;
+
+            apply_transformations();
 
             var s = SceneTransform.TransformRender(ol);
             var frame = animatronic.getNextFrame();
             if (frame == null)
             {
                 render.Render.Invoke(render.Render.MyClose);
+                animatronic.Animate(render);
                 return;
             }
 
@@ -69,7 +93,7 @@ namespace client
 
         public void DoScenePreviewCalculus(ObjectsList ol)
         {
-            this.ol = ol;
+            this.ol = ol.Items;
             mode = MODE.PREVIEW;
             this.RunWorkerAsync();
         }
@@ -77,7 +101,8 @@ namespace client
         FinalRender render;
         public void DoFinalRenderCalculus(ObjectsList ol, Animations.Animatronic anim, MainForm f, FinalRender r)
         {
-            this.ol = ol;
+            this.ol = ol.Items;
+
             this.animatronic = anim;
             this.form = f;
             this.render = r;

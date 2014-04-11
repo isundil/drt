@@ -41,7 +41,7 @@ namespace client.Animations
                 if (a.StartingFrame + a.FrameNumber > frames)
                     frames = a.StartingFrame + a.FrameNumber;
             }
-            decimal seconds = (decimal)frames / _animatronic.FRAMES_PER_SECOND;
+            decimal seconds = (decimal)frames / Animatronic.FRAMES_PER_SECOND;
 
             infosanimations.Text = "" +
                 _animatronic.animations.Count + " animations" +

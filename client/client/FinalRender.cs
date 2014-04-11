@@ -15,6 +15,8 @@ namespace client
         private Animations.Animatronic animatronic;
         public StateReportRender Render = new StateReportRender();
 
+        public PictureBox Picture { get { return pictureBox1; } private set { } }
+
         public FinalRender(Animations.Animatronic a)
         {
             InitializeComponent();

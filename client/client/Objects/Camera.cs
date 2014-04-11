@@ -14,6 +14,8 @@ namespace client
             this.centerPoint = new Points();
             this.Name = "Camera";
             this.Distance = 1000;
+
+            UUID = "I'M SPARTACUS !";
         }
         public ushort Distance { get; set; }
 
