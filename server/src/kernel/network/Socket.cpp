@@ -71,10 +71,19 @@ void Socket::addToSet(fd_set *set)
 int Socket::read(void *buf, size_t len)
 {
 	ssize_t result;
+	size_t pos =0;
+	char *b = (char *) buf;
 
-	if ((result = ::read(socket, buf, len)) < (ssize_t)len)
-		throw std::runtime_error("Cannot read from socket");
-	return result;
+	while (pos < len)
+	{
+		if ((result = ::read(socket, &b[pos], len -pos)) == -1)
+		{
+			std::cerr << "Socket error" << std::endl;
+			throw std::runtime_error("Cannot read from socket");
+		}
+		pos += result;
+	}
+	return pos;
 }
 
 char Socket::getc()
