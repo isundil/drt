@@ -437,6 +437,24 @@ void NetworkWorker::setMax(unsigned short newMax)
 		biggerId = newMax;
 }
 
+unsigned int NetworkWorker::nbServerSocket(network::Socket *avoid) const
+{
+	std::set<network::Socket *> used;
+	unsigned int result =0;
+
+	used.insert(avoid);
+	for (auto i = clients.cbegin(); i != clients.cend(); i++)
+	{
+		if (used.find((*i)->getSocket()) != used.end())
+			continue;
+		if ((*i)->isAClient())
+			continue;
+		used.insert((*i)->getSocket());
+		result++;
+	}
+	return result;
+}
+
 unsigned int NetworkWorker::nbSocket(network::Socket *avoid) const
 {
 	std::set<network::Socket *> used;

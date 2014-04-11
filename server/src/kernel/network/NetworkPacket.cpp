@@ -357,7 +357,7 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 {
 	if (peer->getId() == (unsigned short)-1 && id == (unsigned short)-1)
 	{
-		peer->setConfirmed(manager.getNetwork()->nbSocket() -1);
+		peer->setConfirmed(manager.getNetwork()->nbServerSocket() -1);
 		peer->setId(manager.getNetwork()->incBiggerId());
 		manager.send(peer, new Welcome(peer->getId()));
 		//for (size_t i = 0; i < nbServer; i++)
@@ -367,6 +367,17 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 			manager.send(peer, new Confirm(peer->getId()));
 			manager.send(peer, new IdCh(-1, manager.getNetwork()->getMe()->getId()));
 			manager.send(peer, new Ready(manager.getNetwork()->getMe()->getId(), manager.getNetwork()->getMe()->ready()));
+			for (auto i = manager.getNetwork()->getPeers().cbegin(); i != manager.getNetwork()->getPeers().cend(); i++)
+				if (!(*i)->getConfirmed() && (*i)->getSocket() != peer->getSocket())
+				{
+					if (!(*i)->isAClient())
+					{
+						manager.send(peer, new SAuth((*i)->getId(), 0));
+						manager.send(peer, new Ready((*i)->getId(), (*i)->ready()));
+					}
+					else
+						manager.send(peer, new CAuth((*i)->getId()));
+				}
 		}
 		else
 			manager.broadcast(new IdCh(peer->getId(), -1), peer);
@@ -466,7 +477,10 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 		for (auto i = m.getNetwork()->getPeers().cbegin(); i != m.getNetwork()->getPeers().cend(); i++)
 			if (!(*i)->getConfirmed() && (*i)->getSocket() != newServ->getSocket())
 			{
-				m.send(newServ, new SAuth((*i)->getId(), 0));
+				if (!(*i)->isAClient())
+					m.send(newServ, new SAuth((*i)->getId(), 0));
+				else
+					m.send(newServ, new CAuth((*i)->getId()));
 				m.send(newServ, new Ready((*i)->getId(), (*i)->ready()));
 			}
 	}
