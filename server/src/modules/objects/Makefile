@@ -17,7 +17,7 @@ $(NAME):	$(OBJ)
 	$(CXX) -shared -o $(NAME) $(OBJ)
 
 clean:
-	rm $(OBJ)
+	rm -rf $(OBJ)
 
 fclean:	clean
 	rm $(NAME)

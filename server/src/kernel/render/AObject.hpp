@@ -23,6 +23,10 @@ public:
   virtual unsigned int	postProcess(drt::render::Scene *, Camera *, Ray *, AObject *, double, unsigned int) = 0;
   virtual unsigned int	getColor() = 0;
   virtual t_pt		getNormale(t_pt, t_pt) = 0;
+
+  virtual double	getX() = 0;
+  virtual double	getY() = 0;
+  virtual double	getZ() = 0;
 };
 
 

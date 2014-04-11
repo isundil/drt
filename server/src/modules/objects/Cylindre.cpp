@@ -25,3 +25,14 @@ double		Cylindre::computeEquation(Camera *camera, Ray *ray)
 
   return UtilSdeg::getK(res, d);
 }
+
+t_pt	Cylindre::getNormale(t_pt p, t_pt l)
+{
+  t_pt n;
+  
+  n.x = p.x;
+  n.y = p.y;
+  n.z = 0;
+
+  return n;
+}
