@@ -91,5 +91,22 @@ namespace client
 
             return s;
         }
+
+        public static Scene TransformRender(ObjectsList ol)
+        {
+            Scene s = new Scene();
+
+            s.RequestedModules.Add(Modules.eModules.BASIC_SHAPE);
+            s.RequestedModules.Add(Modules.eModules.BASIC_TRANSFORM);
+
+            foreach (var o in ol.Collection)
+            {
+                if (!s.RequestedModules.Contains(o.getModule()))
+                    s.RequestedModules.Add(o.getModule());
+                s.Items.Add(o.getSceneItem());
+            }
+
+            return s;
+        }
     }
 }

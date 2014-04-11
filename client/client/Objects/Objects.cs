@@ -60,6 +60,15 @@ namespace client
             collection = new ObjectsListB(f);
         }
 
+        public AObjects GetById(int id)
+        {
+            foreach (var o in Collection)
+            {
+                if (o.Id == id) return o;
+            }
+            return null;
+        }
+
         // For XML serialization only !
         public AObjects[] Items
         {

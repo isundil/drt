@@ -1,4 +1,5 @@
-﻿using System;
+﻿using client.Animations;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,6 +7,7 @@ namespace client
 {
     public partial class MainForm : Form
     {
+        Animatronic animatronic = new Animatronic();
         Viewport vp = new Viewport();
         ObjectsList ol;
         public ConClient client;

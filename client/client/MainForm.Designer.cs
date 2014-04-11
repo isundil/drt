@@ -38,6 +38,8 @@
             this.projectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redraw3DToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.animationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.progressbar = new System.Windows.Forms.ToolStripProgressBar();
@@ -71,11 +73,11 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel9 = new System.Windows.Forms.Panel();
             this.panel10 = new System.Windows.Forms.Panel();
+            this.monitoring1 = new client.Monitoring();
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.show_server_mapping = new System.Windows.Forms.CheckBox();
-            this.monitoring1 = new client.Monitoring();
             this.calculusWorker = new client.CalculusWorker();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -164,7 +166,9 @@
             // 
             this.projectToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.connectToolStripMenuItem,
-            this.redraw3DToolStripMenuItem});
+            this.redraw3DToolStripMenuItem,
+            this.toolStripMenuItem1,
+            this.animationsToolStripMenuItem});
             this.projectToolStripMenuItem.Name = "projectToolStripMenuItem";
             this.projectToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.projectToolStripMenuItem.Text = "&Project";
@@ -184,6 +188,22 @@
             this.redraw3DToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
             this.redraw3DToolStripMenuItem.Text = "&Redraw 3D";
             this.redraw3DToolStripMenuItem.Click += new System.EventHandler(this.redraw3DToolStripMenuItem_Click);
+            // 
+            // animationsToolStripMenuItem
+            // 
+            this.animationsToolStripMenuItem.Name = "animationsToolStripMenuItem";
+            this.animationsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.animationsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.animationsToolStripMenuItem.Text = "&Animations";
+            this.animationsToolStripMenuItem.Click += new System.EventHandler(this.animationsToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.ShortcutKeys = System.Windows.Forms.Keys.F6;
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
+            this.toolStripMenuItem1.Text = "&Final Render";
+            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -514,6 +534,14 @@
             this.panel10.Size = new System.Drawing.Size(200, 59);
             this.panel10.TabIndex = 1;
             // 
+            // monitoring1
+            // 
+            this.monitoring1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.monitoring1.Location = new System.Drawing.Point(0, 0);
+            this.monitoring1.Name = "monitoring1";
+            this.monitoring1.Size = new System.Drawing.Size(200, 59);
+            this.monitoring1.TabIndex = 0;
+            // 
             // propertyGrid
             // 
             this.propertyGrid.CommandsVisibleIfAvailable = false;
@@ -557,14 +585,6 @@
             this.show_server_mapping.Text = "Show server mapping";
             this.show_server_mapping.UseVisualStyleBackColor = true;
             this.show_server_mapping.CheckedChanged += new System.EventHandler(this.show_server_mapping_CheckedChanged);
-            // 
-            // monitoring1
-            // 
-            this.monitoring1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.monitoring1.Location = new System.Drawing.Point(0, 0);
-            this.monitoring1.Name = "monitoring1";
-            this.monitoring1.Size = new System.Drawing.Size(200, 59);
-            this.monitoring1.TabIndex = 0;
             // 
             // calculusWorker
             // 
@@ -669,6 +689,8 @@
         private System.Windows.Forms.ToolStripMenuItem redraw3DToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton light_toolstrip;
         private System.Windows.Forms.ToolStripButton cone_toolstrip;
+        private System.Windows.Forms.ToolStripMenuItem animationsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
     }
 }
 

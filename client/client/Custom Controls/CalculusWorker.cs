@@ -10,6 +10,8 @@ namespace client
     public class CalculusWorker : BackgroundWorker
     {
         private ObjectsList ol;
+        private Animations.Animatronic animatronic;
+        private MainForm form;
 
         public System.Drawing.Image DestinationImage { get; set; }
         public ConClient Connection { get; set; }
@@ -18,20 +20,76 @@ namespace client
 
         private void doScenePreviewCalculus(object o, DoWorkEventArgs e)
         {
+            if (mode != MODE.PREVIEW) return;
             var s = SceneTransform.TransformPreview(ol);
             
-            if (! this.Offline)
-            Connection.NEWJOB(s, DestinationImage.Size);
+            if (! this.Offline) Connection.NEWJOB(s, DestinationImage.Size);
+        }
+
+        private void doFinalRenderCalculus(object o, DoWorkEventArgs e)
+        {
+            if (mode != MODE.RENDER) return;
+
+            var s = SceneTransform.TransformRender(ol);
+            if (!this.Offline) Connection.NEWJOB(s, DestinationImage.Size);
+        }
+
+        private void doFinalRenderWithAnimationsCalculus(object o, DoWorkEventArgs e)
+        {
+            if (mode != MODE.ANIM) return;
+
+            var s = SceneTransform.TransformRender(ol);
+            var frame = animatronic.getNextFrame();
+            if (frame == null)
+            {
+                render.Render.Invoke(render.Render.MyClose);
+                return;
+            }
+
+            form.pdestination = null;
+            form.destination = frame;
+            this.DestinationImage = frame;
+
+            render.Render.Invoke(render.Render.PlusOne);
+            if (!this.Offline) Connection.NEWJOB(s, frame.Size);
         }
 
         public CalculusWorker()
         {
             this.DoWork += new DoWorkEventHandler(doScenePreviewCalculus);
+            this.DoWork += new DoWorkEventHandler(doFinalRenderCalculus);
+            this.DoWork += new DoWorkEventHandler(doFinalRenderWithAnimationsCalculus);
         }
+
+        enum MODE {
+            PREVIEW,
+            RENDER,
+            ANIM
+        }; MODE mode;
 
         public void DoScenePreviewCalculus(ObjectsList ol)
         {
             this.ol = ol;
+            mode = MODE.PREVIEW;
+            this.RunWorkerAsync();
+        }
+
+        FinalRender render;
+        public void DoFinalRenderCalculus(ObjectsList ol, Animations.Animatronic anim, MainForm f, FinalRender r)
+        {
+            this.ol = ol;
+            this.animatronic = anim;
+            this.form = f;
+            this.render = r;
+
+            if (animatronic.FramesNumber == 0)
+                mode = MODE.RENDER;
+            else
+            {
+                render.Render.Invoke(render.Render.SetMaximum, new object[] { animatronic.FramesNumber });
+                mode = MODE.ANIM;
+            }
+
             this.RunWorkerAsync();
         }
     }

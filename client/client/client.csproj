@@ -68,9 +68,23 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Animations\AAnimation.cs" />
+    <Compile Include="Animations\Animations.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Animations\Animations.Designer.cs">
+      <DependentUpon>Animations.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Animations\Animatronic.cs" />
     <Compile Include="BasicTransformations.cs" />
     <Compile Include="Custom Controls\CalculusWorker.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FinalRender.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FinalRender.Designer.cs">
+      <DependentUpon>FinalRender.cs</DependentUpon>
     </Compile>
     <Compile Include="MainForm_Draw.cs">
       <SubType>Form</SubType>
@@ -117,13 +131,25 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneTransform.cs" />
     <Compile Include="Objects\Sphere.cs" />
+    <Compile Include="StateReportRender.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="StateReportRender.Designer.cs">
+      <DependentUpon>StateReportRender.cs</DependentUpon>
+    </Compile>
     <Compile Include="Util.cs" />
     <Compile Include="Viewport.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Animations\Animations.resx">
+      <DependentUpon>Animations.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Connection.resx">
       <DependentUpon>Connection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FinalRender.resx">
+      <DependentUpon>FinalRender.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -141,6 +167,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="StateReportRender.resx">
+      <DependentUpon>StateReportRender.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\DataSources\ObjectsList.datasource" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

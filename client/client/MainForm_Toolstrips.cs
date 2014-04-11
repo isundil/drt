@@ -7,6 +7,25 @@ namespace client
 {
     public partial class MainForm : Form
     {
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var renderer = new FinalRender(animatronic);
+            renderer.Show();
+
+            this.destination = renderer.pictureBox1.Image;
+            this.pdestination = renderer.pictureBox1;
+            calculusWorker.DestinationImage = renderer.pictureBox1.Image;
+            calculusWorker.DoFinalRenderCalculus(ol, animatronic, this, renderer);
+        }
+
+        private void animationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var s = new Animations.Animations();
+            s.animatronic = animatronic;
+            s.objectslist = ol;
+            s.ShowDialog();
+        }
+
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -118,7 +137,7 @@ namespace client
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new About().Show();
+            new About().ShowDialog();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
