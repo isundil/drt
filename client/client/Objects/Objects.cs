@@ -56,11 +56,15 @@ namespace client
     {
         private ObjectsListB collection;
 
-        ObjectsList() { collection = new ObjectsListB(); }
+        ObjectsList()
+        {
+            collection = new ObjectsListB();
+            _animatronic = new Animatronic();
+        }
         public ObjectsList(MainForm f)
         {
             collection = new ObjectsListB(f);
-            animatronic = new Animatronic();
+            _animatronic = new Animatronic();
         }
 
         public AObjects GetById(int id)
@@ -72,7 +76,20 @@ namespace client
             return null;
         }
 
-        public Animatronic animatronic;
+        private Animatronic _animatronic;
+        public Animatronic Animatronic
+        {
+            get
+            {
+                return _animatronic;
+            }
+            set
+            {
+                if (value == null)
+                    return;
+                _animatronic = value;
+            }
+        }
 
         // For XML serialization only !
         public AObjects[] Items

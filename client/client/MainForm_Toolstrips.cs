@@ -9,7 +9,7 @@ namespace client
     {
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            var renderer = new FinalRender(ol.animatronic);
+            var renderer = new FinalRender(ol.Animatronic);
             renderer.Show();
 
             this.destination = renderer.pictureBox1.Image;
@@ -21,7 +21,7 @@ namespace client
         private void animationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var s = new Animations.Animations();
-            s.animatronic = ol.animatronic;
+            s.animatronic = ol.Animatronic;
             s.objectslist = ol;
             s.ShowDialog();
         }

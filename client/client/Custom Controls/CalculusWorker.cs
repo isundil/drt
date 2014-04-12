@@ -106,7 +106,7 @@ namespace client
         {
             this.ol = ol.Items;
 
-            this.animatronic = ol.animatronic;
+            this.animatronic = ol.Animatronic;
             this.form = f;
             this.render = r;
 
