@@ -21,12 +21,6 @@ namespace client
         {
             InitializeComponent();
             animatronic = a;
-            var bm = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
-            using (var g = System.Drawing.Graphics.FromImage(bm))
-            {
-                g.Clear(Color.Black);
-            }
-            pictureBox1.Image = bm;
         }
 
         private void FinalRender_KeyDown(object sender, KeyEventArgs e)
@@ -38,6 +32,12 @@ namespace client
         {
             animatronic.prepareFrames(pictureBox1.Size);
 
+            var bm = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
+            using (var g = System.Drawing.Graphics.FromImage(bm))
+            {
+                g.Clear(Color.Black);
+            }
+            pictureBox1.Image = bm;
             Render.Show();
         }
     }

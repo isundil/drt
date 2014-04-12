@@ -12,17 +12,17 @@ namespace client.Animations
         public string AppliesOn { get; set; }
         public int StartingFrame { get; set; }
         public int FrameNumber { get; set; }
-        int modifier;
+        private int _modifier { get; set; }
         public int Modifier
         {
             get
             {
-                return modifier;
+                return _modifier;
             }
             set
             {
-                modifier = value;
-                modifier_per_frame = (double)modifier / Animatronic.FRAMES_PER_SECOND;
+                _modifier = value;
+                this.modifier_per_frame = (double)Modifier / FrameNumber;
             }
         }
         protected double modifier_per_frame;

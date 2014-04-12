@@ -9,6 +9,17 @@ namespace client
 {
     public class Camera : AObjects
     {
+        Camera(Camera o)
+            : base(o)
+        {
+            this.Distance = o.Distance;
+        }
+
+        override public object Clone()
+        {
+            return new Camera(this);
+        }
+
         public Camera()
         {
             this.centerPoint = new Points();

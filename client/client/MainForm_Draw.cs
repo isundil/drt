@@ -175,7 +175,7 @@ namespace client
                 progressbar.Value = 0;
                 show_server_mapping.Enabled = true;
 
-                if (animatronic.FramesNumber > 0)
+                if (!animatronic.IsFinished)
                 calculusWorker.RunWorkerAsync();
             }
         }
@@ -215,7 +215,7 @@ namespace client
                 progressbar.Value = 0;
                 show_server_mapping.Enabled = true;
 
-                if (animatronic.FramesNumber > 0)
+                if (!animatronic.IsFinished)
                 calculusWorker.RunWorkerAsync();
             }
         }

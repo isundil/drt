@@ -6,6 +6,15 @@ namespace client
 {
     public class Sphere : AObjects
     {
+        Sphere (Sphere o)
+            : base(o)
+        { }
+
+        override public object Clone()
+        {
+            return new Sphere(this);
+        }
+
         public override void Refresh()
         { }
 

@@ -30,6 +30,7 @@ namespace client
         {
             if (mode != MODE.RENDER) return;
 
+            render.Render.Invoke(render.Render.MyClose);
             var s = SceneTransform.TransformRender(ol);
             if (!this.Offline) Connection.NEWJOB(s, DestinationImage.Size);
         }
@@ -59,7 +60,6 @@ namespace client
         {
             if (mode != MODE.ANIM) return;
 
-            apply_transformations();
 
             var s = SceneTransform.TransformRender(ol);
             var frame = animatronic.getNextFrame();
@@ -69,6 +69,8 @@ namespace client
                 animatronic.Animate(render);
                 return;
             }
+
+            apply_transformations();
 
             form.pdestination = null;
             form.destination = frame;

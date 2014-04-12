@@ -52,8 +52,10 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FinalRender";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FinalRender";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.FinalRender_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FinalRender_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

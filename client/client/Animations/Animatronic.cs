@@ -37,7 +37,6 @@ namespace client.Animations
             {
                 encoder.Frames.Add(BitmapFrame.Create(toBitmapConvert(f)));
             }
-
             encoder.Save(stream);
             stream.Close();
 
@@ -51,7 +50,7 @@ namespace client.Animations
             test2.Encode(test);
 
             var w = new Jillzhang.GifUtility.GifHelper();
-            w.WaterMark(@"TMP.GIF", "Distributed RT - ITCS 422", Color.White, new Font(new FontFamily("arial"), 10), 0, 0, @"TMP.GIF");
+            w.WaterMark(@"TMP.GIF", "Distributed RT - ITCS 422", Color.White, new Font(new FontFamily("Arial"), 8), 0, 0, @"TMP.GIF");
 
             renderer.Picture.LoadAsync(@"TMP.GIF");
         }
@@ -60,6 +59,14 @@ namespace client.Animations
 
         List<System.Drawing.Bitmap> frames;
 
+        public bool IsFinished
+        {
+            get
+            {
+                return (index > frames.Count) || (FramesNumber == 0);
+            }
+            private set { }
+        }
         public int CurrentFrame { get { return index; } private set { } }
         public int FramesNumber { get { return frames.Count; } private set { } }
 
@@ -72,6 +79,7 @@ namespace client.Animations
         public void prepareFrames(System.Drawing.Size screensize)
         {
             index = 0;
+            frames.Clear();
             foreach (var a in animations)
             {
                 while (a.StartingFrame + a.FrameNumber > FramesNumber)
@@ -83,8 +91,8 @@ namespace client.Animations
 
         public Bitmap getNextFrame()
         {
-            if (index >= frames.Count) return null;
-            return frames[index++];
+            if (index++ >= frames.Count) return null;
+            return frames[index - 1];
         }
     }
 }
