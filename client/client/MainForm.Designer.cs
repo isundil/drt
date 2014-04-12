@@ -38,8 +38,8 @@
             this.projectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.connectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redraw3DToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.animationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.animationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.progressbar = new System.Windows.Forms.ToolStripProgressBar();
@@ -79,6 +79,8 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.show_server_mapping = new System.Windows.Forms.CheckBox();
             this.calculusWorker = new client.CalculusWorker();
+            this.antialias = new System.Windows.Forms.ComboBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -189,14 +191,6 @@
             this.redraw3DToolStripMenuItem.Text = "&Redraw 3D";
             this.redraw3DToolStripMenuItem.Click += new System.EventHandler(this.redraw3DToolStripMenuItem_Click);
             // 
-            // animationsToolStripMenuItem
-            // 
-            this.animationsToolStripMenuItem.Name = "animationsToolStripMenuItem";
-            this.animationsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F12;
-            this.animationsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
-            this.animationsToolStripMenuItem.Text = "&Animations";
-            this.animationsToolStripMenuItem.Click += new System.EventHandler(this.animationsToolStripMenuItem_Click);
-            // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
@@ -204,6 +198,14 @@
             this.toolStripMenuItem1.Size = new System.Drawing.Size(186, 22);
             this.toolStripMenuItem1.Text = "&Final Render";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
+            // 
+            // animationsToolStripMenuItem
+            // 
+            this.animationsToolStripMenuItem.Name = "animationsToolStripMenuItem";
+            this.animationsToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F12;
+            this.animationsToolStripMenuItem.Size = new System.Drawing.Size(186, 22);
+            this.animationsToolStripMenuItem.Text = "&Animations";
+            this.animationsToolStripMenuItem.Click += new System.EventHandler(this.animationsToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
@@ -594,12 +596,39 @@
             this.calculusWorker.WorkerReportsProgress = true;
             this.calculusWorker.WorkerSupportsCancellation = true;
             // 
+            // antialias
+            // 
+            this.antialias.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.antialias.FormattingEnabled = true;
+            this.antialias.Items.AddRange(new object[] {
+            "0",
+            "2",
+            "4",
+            "8",
+            "16"});
+            this.antialias.Location = new System.Drawing.Point(500, 24);
+            this.antialias.Name = "antialias";
+            this.antialias.Size = new System.Drawing.Size(42, 21);
+            this.antialias.TabIndex = 5;
+            this.antialias.SelectedValueChanged += new System.EventHandler(this.antialias_SelectedValueChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(426, 30);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(68, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Antialiasing x";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(750, 416);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.antialias);
             this.Controls.Add(this.show_server_mapping);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.toolStrip1);
@@ -691,6 +720,8 @@
         private System.Windows.Forms.ToolStripButton cone_toolstrip;
         private System.Windows.Forms.ToolStripMenuItem animationsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
+        private System.Windows.Forms.ComboBox antialias;
+        private System.Windows.Forms.Label label1;
     }
 }
 

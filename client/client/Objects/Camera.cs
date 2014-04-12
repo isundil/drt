@@ -38,7 +38,7 @@ namespace client
         public override void draw_y(System.Drawing.Image b, Viewport vp, bool selected) { }
         public override void draw_z(System.Drawing.Image b, Viewport vp, bool selected) { }
         public override int getSubModule() { return 0; }
-        override public byte[] getBytes()
+        override public byte[] getBytes(bool final_render = false)
         {
             List<byte> b = new List<byte>();
 

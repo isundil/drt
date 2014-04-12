@@ -106,5 +106,14 @@ namespace client
 
             return l.ToArray();
         }
+
+        public static byte[] getBrightness(SceneItem i)
+        {
+            List<byte> l = new List<byte>();
+
+            l.AddRange(BitConverter.GetBytes((double)i.refObject.Brightness));
+
+            return l.ToArray();
+        }
     }
 }

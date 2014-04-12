@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -152,12 +153,6 @@ namespace client
                 progressbar.Maximum = _destination.Width * _destination.Height;
                 progressbar.Value = 0;
                 DrawPixel3DView_count = 0;
-
-                foreach (var t in taskList)
-                {
-                    t.Cancel(true);
-                }
-                taskList.Clear();
             }
         }
         public PictureBox pdestination;
@@ -190,7 +185,9 @@ namespace client
                 for (var y = 0; y < H; y++)
                 {
                     if (minx + x < destination.Width && miny + y < destination.Height)
+                    {
                         ((Bitmap)destination).SetPixel(minx + x, miny + y, Color.FromArgb((Int32)BitConverter.ToInt32(bufpels, i)));
+                    }
                     i += sizeof(Int32);
                 }
             }
@@ -210,7 +207,6 @@ namespace client
             FinalizeDrawing();
         }
 
-        List<CancellationTokenSource> taskList = new List<CancellationTokenSource>();
         private void FinalizeDrawing()
         {
             if (DrawPixel3DView_count == progressbar.Maximum)
@@ -222,22 +218,17 @@ namespace client
                 if (!ol.Animatronic.IsFinished)
                     calculusWorker.RunWorkerAsync();
 
-                var ts = new CancellationTokenSource();
-                CancellationToken ct = ts.Token;
-                
-                object dest = destination.Clone();
-                Task.Factory.StartNew(() =>
+                if (AAX != 0)
                 {
-                    apply_antialiasing(dest, ct);
-                }, ct);
-                taskList.Add(ts);
+                    apply_antialiasing(destination);
+                }
             }
 
             if (pdestination != null) pdestination.Refresh();
         }
 
-        static public readonly int AAX = 16;
-        Color getMeanColorArround(Bitmap bm, int x, int y, CancellationToken ct)
+        static public int AAX = 0;
+        Color getMeanColorArround(Bitmap bmp, int x, int y)
         {
             double R = 0;
             double G = 0;
@@ -246,18 +237,14 @@ namespace client
             int AAX2 = AAX / 2;
             for (var nx = -AAX2; nx < AAX2; nx++)
             {
-                if (ct.IsCancellationRequested) return Color.Black;
-
                 if (nx + x < 0) continue;
-                if (nx + x >= bm.Width) break;
+                if (nx + x >= bmp.Width) break;
                 for (var ny = -AAX2; ny < AAX2; ny++)
                 {
-                    if (ct.IsCancellationRequested) return Color.Black;
-
                     if (ny + y < 0) continue;
-                    if (ny + y >= bm.Height) break;
+                    if (ny + y >= bmp.Height) break;
 
-                    Color pel = bm.GetPixel(nx + x, ny + y);
+                    Color pel = bmp.GetPixel(nx + x, ny + y);
                     var pivot = (AAX2 - Math.Abs(nx)) * (AAX2 - Math.Abs(ny)) + 1;
 
                     R += pel.R * pivot;
@@ -274,38 +261,18 @@ namespace client
                 (int)(B / nbcolors));
         }
 
-        private void apply_antialiasing(object destination, CancellationToken ct)
+        private void apply_antialiasing(Image destination)
         {
-            var bmp = (Bitmap)destination;
+            var bmp = ((Bitmap)destination) as Bitmap;
+            var cpy = ((Bitmap)destination).Clone() as Bitmap;
 
-            BitmapData data = bmp.LockBits(new Rectangle(0, 0, (int)bmp.PhysicalDimension.Width, (int)bmp.PhysicalDimension.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-            int bytes = Math.Abs(data.Stride) * bmp.Height;
-            byte[] outPut = new byte[bytes];
-            Marshal.Copy(data.Scan0, outPut, 0, bytes);
-            Marshal.Copy(outPut, 0, data.Scan0, bytes);
-            bmp.UnlockBits(data);
-
-            var cpy = bmp.Clone() as Bitmap;
-
-            for (var w = 0; w < cpy.Width; w++)
+            for (var w = 0; w < destination.Width; w++)
             {
-                for (var h = 0; h < cpy.Height; h++)
+                for (var h = 0; h < destination.Height; h++)
                 {
-                    if (ct.IsCancellationRequested) return;
-                    bmp.SetPixel(w, h, getMeanColorArround(cpy, w, h, ct));
+                    bmp.SetPixel(w, h, getMeanColorArround(cpy, w, h));
                 }
             }
-
-            this.Invoke(UpdateImage, new object[] { bmp });
-        }
-
-        public delegate void UpdateImageDelegate(Bitmap bmp);
-        public UpdateImageDelegate UpdateImage;
-        private void updateImage(Bitmap bmp)
-        {
-            this.destination = bmp.Clone() as Bitmap;
-            this.pdestination.Image = this.destination;
-            this.pdestination.Refresh();
         }
 
         private bool drawTmpObject(MouseEventArgs e, Points p3, Util.eView v)

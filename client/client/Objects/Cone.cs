@@ -248,7 +248,7 @@ namespace client
             return Modules.Submodules[getModule()]["CONE"];
         }
 
-        override public byte[] getBytes()
+        override public byte[] getBytes(bool final_render = false)
         {
             List<byte> b = new List<byte>();
             double a = Math.Atan2(Radius, (double)Height / 2);

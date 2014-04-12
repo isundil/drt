@@ -108,7 +108,7 @@ namespace client.Objects
             : base(tmp)
         {
             this.centerPoint = c;
-            this.Color = new MyColor(System.Drawing.Color.Black.ToArgb());
+            this.Color = new MyColor(System.Drawing.Color.White.ToArgb());
 
             if (!tmp)
             {
@@ -125,9 +125,14 @@ namespace client.Objects
             return Modules.Submodules[Modules.eModules.BASIC_LIGHT]["LIGHT"];
         }
 
-        override public byte[] getBytes()
+        override public byte[] getBytes(bool final_render = false)
         {
-            return new byte[] { };
+            List<byte> b = new List<byte>();
+
+            if (final_render)
+            b.AddRange(BitConverter.GetBytes((UInt32)this.Color.GetARGB()));
+
+            return b.ToArray();
         }
 
         override public SceneItem getSceneItem(bool final_render = false)
@@ -136,6 +141,7 @@ namespace client.Objects
 
             sc.Module = (byte)getModule(final_render);
             sc.SubModule = (byte)getSubModule();
+            sc.addRange(this.getBytes(final_render));
 
             var translation = new SceneItem(this);
             translation.Module = (byte)Modules.eModules.BASIC_TRANSFORM;

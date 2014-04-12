@@ -193,6 +193,7 @@ namespace client
             this.Z = o.Z;
             this.Transparency = o.Transparency;
             this.Reflection = o.Reflection;
+            this.Brightness = o.Brightness;
         }
 
         abstract public object Clone();
@@ -335,6 +336,7 @@ namespace client
 
         public double Transparency { get; set; }
         public double Reflection { get; set; }
+        public double Brightness { get; set; }
 
         [EditorAttribute(typeof(MyColorEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public MyColor Color { get; set; }
@@ -356,7 +358,7 @@ namespace client
         virtual public Modules.eModules getModule(bool final_render = false) { return Modules.eModules.BASIC_SHAPE; }
         public abstract int getSubModule();
 
-        public abstract byte[] getBytes();
+        public abstract byte[] getBytes(bool final_render = false);
 
         protected int AddOneToCount(Type type)
         {
@@ -405,6 +407,15 @@ namespace client
                     reflection.SubModule = (byte)Modules.Submodules[Modules.eModules.ADVANCED_LIGHT]["REFLECTION"];
                     reflection.addRange(BasicTransformations.getReflection(reflection));
                     sc.addItem(reflection);
+                }
+
+                if (Brightness != 0)
+                {
+                    var brightness = new SceneItem(this);
+                    brightness.Module = (byte)Modules.eModules.ADVANCED_LIGHT;
+                    brightness.SubModule = (byte)Modules.Submodules[Modules.eModules.ADVANCED_LIGHT]["BRIGHTNESS"];
+                    brightness.addRange(BasicTransformations.getBrightness(brightness));
+                    sc.addItem(brightness);
                 }
             }
 

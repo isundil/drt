@@ -68,7 +68,8 @@ namespace client
             this.DrawPixel = new DrawPixelDelegate(DrawPixel3DView);
             this.DrawChunk = new DrawChunkDelegate(DrawChunk3DView);
             this.Monitor = new MonitorDelegate(UpdateMonitor);
-            this.UpdateImage = new UpdateImageDelegate(updateImage);
+
+            this.antialias.SelectedIndex = 0;
 
             td_bitmap = new Bitmap(view_3d.Width, view_3d.Height);
             empty_bitmap(td_bitmap);
@@ -167,6 +168,14 @@ namespace client
             }
 
             view_3d.Image = bm;
+        }
+
+        private void antialias_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (antialias.SelectedItem != null)
+            {
+                AAX = Int32.Parse(antialias.SelectedItem.ToString());
+            }
         }
     }
 }

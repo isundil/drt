@@ -127,7 +127,7 @@ namespace client
             return Modules.Submodules[getModule()]["SPHERE"];
         }
 
-        override public byte[] getBytes()
+        override public byte[] getBytes(bool final_render = false)
         {
             List<byte> b = new List<byte>();
 
