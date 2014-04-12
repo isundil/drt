@@ -13,13 +13,14 @@ class WorkerManager;
 namespace network
 {
 class PeerInfo;
+class ChunkResult;
 }
 namespace render
 {
 class Scene;
 }
 
-	namespace worker
+namespace worker
 {
 class ManagedScene
 {
@@ -35,16 +36,19 @@ class ManagedScene
 		bool operator==(const render::Scene &) const;
 
 		bool ready(drt::network::PeerInfo *);
+		bool chunkDone(const drt::network::ChunkResult &chunk);
 
 	private:
 		std::set<drt::network::PeerInfo *> elligiblePeers;
 		WorkerManager &manager;
 		network::PeerInfo *peer;
 		render::Scene *scene;
+		unsigned int isDone() const;
 
-		std::pair<drt::network::PeerInfo *, bool> **pixels;
+		//
+		std::pair<std::list<drt::network::PeerInfo *>, bool> **pixels;
 		unsigned short px, py;
-		bool done;
+		int remain;
 
 	private:
 		worker::AWorker::Operation *getNextOp();
