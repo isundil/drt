@@ -1,7 +1,8 @@
 
 SRC=	objects		\
 		transform	\
-		basic_light
+		basic_light	\
+		advanced_light
 
 all:
 	for fileList in $(SRC) ; do \
