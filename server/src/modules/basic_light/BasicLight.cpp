@@ -9,7 +9,7 @@ extern "C"
   {
     AObject		*ret = nullptr;
 
-    std::cout << "basic_light [" << subModule << "]" << std::endl;
+    std::cout << "basic_light:" << subModule << std::endl;
     switch (subModule)
       {
       case 1:

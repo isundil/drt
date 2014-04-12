@@ -2,13 +2,13 @@
 #include <iostream>
 
 Reflection::Reflection(double c) {
-  std::cout << "Reflection" << std::endl;
   coef = c;
+  std::cout << "Reflection : coef = " << coef << std::endl;
 }
 
 Reflection::Reflection(Reflection &r) {
-  std::cout << "Reflection" << std::endl;
   coef = r.getCoef();
+  std::cout << "Reflection : coef = " << coef << std::endl;
 }
 
 double	Reflection::getCoef() {

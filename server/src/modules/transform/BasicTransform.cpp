@@ -1,5 +1,6 @@
 #include "BasicTransform.hpp"
 #include <string.h>
+#include <iostream>
 
 extern "C"
 {
@@ -7,6 +8,8 @@ extern "C"
   {
     AObject		*ret = nullptr;
     t_param		*param = (t_param *) data;
+
+    std::cout << "basic_transform:" << subModule << std::endl;
 
     switch (subModule)
       {

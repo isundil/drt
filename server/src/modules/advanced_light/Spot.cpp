@@ -223,6 +223,8 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
     if (trans)
       break;
   }
+  if (!trans)
+    return color;
   coef = trans->getCoef();
   if (coef == 0)
     return color;
@@ -280,11 +282,11 @@ unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_I
     if (ref)
       break;
   }
+  if (!ref)
+    return color;
   coef = ref->getCoef();
   if (coef == 0)
     return color;
-
-  std::cout << "reflection ! :D"  << std::endl;
 
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
@@ -372,24 +374,13 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   applyRotation(&p, objRot);
   n = obj->getNormale(p, l);
 
-  if (obj->getColor() == 0xFF4682B4)		// a modifier plus tard pour mettre des valeur setables
-    {
-      camera->reset();
-      ray->reset();
-      p2.x = camera->getX() + ray->getX() * k;
-      p2.y = camera->getY() + ray->getY() * k;
-      p2.z = camera->getZ() + ray->getZ() * k;
-      tmpcolor = transparency(p2, ray, n, lastFound, tmpcolor, scene, objects);
-    }
-  if (obj->getColor() == 0xFFFF0000)		// a modifier plus tard pour mettre des valeur setables
-    {
-      camera->reset();
-      ray->reset();
-      p2.x = camera->getX() + ray->getX() * k;
-      p2.y = camera->getY() + ray->getY() * k;
-      p2.z = camera->getZ() + ray->getZ() * k;
-      tmpcolor = reflection(p2, ray, n, lastFound, tmpcolor, scene, objects);
-    }
+  camera->reset();
+  ray->reset();
+  p2.x = camera->getX() + ray->getX() * k;
+  p2.y = camera->getY() + ray->getY() * k;
+  p2.z = camera->getZ() + ray->getZ() * k;
+  tmpcolor = transparency(p2, ray, n, lastFound, tmpcolor, scene, objects);
+  tmpcolor = reflection(p2, ray, n, lastFound, tmpcolor, scene, objects);
 
   // p.x = camera->getX() + ray->getX() * k;
   // p.y = camera->getY() + ray->getY() * k;

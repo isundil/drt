@@ -10,6 +10,9 @@ extern "C"
   AObject		*getInstance(unsigned short subModule, char *data)
   {
     AObject		*ret = nullptr;
+    double		*d = (double *) data;
+
+    std::cout << "advanced_light:" << subModule << std::endl;
 
     switch (subModule)
       {
@@ -17,10 +20,10 @@ extern "C"
 	ret = (AObject*) new Spot();
 	break;
       case 2:
-	ret = new Transparency((double) *data);
+	ret = (AObject*) new Transparency((double) *d);
 	break;
       case 3:
-	ret = new Reflection((double) *data);
+	ret = (AObject*) new Reflection((double) *d);
 	break;
       default:
 	break;
