@@ -191,6 +191,8 @@ namespace client
             this.X = o.X;
             this.Y = o.Y;
             this.Z = o.Z;
+            this.Transparency = o.Transparency;
+            this.Reflection = o.Reflection;
         }
 
         abstract public object Clone();
@@ -365,7 +367,7 @@ namespace client
             return counts[type];
         }
 
-        public SceneItem getSceneItem(bool final_render = false)
+        public virtual SceneItem getSceneItem(bool final_render = false)
         {
             var sc = new SceneItem(this);
 
@@ -384,6 +386,27 @@ namespace client
             rotate.SubModule = (byte)Modules.Submodules[Modules.eModules.BASIC_TRANSFORM]["ROTATION"];
             rotate.addRange(BasicTransformations.getRotation(rotate));
             sc.addItem(rotate);
+
+            if (final_render)
+            {
+                if (Transparency != 0)
+                {
+                    var transparency = new SceneItem(this);
+                    transparency.Module = (byte)Modules.eModules.ADVANCED_LIGHT;
+                    transparency.SubModule = (byte)Modules.Submodules[Modules.eModules.ADVANCED_LIGHT]["TRANSPARENCY"];
+                    transparency.addRange(BasicTransformations.getTransparency(transparency));
+                    sc.addItem(transparency);
+                }
+
+                if (Reflection != 0)
+                {
+                    var reflection = new SceneItem(this);
+                    reflection.Module = (byte)Modules.eModules.ADVANCED_LIGHT;
+                    reflection.SubModule = (byte)Modules.Submodules[Modules.eModules.ADVANCED_LIGHT]["REFLECTION"];
+                    reflection.addRange(BasicTransformations.getReflection(reflection));
+                    sc.addItem(reflection);
+                }
+            }
 
             return sc;
         }

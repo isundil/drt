@@ -88,5 +88,23 @@ namespace client
 
             return l.ToArray();
         }
+
+        public static byte[] getTransparency(SceneItem i)
+        {
+            List<byte> l = new List<byte>();
+
+            l.AddRange(BitConverter.GetBytes((double)i.refObject.Transparency));
+
+            return l.ToArray();
+        }
+
+        public static byte[] getReflection(SceneItem i)
+        {
+            List<byte> l = new List<byte>();
+
+            l.AddRange(BitConverter.GetBytes((double)i.refObject.Reflection));
+
+            return l.ToArray();
+        }
     }
 }

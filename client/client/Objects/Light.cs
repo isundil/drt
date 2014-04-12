@@ -130,36 +130,18 @@ namespace client.Objects
             return new byte[] { };
         }
 
-        new public SceneItem getSceneItem(bool final_render = false)
+        override public SceneItem getSceneItem(bool final_render = false)
         {
             var sc = new SceneItem(this);
 
-            sc.Module = (byte)getModule();
+            sc.Module = (byte)getModule(final_render);
             sc.SubModule = (byte)getSubModule();
 
             var translation = new SceneItem(this);
             translation.Module = (byte)Modules.eModules.BASIC_TRANSFORM;
             translation.SubModule = (byte)Modules.Submodules[Modules.eModules.BASIC_TRANSFORM]["TRANSLATION"];
+            translation.addRange(BasicTransformations.getTranslation(translation)); 
             sc.addItem(translation);
-
-            if (getModule(final_render) == Modules.eModules.ADVANCED_LIGHT)
-            {
-                if (Transparency != 0)
-                {
-                    var transparency = new SceneItem(this);
-                    transparency.Module = (byte)Modules.eModules.ADVANCED_LIGHT;
-                    transparency.SubModule = (byte)Modules.Submodules[Modules.eModules.ADVANCED_LIGHT]["TRANSPARENCY"];
-                    sc.addItem(transparency);
-                }
-
-                if (Reflection != 0)
-                {
-                    var reflection = new SceneItem(this);
-                    reflection.Module = (byte)Modules.eModules.ADVANCED_LIGHT;
-                    reflection.SubModule = (byte)Modules.Submodules[Modules.eModules.ADVANCED_LIGHT]["REFLECTION"];
-                    sc.addItem(reflection);
-                }
-            }
 
             return sc;
         }

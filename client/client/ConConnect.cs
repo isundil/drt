@@ -67,12 +67,21 @@ namespace client
             buf.AddRange(BitConverter.GetBytes((UInt32)s.Items.Count));
         }
 
-        private void _write_item(SceneItem i, List<byte> buf)
+        private void _write_item(Scene s, SceneItem i, List<byte> buf)
         {
+            // Convert module ID with its position in the array
+            byte nmodule = 0;
+            foreach (var m in s.RequestedModules)
+            {
+                if (m == (Modules.eModules)(i.Module)) break;
+                nmodule++;
+            }
+            i.Module = nmodule;
+
             buf.AddRange(i.getBytes());
             foreach (var si in i.Items)
             {
-                _write_item(si, buf);
+                _write_item(s, si, buf);
             }
         }
 
@@ -80,7 +89,7 @@ namespace client
         {
             foreach (var i in s.Items)
             {
-                _write_item(i, buf);
+                _write_item(s, i, buf);
             }
         }
 
