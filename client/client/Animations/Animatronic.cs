@@ -31,19 +31,29 @@ namespace client.Animations
 
         public void Animate(FinalRender renderer)
         {
-            MemoryStream stream = new MemoryStream();
-            FileStream teststream = new FileStream(@"C:\Users\Kim\Desktop\TEST.GIF", FileMode.Create);
+            FileStream stream = new FileStream(@"TMP.GIF", FileMode.Create);
             var encoder = new System.Windows.Media.Imaging.GifBitmapEncoder();
-            var testencoder = new System.Windows.Media.Imaging.GifBitmapEncoder();
             foreach (var f in frames)
             {
                 encoder.Frames.Add(BitmapFrame.Create(toBitmapConvert(f)));
-                testencoder.Frames.Add(BitmapFrame.Create(toBitmapConvert(f)));
             }
-            encoder.Save(stream);
-            testencoder.Save(teststream);
 
-            renderer.Picture.Image = Image.FromStream(stream);
+            encoder.Save(stream);
+            stream.Close();
+
+            var test = new Jillzhang.GifUtility.GifDecoder();
+            test.Decode(@"TMP.GIF");
+            foreach (var frame in test.Frames)
+            {
+                frame.Delay = (short)((double)100 / Animatronic.FRAMES_PER_SECOND);
+            }
+            var test2 = new Jillzhang.GifUtility.GifEncoder(@"TMP.GIF");
+            test2.Encode(test);
+
+            var w = new Jillzhang.GifUtility.GifHelper();
+            w.WaterMark(@"TMP.GIF", "Distributed RT - ITCS 422", Color.White, new Font(new FontFamily("arial"), 10), 0, 0, @"TMP.GIF");
+
+            renderer.Picture.LoadAsync(@"TMP.GIF");
         }
 
         public BindingList<AAnimation> animations { get; set; }
