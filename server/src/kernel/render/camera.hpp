@@ -6,6 +6,7 @@ class Camera : public AObject {
 public:
 
   Camera(short, short, short, double, double, double);
+  Camera(double, double, double);
   Camera(Camera &);
   virtual double	computeEquation(Camera * camera, Ray * ray) {
     (void)camera;

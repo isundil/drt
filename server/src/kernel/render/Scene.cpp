@@ -123,6 +123,8 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	Camera	saveCamera(*camera);
 	t_Item	*lastFound = nullptr;
 
+	// t_pt p;
+
 	x = this->width - x;
 	Ray *ray = new Ray(this->d, (double)(this->width / 2) - x, (double)(this->height / 2) - y);
 
@@ -138,13 +140,19 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	      {
 	    	k = tmpk;
 	    	color = (*i).second->object->getColor();
+
+		// p.x = camera->getX() + ray->getX() * k;
+		// p.y = camera->getY() + ray->getY() * k;
+		// p.z = camera->getZ() + ray->getZ() * k;
+
 		lastFound = (*i).second;
 	      }
 	  }
 	if (lastFound != nullptr)
 	  {
+	    // std::cout << "p [" << p.x << ", " << p.y << ", " << p.z << "]" << std::endl;
+
 	    // saveCamera.reset();
-	    // ray->reset();
 	    // for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
 	    //   (*a)->object->preProcess(&saveCamera, ray);
 	    for (auto it = objects.cbegin(); it != objects.cend(); it++)

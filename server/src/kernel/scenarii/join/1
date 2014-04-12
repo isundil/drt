@@ -3,6 +3,9 @@
 
 [peers]
 Server localhost:8141
+Server localhost:8142
+Server localhost:8143
+Server localhost:8144
 
 [server]
 #Listen 8140

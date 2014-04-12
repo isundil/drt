@@ -1,8 +1,7 @@
 
-SRC=	test 	\
-		test2	\
-		objects	\
-		transform \
+SRC=	objects		\
+		transform	\
+		basic_light
 
 all:
 	for fileList in $(SRC) ; do \

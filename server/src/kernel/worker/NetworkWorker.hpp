@@ -39,6 +39,7 @@ class NetworkWorker: public AWorker
 
 			unsigned int nbClient() const;
 			unsigned int nbSocket(network::Socket *avoid =nullptr) const;
+			unsigned int nbServerSocket(network::Socket *avoid =nullptr) const;
 			drt::network::PeerInfo *addServer(network::Socket *sock, unsigned short id =0);
 
 			void rmPeer(network::PeerInfo *peer);
