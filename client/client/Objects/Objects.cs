@@ -331,6 +331,9 @@ namespace client
             }
         }
 
+        public double Transparency { get; set; }
+        public double Reflection { get; set; }
+
         [EditorAttribute(typeof(MyColorEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public MyColor Color { get; set; }
 
@@ -362,7 +365,7 @@ namespace client
             return counts[type];
         }
 
-        public SceneItem getSceneItem()
+        public SceneItem getSceneItem(bool final_render = false)
         {
             var sc = new SceneItem(this);
 

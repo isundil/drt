@@ -44,7 +44,9 @@ namespace client
                 { "LIGHT",       1 }
             } },
             { eModules.ADVANCED_LIGHT, new Dictionary<string, int>() {
-                { "LIGHT",       1 }
+                { "LIGHT",       1 },
+                { "TRANSPARENCY",2 },
+                { "REFLECTION",  3 }
             } }
         };
     }
