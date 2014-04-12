@@ -72,6 +72,11 @@ namespace client
         Random rand = new Random(Guid.NewGuid().GetHashCode());
         string pickOne()
         {
+            if (LOADING.Count == 0)
+            {
+                return "Looking for inspiration...";
+            }
+
             var i = rand.Next(0, LOADING.Count);
             var s = LOADING[i];
             LOADING.RemoveAt(i);

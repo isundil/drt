@@ -9,19 +9,19 @@ namespace client
     {
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            var renderer = new FinalRender(animatronic);
+            var renderer = new FinalRender(ol.animatronic);
             renderer.Show();
 
             this.destination = renderer.pictureBox1.Image;
             this.pdestination = renderer.pictureBox1;
             calculusWorker.DestinationImage = renderer.pictureBox1.Image;
-            calculusWorker.DoFinalRenderCalculus(ol, animatronic, this, renderer);
+            calculusWorker.DoFinalRenderCalculus(ol, this, renderer);
         }
 
         private void animationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var s = new Animations.Animations();
-            s.animatronic = animatronic;
+            s.animatronic = ol.animatronic;
             s.objectslist = ol;
             s.ShowDialog();
         }

@@ -1,4 +1,5 @@
-﻿using client.Objects;
+﻿using client.Animations;
+using client.Objects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -59,6 +60,7 @@ namespace client
         public ObjectsList(MainForm f)
         {
             collection = new ObjectsListB(f);
+            animatronic = new Animatronic();
         }
 
         public AObjects GetById(int id)
@@ -69,6 +71,8 @@ namespace client
             }
             return null;
         }
+
+        public Animatronic animatronic;
 
         // For XML serialization only !
         public AObjects[] Items
@@ -174,7 +178,8 @@ namespace client
 
         abstract public object Clone();
 
-        internal string UUID { get; set; }
+        [Browsable(false)]
+        public string UUID { get; set; }
 
         public abstract void Refresh();
 

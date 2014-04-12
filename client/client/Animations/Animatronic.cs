@@ -6,11 +6,13 @@ using System.IO;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using System.Xml.Serialization;
 
 namespace client.Animations
 {
     public class Animatronic
     {
+        [XmlIgnore]
         static public readonly int FRAMES_PER_SECOND = 24;
      
         public Animatronic()
@@ -55,10 +57,35 @@ namespace client.Animations
             renderer.Picture.LoadAsync(@"TMP.GIF");
         }
 
+        [XmlIgnore]
         public BindingList<AAnimation> animations { get; set; }
+        public AAnimation[] Animations
+        {
+            get
+            {
+                var al = new AAnimation[animations.Count];
+                int i = 0;
+                foreach (var a in animations)
+                {
+                    al[i] = a;
+                    i++;
+                }
+                return al;
+            }
+            set
+            {
+                foreach (var a in value)
+                {
+                    this.AddAnimation(a);
+                }
+            }
+        }
+
+        // For XML serialization only !
 
         List<System.Drawing.Bitmap> frames;
 
+        [XmlIgnore]
         public bool IsFinished
         {
             get
@@ -67,7 +94,9 @@ namespace client.Animations
             }
             private set { }
         }
+        [XmlIgnore]
         public int CurrentFrame { get { return index; } private set { } }
+        [XmlIgnore]
         public int FramesNumber { get { return frames.Count; } private set { } }
 
         public void AddAnimation(AAnimation anim)

@@ -64,8 +64,39 @@ namespace client.Animations
         private void Animations_Load(object sender, EventArgs e)
         {
             appliesonobject.DataSource = objectslist.Collection;
+
+            updateReferences();
+
             appliesonobject.DisplayMember = "Name";
             appliesonobject.ValueMember = "Id";
+
+            displayinfos();
+        }
+
+        private void updateReferences()
+        {
+            List<AAnimation> toDelete = new List<AAnimation>();
+            foreach (var a in _animatronic.animations)
+            {
+                bool found = false;
+                foreach (var o in objectslist.Collection)
+                {
+                    if (o.UUID == a.UUID)
+                    {
+                        found = true;
+                        a.AppliesOn = o.Name;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    toDelete.Add(a);
+                }
+            }
+            foreach (var a in toDelete)
+            {
+                _animatronic.animations.Remove(a);
+            }
         }
 
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)

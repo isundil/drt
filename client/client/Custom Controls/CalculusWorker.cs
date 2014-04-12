@@ -51,6 +51,7 @@ namespace client
                 if (animatronic.CurrentFrame >= a.StartingFrame && animatronic.CurrentFrame < a.StartingFrame + a.FrameNumber)
                 {
                     var o = getFromUUID(a.UUID);
+                    if (o == null) continue;
                     a.ApplyOnObject(o);
                 }
             }
@@ -101,11 +102,11 @@ namespace client
         }
 
         FinalRender render;
-        public void DoFinalRenderCalculus(ObjectsList ol, Animations.Animatronic anim, MainForm f, FinalRender r)
+        public void DoFinalRenderCalculus(ObjectsList ol, MainForm f, FinalRender r)
         {
             this.ol = ol.Items;
 
-            this.animatronic = anim;
+            this.animatronic = ol.animatronic;
             this.form = f;
             this.render = r;
 

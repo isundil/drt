@@ -7,7 +7,6 @@ namespace client
 {
     public partial class MainForm : Form
     {
-        Animatronic animatronic = new Animatronic();
         Viewport vp = new Viewport();
         ObjectsList ol;
         public ConClient client;

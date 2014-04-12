@@ -3,12 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace client.Animations
 {
+    [XmlInclude(typeof(TranslateX))]
+    [XmlInclude(typeof(TranslateY))]
+    [XmlInclude(typeof(TranslateZ))]
+    [XmlInclude(typeof(RotateX))]
+    [XmlInclude(typeof(RotateY))]
+    [XmlInclude(typeof(RotateZ))]
     public abstract class AAnimation
     {
+        [XmlIgnore]
         public string Type { get; protected set; }
+        [XmlIgnore]
         public string AppliesOn { get; set; }
         public int StartingFrame { get; set; }
         public int FrameNumber { get; set; }
@@ -41,6 +50,7 @@ namespace client.Animations
 
     public class TranslateX : AAnimation
     {
+        public TranslateX() { Type = "Translate X"; }
         public TranslateX(AObjects o) : base(o) { Type = "Translate X"; }
         override public void ApplyOnObject(AObjects o)
         {
@@ -49,6 +59,7 @@ namespace client.Animations
     }
     public class TranslateY : AAnimation
     {
+        public TranslateY() { Type = "Translate Y"; }
         public TranslateY(AObjects o) : base(o) { Type = "Translate Y"; }
         override public void ApplyOnObject(AObjects o)
         {
@@ -57,6 +68,7 @@ namespace client.Animations
     }
     public class TranslateZ : AAnimation
     {
+        public TranslateZ() { Type = "Translate Z"; }
         public TranslateZ(AObjects o) : base(o) { Type = "Translate Z"; }
         override public void ApplyOnObject(AObjects o)
         {
@@ -66,6 +78,7 @@ namespace client.Animations
 
     public class RotateX : AAnimation
     {
+        public RotateX() { Type = "Rotate X"; }
         public RotateX(AObjects o) : base(o) { Type = "Rotate X"; }
         override public void ApplyOnObject(AObjects o)
         {
@@ -74,6 +87,7 @@ namespace client.Animations
     }
     public class RotateY : AAnimation
     {
+        public RotateY() { Type = "Rotate Y"; }
         public RotateY(AObjects o) : base(o) { Type = "Rotate Y"; }
         override public void ApplyOnObject(AObjects o)
         {
@@ -82,6 +96,7 @@ namespace client.Animations
     }
     public class RotateZ : AAnimation
     {
+        public RotateZ() { Type = "Rotate Z"; }
         public RotateZ(AObjects o) : base(o) { Type = "Rotate Z"; }
         override public void ApplyOnObject(AObjects o)
         {
