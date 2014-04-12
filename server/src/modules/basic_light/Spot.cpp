@@ -124,6 +124,10 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   tmpcolor = lastFound->object->getColor();
   camera->reset();
   ray->reset();
+  t_pt tmpCam;
+  tmpCam.x = camera->getX();
+  tmpCam.y = camera->getY();
+  tmpCam.z = camera->getZ();
   int d = 0;
   for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
     {
@@ -147,10 +151,7 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   l.x = x - p.x - objTrans->getX();
   l.y = y - p.y - objTrans->getY();
   l.z = z - p.z - objTrans->getZ();
-  n = obj->getNormale(p, l);
-  p.x = p.x + objTrans->getX();
-  p.y = p.y + objTrans->getY();
-  p.z = p.z + objTrans->getZ();
+  n = obj->getNormale(p, tmpCam);
 
   this->normalize(&n);
   this->normalize(&l);
