@@ -49,6 +49,33 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 		"there is " << data.nbObjects << " objects" << std::endl;
 }
 
+Scene::Scene(Scene &s) : scenePath(s.getPath()) {
+  height = s.getHeight();
+  width = s.getWidth();
+  camera = (Camera *) s.getCamera()->clone();
+  d = s.getD();
+  id = s.getId();
+  std::map<unsigned int, t_Item *> tmp = getObjects();
+  for (auto a = tmp.cbegin(); a != tmp.cend(); a++) {
+    t_Item *obj = new t_Item();
+    obj->toReceive = (*a).second->toReceive;
+    obj->data = (*a).second->data;
+    for (auto i = (*a).second->subItems.cbegin(); i != (*a).second->subItems.cend(); i++) {
+      t_Item *obj2 = new t_Item();
+      obj2->toReceive = (*i)->toReceive;
+      obj2->data = (*i)->data;
+      obj2->object = (*i)->object->clone();
+      obj->subItems.push_back(obj2);
+    }
+    obj->object = (*a).second->object->clone();
+    this->objects[(*a).first] = obj;
+  }
+}
+
+Scene	*Scene::clone() {
+  return new Scene(*this);
+}
+
 Scene::~Scene()
 {
 	delete camera;
@@ -79,9 +106,10 @@ Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *module
 			// std::cout << "  data contain [" << (char *) obj->data << "]" << std::endl;
 	}
 	std::string tmpStr = moduleArray[(int) obj->toReceive.moduleID];
-	std::cout << "module : [" << tmpStr << "]" << std::endl;
+	std::cout << "module : [" << tmpStr << "] (" << (int)obj->toReceive.moduleID << ")" << std::endl;
 	std::cout << "subModule : " << (short) obj->toReceive.subModule << std::endl;
-	std::cout << std::endl << "there is " << obj->toReceive.nbSubItem << " subItems" << std::endl;
+	std::cout << std::endl << "there is " << obj->toReceive.nbSubItem << " subItems" << std::endl
+	  ;
 	for (unsigned int a = 0; a < obj->toReceive.nbSubItem; a++)
 	  {
 	    std::cout << "SubItem [" << std::endl;
@@ -92,10 +120,10 @@ Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *module
 	module::AModule	*tmpModule = modules->getModule(tmpStr);
 	if (tmpModule == nullptr)
 	  {
-	    std::cout << "tmpModule == nullptr" << std::endl;
+	    // std::cout << "tmpModule == nullptr" << std::endl;
 		throw network::CompilFail();
 	  }
-	std::cout << "getInstance" << std::endl;
+	// std::cout << "getInstance" << std::endl;
 	result = tmpModule->getInstance(obj->toReceive.subModule, obj->data);
 	obj->object = result;
 	return (obj);

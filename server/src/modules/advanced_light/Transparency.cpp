@@ -1,4 +1,5 @@
 #include "Transparency.hpp"
+#include <iostream>
 
 Transparency::Transparency(double c) {
   coef = c;

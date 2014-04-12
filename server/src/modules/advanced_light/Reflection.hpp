@@ -20,7 +20,7 @@ public:
   virtual double	getX() {return 0;}
   virtual double	getY() {return 0;}
   virtual double	getZ() {return 0;}
-  // virtual AObject	*clone() {return new Reflection(*this);}
+  virtual AObject	*clone() {return new Reflection(*this);}
   double		getCoef();
 
 private:

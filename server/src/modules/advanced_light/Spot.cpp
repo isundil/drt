@@ -2,9 +2,19 @@
 #include <iostream>
 #include "Spot.hpp"
 #include "Scene.hpp"
+#include "Transparency.hpp"
+#include "Reflection.hpp"
 
 Spot::Spot() {
-  std::cout << "Spot initialized" << std::endl;
+  x = 0;
+  y = 0;
+  z = 0;
+  color = 0xFFFFFF;
+  refMax = 0;
+  transMax = 0;
+}
+
+Spot::Spot(Spot &s) {
   x = 0;
   y = 0;
   z = 0;
@@ -200,21 +210,31 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
 				   std::map<unsigned int, drt::render::Scene::t_Item *> objects)
 {
   Camera	cam(p.x, p.y, p.z);
-  Ray		ray(r->getX(), r->getY(), r->getZ());
+  Ray		ray(*r);
   double	k = -1;
   double	tmpk = k;
+  unsigned int	tmpcolor = 0;
   drt::render::Scene::t_Item	*lastFound = nullptr;
-  unsigned int	tmpcolor;
+  double	coef = 0;
+  Transparency	*trans = nullptr;
 
-  // transMax++;
-  // std::cout << "transMax = " << transMax << std::endl;
+  for (auto a = obj->subItems.cbegin(); a != obj->subItems.cend(); a++) {
+    trans = dynamic_cast<Transparency *> ((*a)->object);
+    if (trans)
+      break;
+  }
+  if (!trans)
+    return color;
+  coef = trans->getCoef();
+  if (coef == 0)
+    return color;
 
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
       cam.reset();
       ray.reset();
       if ((*i).second->object != obj->object)
-	{
+      	{
 	  // (*i).second->object->preProcess(); // I don't think the object will need a preProcess func.
 	  for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++)
 	    (*a)->object->preProcess(&cam, &ray);
@@ -222,24 +242,75 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
 	  if ((tmpk < k || k == -1) && tmpk >= 0)
 	    {
 	      k = tmpk;
-	      color = (*i).second->object->getColor();
+	      tmpcolor = (*i).second->object->getColor();
 	      lastFound = (*i).second;
 	    }
 	}
     }
   if (lastFound != nullptr)
     for (auto it = objects.cbegin(); it != objects.cend(); it++)
-      tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, color);
-  // transMax--;
-  // std::cout << "found color [" << tmpcolor << "] to merge with [" << color << "]" << std::endl;
-  return mergeColors2(tmpcolor, color, 0.4); // recuperer le coef de l'objet
+      tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, tmpcolor);
+  return mergeColors2(tmpcolor, color, coef);
 }
 
-// unsigned int	Spot::reflection(t_pt p, Ray *ray, t_pt norm, drt::render::Scene::t_Item *obj,
-				// unsigned int color,
-				   // std::map<unsigned int, drt::render::Scene::t_Item *> objects)
-// {
-// }
+unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_Item *obj,
+				   unsigned int color, drt::render::Scene *scene,
+				   std::map<unsigned int, drt::render::Scene::t_Item *> objects)
+{
+  Camera	cam(p.x, p.y, p.z);
+  t_pt		tmpr;
+  double	p_s;
+  tmpr.x = r->getX();
+  tmpr.y = r->getY();
+  tmpr.z = r->getZ();
+  this->normalize(&norm);
+  this->normalize(&tmpr);
+  p_s = norm.x * tmpr.x + norm.y * tmpr.y + norm.z * tmpr.z;
+  tmpr.x = (-2.f * norm.x) * p_s + tmpr.x;
+  tmpr.y = (-2.f * norm.y) * p_s + tmpr.y;
+  tmpr.z = (-2.f * norm.z) * p_s + tmpr.z;
+  Ray		ray(tmpr.x, tmpr.y, tmpr.z);
+  double	k = -1;
+  double	tmpk = k;
+  unsigned int	tmpcolor = 0;
+  drt::render::Scene::t_Item	*lastFound = nullptr;
+  double	coef = 0;
+  Reflection	*ref = nullptr;
+
+  for (auto a = obj->subItems.cbegin(); a != obj->subItems.cend(); a++) {
+    ref = dynamic_cast<Reflection *> ((*a)->object);
+    if (ref)
+      break;
+  }
+  if (!ref)
+    return color;
+  coef = ref->getCoef();
+  if (coef == 0)
+    return color;
+
+  for (auto i = objects.cbegin(); i != objects.cend(); i++)
+    {
+      cam.reset();
+      ray.reset();
+      if ((*i).second->object != obj->object)
+      	{
+	  // (*i).second->object->preProcess(); // I don't think the object will need a preProcess func.
+	  for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++)
+	    (*a)->object->preProcess(&cam, &ray);
+	  tmpk = (*i).second->object->computeEquation(&cam, &ray);
+	  if ((tmpk < k || k == -1) && tmpk >= 0)
+	    {
+	      k = tmpk;
+	      tmpcolor = (*i).second->object->getColor();
+	      lastFound = (*i).second;
+	    }
+	}
+    }
+  if (lastFound != nullptr)
+    for (auto it = objects.cbegin(); it != objects.cend(); it++)
+      tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, tmpcolor);
+  return mergeColors2(tmpcolor, color, coef);
+}
 
 unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray * ray,
 				  AObject * obj, double k, unsigned int color)
@@ -303,20 +374,17 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   applyRotation(&p, objRot);
   n = obj->getNormale(p, l);
 
-  // static unsigned int maxTrans = 0;
-  // if (maxTrans < 5)		// a modifier plus tard pour mettre des valeur setables
-  //   {
-  //     maxTrans++;
-  //     std::cout << "transparence !!!" << std::endl;
-  //     tmpcolor = transparency(p2, ray, n, lastFound, tmpcolor, scene, objects);
-  //     maxTrans--;
-  //   }
-  // if (refMax < 10)		// a modifier plus tard pour mettre des valeur setables
-  //   reflection(p2, ray, n, lastFound, tmpcolor, objects);
+  camera->reset();
+  ray->reset();
+  p2.x = camera->getX() + ray->getX() * k;
+  p2.y = camera->getY() + ray->getY() * k;
+  p2.z = camera->getZ() + ray->getZ() * k;
+  tmpcolor = transparency(p2, ray, n, lastFound, tmpcolor, scene, objects);
+  tmpcolor = reflection(p2, ray, n, lastFound, tmpcolor, scene, objects);
 
-  p.x = camera->getX() + ray->getX() * k;
-  p.y = camera->getY() + ray->getY() * k;
-  p.z = camera->getZ() + ray->getZ() * k;
+  // p.x = camera->getX() + ray->getX() * k;
+  // p.y = camera->getY() + ray->getY() * k;
+  // p.z = camera->getZ() + ray->getZ() * k;
   l.x = x - p.x - objTrans->getX();
   l.y = y - p.y - objTrans->getY();
   l.z = z - p.z - objTrans->getZ();

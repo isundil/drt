@@ -38,7 +38,9 @@ void Worker::nextOp(Operation *op)
 	for (int i = op->x; i < maxX; i++)
 		for (int j = op->y; j < maxY; j++)
 		{
+		  render::Scene *s2 = s->clone();
 			color = s->calc(manager, i, j);
+			delete (s2);
 			color |= 0xff000000;
 
 			(*rList) += std::make_tuple(i, j, color);

@@ -1,5 +1,6 @@
 #include "BasicShape.hpp"
 #include <string.h>
+#include <iostream>
 
 basicShape::basicShape()
 {
@@ -12,6 +13,8 @@ extern "C"
     AObject	*ret;
     t_rayon	*d = (t_rayon *)data;
     t_angle	*a = (t_angle *)data;
+
+    std::cout << "basic_shape:" << subModule << std::endl;
     
     switch (subModule)
       {

@@ -1,7 +1,7 @@
 
-SRC=	objects		\
-		transform	\
-		basic_light	\
+SRC=	objects			\
+		transform		\
+		basic_light		\
 		advanced_light
 
 all:

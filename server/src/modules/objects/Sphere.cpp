@@ -7,6 +7,12 @@ Sphere::Sphere(unsigned int color, double r) : AMathObject()
   this->r = r;
 }
 
+Sphere::Sphere(Sphere &s) :AMathObject()
+{
+  this->color = s.getColor();
+  this->r = s.getR();
+}
+
 double Sphere::computeEquation(Camera * camera, Ray * ray)
 {
   double a = SQ(ray->getX()) + SQ(ray->getY()) + SQ(ray->getZ());

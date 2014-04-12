@@ -59,6 +59,7 @@ namespace drt
 
 			public:
 				Scene( std::ifstream &, const std::string &path);
+				Scene(Scene &);
 				virtual ~Scene();
 
 				unsigned int calc(WorkerManager &, unsigned int x, unsigned int y);
@@ -70,6 +71,10 @@ namespace drt
 				const std::string getPath() const;
 				unsigned short getId() const;
 				void setId(unsigned short id);
+
+		  Camera	*getCamera() const {return camera;}
+		  short		getD() const {return d;}
+		  Scene	*clone();
 
 			private:
 				unsigned int height, width;

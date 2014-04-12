@@ -9,6 +9,13 @@ Translation::Translation(double x, double y, double z)
   _z = z;
 }
 
+Translation::Translation(Translation &t)
+{
+  _x = t.getX();
+  _y = t.getY();
+  _z = t.getZ();
+}
+
 void	Translation::preProcess(Camera * camera, Ray * ray)
 {
   camera->setX((double)-_x);

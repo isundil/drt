@@ -9,6 +9,12 @@ Ray::Ray(double x, double y, double z) : AObject() {
   this->z = z;
 }
 
+Ray::Ray(Ray &r) : AObject() {
+  this->x = r.getX();
+  this->y = r.getY();
+  this->z = r.getZ();
+}
+
 double Ray::getX()
 { return (double)((double)x + (double)mod_x); }
 

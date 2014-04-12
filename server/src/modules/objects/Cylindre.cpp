@@ -6,6 +6,12 @@ Cylindre::Cylindre(unsigned int color, double r) : AMathObject()
   this->r = r;
 }
 
+Cylindre::Cylindre(Cylindre &c) : AMathObject()
+{
+  this->color = c.getColor();
+  this->r = c.getR();
+}
+
 double		Cylindre::computeEquation(Camera *camera, Ray *ray)
 {
   double	a;

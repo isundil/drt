@@ -2,12 +2,17 @@
 #include <string.h>
 #include <iostream>
 #include "Spot.hpp"
+#include "Transparency.hpp"
+#include "Reflection.hpp"
 
 extern "C"
 {
   AObject		*getInstance(unsigned short subModule, char *data)
   {
     AObject		*ret = nullptr;
+    double		*d = (double *) data;
+
+    std::cout << "advanced_light:" << subModule << std::endl;
 
     switch (subModule)
       {
@@ -15,10 +20,10 @@ extern "C"
 	ret = (AObject*) new Spot();
 	break;
       case 2:
-	// transparency (double coef)
+	ret = (AObject*) new Transparency((double) *d);
 	break;
       case 3:
-	// reflection (double coef)
+	ret = (AObject*) new Reflection((double) *d);
 	break;
       default:
 	break;

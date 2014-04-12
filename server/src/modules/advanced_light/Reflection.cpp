@@ -1,4 +1,5 @@
 #include "Reflection.hpp"
+#include <iostream>
 
 Reflection::Reflection(double c) {
   coef = c;

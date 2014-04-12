@@ -6,6 +6,7 @@ class Ray : public AObject {
 public:
   
   Ray(double, double, double);
+  Ray(Ray &r);
   virtual double	computeEquation(Camera * camera, Ray * ray) {
     (void)camera;
     (void)ray;
@@ -19,6 +20,8 @@ public:
   virtual double	getX();
   virtual double	getY();
   virtual double	getZ();
+
+  virtual AObject	*clone() {return new Ray(*this);}
 
   double	getModX();
   double	getModY();

@@ -11,6 +11,13 @@ Rotation::Rotation(double x, double y, double z)
   _z = y;
 }
 
+Rotation::Rotation(Rotation &r)
+{
+  _x = r.getX();
+  _y = r.getY();
+  _z = r.getZ();
+}
+
 void	Rotation::xRotation(Camera * camera, Ray * ray)
 {
   // rotation en x

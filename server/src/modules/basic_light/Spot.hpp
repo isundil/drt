@@ -13,6 +13,7 @@ class		Spot : public AObject {
 public:
 
   Spot();
+  Spot(Spot &);
 
   virtual double	computeEquation(Camera * camera, Ray * ray) {return -1;}
   virtual void		preProcess(Camera * camera, Ray * ray) {}
@@ -22,6 +23,7 @@ public:
   virtual double	getX() {return x;}
   virtual double	getY() {return y;}
   virtual double	getZ() {return z;}
+  virtual AObject	*clone() {return new Spot(*this);}
   unsigned int		applyLight(double, unsigned int);
   void			normalize(t_pt *);
   void			applyRotation(t_pt *n, AObject *rot);
