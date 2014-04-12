@@ -6,6 +6,12 @@ Cone::Cone(unsigned int color,double r) : AMathObject()
   this->r = r;
 }
 
+Cone::Cone(Cone &c) : AMathObject()
+{
+  this->color = c.getColor();
+  this->r = c.getR();
+}
+
 double		Cone::computeEquation(Camera *camera, Ray *ray)
 {
   double	a;

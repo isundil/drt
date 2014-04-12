@@ -9,6 +9,12 @@ Spot::Spot() {
   z = 0.f;
 }
 
+Spot::Spot(Spot &s) {
+  x = 0.f;
+  y = 0.f;
+  z = 0.f;
+}
+
 void		Spot::normalize(t_pt *a) {
   double	r = sqrt(SQ(a->x) + SQ(a->y) + SQ(a->z));
 

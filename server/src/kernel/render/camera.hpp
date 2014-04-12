@@ -22,6 +22,8 @@ public:
   virtual double	getY();
   virtual double	getZ();
 
+  virtual AObject	*clone() {return new Camera(*this);}
+
   double	getRX();
   double	getRY();
   double	getRZ();

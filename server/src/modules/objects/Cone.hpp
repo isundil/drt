@@ -7,6 +7,7 @@ class Cone : public AMathObject {
 public:
 
   Cone(unsigned int color, double r);
+  Cone(Cone &);
 
   virtual double computeEquation(Camera * camera, Ray * ray);
   virtual void		preProcess(Camera * camera, Ray * ray) {(void)camera; (void)ray;};
@@ -17,6 +18,10 @@ public:
   virtual double	getX() {return 0;}
   virtual double	getY() {return 0;}
   virtual double	getZ() {return 0;}
+
+  virtual AObject	*clone() {return new Cone(*this);}
+
+  double		getR() {return r;}
 
 private:
   double	r;

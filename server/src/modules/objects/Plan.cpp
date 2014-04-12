@@ -5,6 +5,11 @@ Plan::Plan(unsigned int color): AMathObject()
   this->color = color;
 }
 
+Plan::Plan(Plan &p) : AMathObject()
+{
+  this->color = p.getColor();
+}
+
 double		Plan::computeEquation(Camera *camer, Ray *ray)
 {
   double	a;

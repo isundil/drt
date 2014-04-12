@@ -49,6 +49,33 @@ Scene::Scene( std::ifstream &s, const std::string &_scenePath ): scenePath(_scen
 		"there is " << data.nbObjects << " objects" << std::endl;
 }
 
+Scene::Scene(Scene &s) : scenePath(s.getPath()) {
+  height = s.getHeight();
+  width = s.getWidth();
+  camera = (Camera *) s.getCamera()->clone();
+  d = s.getD();
+  id = s.getId();
+  std::map<unsigned int, t_Item *> tmp = getObjects();
+  for (auto a = tmp.cbegin(); a != tmp.cend(); a++) {
+    t_Item *obj = new t_Item();
+    obj->toReceive = (*a).second->toReceive;
+    obj->data = (*a).second->data;
+    for (auto i = (*a).second->subItems.cbegin(); i != (*a).second->subItems.cend(); i++) {
+      t_Item *obj2 = new t_Item();
+      obj2->toReceive = (*i)->toReceive;
+      obj2->data = (*i)->data;
+      obj2->object = (*i)->object->clone();
+      obj->subItems.push_back(obj2);
+    }
+    obj->object = (*a).second->object->clone();
+    this->objects[(*a).first] = obj;
+  }
+}
+
+Scene	*Scene::clone() {
+  return new Scene(*this);
+}
+
 Scene::~Scene()
 {
 	delete camera;
