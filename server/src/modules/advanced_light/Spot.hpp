@@ -1,6 +1,5 @@
 #pragma once
 
-// #include <list>
 #include "AObject.hpp"
 #include "Scene.hpp"
 
@@ -25,7 +24,7 @@ public:
   virtual double	getZ() {return z;}
   void			colorSeparator(unsigned int *, unsigned int *, unsigned int *, unsigned int);
   unsigned int		colorUnificator(unsigned int red, unsigned int green, unsigned int blue);
-  unsigned int		mergeColors(unsigned int color1, unsigned int color2);
+  unsigned int		mergeColors(unsigned int color1, unsigned int color2, unsigned int max);
   unsigned int		applyLight(double, unsigned int);
   bool			isInShadow(std::map<unsigned int, drt::render::Scene::t_Item *>, t_pt, t_pt, drt::render::Scene::t_Item *);
   void			normalize(t_pt *);

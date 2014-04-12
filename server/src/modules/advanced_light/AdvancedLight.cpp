@@ -14,6 +14,12 @@ extern "C"
       case 1:
 	ret = (AObject*) new Spot();
 	break;
+      case 2:
+	// transparency (double coef)
+	break;
+      case 3:
+	// reflection (double coef)
+	break;
       default:
 	break;
       }

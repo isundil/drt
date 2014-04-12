@@ -65,7 +65,7 @@ unsigned int	Spot::colorUnificator(unsigned int red, unsigned int green, unsigne
   return (c);
 }
 
-unsigned int	Spot::mergeColors(unsigned int color1, unsigned int color2)
+unsigned int	Spot::mergeColors(unsigned int color1, unsigned int color2, unsigned int max)
 {
   unsigned int	r1 = 0;
   unsigned int	g1 = 0;
@@ -73,9 +73,13 @@ unsigned int	Spot::mergeColors(unsigned int color1, unsigned int color2)
   unsigned int	r2 = 0;
   unsigned int	g2 = 0;
   unsigned int	b2 = 0;
+  unsigned int	rm = 0;
+  unsigned int	gm = 0;
+  unsigned int	bm = 0;
 
   colorSeparator(&b1, &g1, &r1, color1);
   colorSeparator(&b2, &g2, &r2, color2);
+  colorSeparator(&bm, &gm, &rm, max);
 
   // r1 = r1 * coef + r2 * (1 - coef);
   // if (r1 > 255)
@@ -88,14 +92,14 @@ unsigned int	Spot::mergeColors(unsigned int color1, unsigned int color2)
   //   b1 = 255;
 
   r1 = r1 + r2;
-  if (r1 > 255)
-    r1 = 255;
+  if (r1 > rm)
+    r1 = rm;
   g1 = g1 + g2;
-  if (g1 > 255)
-    g1 = 255;
+  if (g1 > gm)
+    g1 = gm;
   b1 = b1 + b2;
-  if (b1 > 255)
-    b1 = 255;
+  if (b1 > bm)
+    b1 = bm;
 
   return colorUnificator(r1, g1, b1);
 }
@@ -163,17 +167,17 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   ray->reset();
   for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
     (*a)->object->preProcess(camera, ray);
-  drt::render::Scene::t_Item *i = (*light->subItems.cbegin());
-  drt::render::Scene::t_Item *a = (*lastFound->subItems.cbegin());
-  x = i->object->getX();
-  y = i->object->getY();
-  z = i->object->getZ();
+  AObject *spotTrans = (*light->subItems.cbegin())->object;
+  AObject *objTrans = (*lastFound->subItems.cbegin())->object;
+  x = spotTrans->getX();
+  y = spotTrans->getY();
+  z = spotTrans->getZ();
   p.x = camera->getX() + ray->getX() * k;
   p.y = camera->getY() + ray->getY() * k;
   p.z = camera->getZ() + ray->getZ() * k;
-  l.x = x - p.x - a->object->getX();
-  l.y = y - p.y - a->object->getY();
-  l.z = z - p.z - a->object->getZ();
+  l.x = x - p.x - objTrans->getX();
+  l.y = y - p.y - objTrans->getY();
+  l.z = z - p.z - objTrans->getZ();
 
   shadow = isInShadow(objects, p, l, lastFound);
   n = obj->getNormale(p, l);
@@ -186,6 +190,6 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
     tmpcolor = applyLight(cosa, tmpcolor);
   else
     tmpcolor = 0;
-  color = mergeColors(tmpcolor, color);
+  color = mergeColors(tmpcolor, color, 0xFFFFFF);
   return color;
 }

@@ -47,6 +47,43 @@ unsigned int	Spot::applyLight(double cosa, unsigned int color) {
   return tmpcolor;
 } 
 
+void		Spot::applyRotation(t_pt *n, AObject *rot)
+{
+  t_pt		tmp = *n;
+  double	_cos = cos(- rot->getZ());
+  double	_sin = sin(- rot->getZ());
+  double	x;
+  double	y;
+  double	z;
+
+  x = tmp.x * _cos - tmp.y * _sin;
+  y = tmp.x * _sin + tmp.y * _cos;
+  z = tmp.z;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+
+  _cos = cos(- rot->getY());
+  _sin = sin(- rot->getY());
+  x = tmp.x * _cos - tmp.z * _sin;
+  y = tmp.y;
+  z = tmp.x * _sin + tmp.z * _cos;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+
+  _cos = cos(rot->getX());
+  _sin = sin(rot->getX());
+  x = tmp.x;
+  y = tmp.y * _cos - tmp.z * _sin;
+  z = tmp.y * _sin + tmp.z * _cos;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+  
+  *n = tmp;
+}
+
 unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray * ray,
 				  AObject * obj, double k, unsigned int color)
 {
@@ -58,6 +95,8 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   drt::render::Scene::t_Item	*lastFound = nullptr;
   drt::render::Scene::t_Item	*light = nullptr;
   unsigned int	tmpcolor;
+  AObject *objTrans = nullptr;
+  AObject *objRot = nullptr;
 
   for (auto b = objects.cbegin(); b != objects.cend(); b++)
     {
@@ -79,21 +118,34 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   tmpcolor = lastFound->object->getColor();
   camera->reset();
   ray->reset();
+  int d = 0;
   for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
-    (*a)->object->preProcess(camera, ray);
-  drt::render::Scene::t_Item *i = (*light->subItems.cbegin());
-  drt::render::Scene::t_Item *a = (*lastFound->subItems.cbegin());
-  x = i->object->getX();
-  y = i->object->getY();
-  z = i->object->getZ();
+    {
+      if (d == 0)
+	objTrans = (*a)->object;
+      if (d == 1)
+	objRot = (*a)->object;
+      (*a)->object->preProcess(camera, ray);
+      d++;
+    }
+  AObject *spotTrans = (*light->subItems.cbegin())->object;
+
+  x = spotTrans->getX();
+  y = spotTrans->getY();
+  z = spotTrans->getZ();
   p.x = camera->getX() + ray->getX() * k;
   p.y = camera->getY() + ray->getY() * k;
   p.z = camera->getZ() + ray->getZ() * k;
-  l.x = x - p.x - a->object->getX();
-  l.y = y - p.y - a->object->getY();
-  l.z = z - p.z - a->object->getZ();
 
+  applyRotation(&p, objRot);
   n = obj->getNormale(p, l);
+  p.x = p.x + objTrans->getX();
+  p.y = p.y + objTrans->getY();
+  p.z = p.z + objTrans->getZ();
+  l.x = x - p.x;
+  l.y = y - p.y;
+  l.z = z - p.z;
+
   this->normalize(&n);
   this->normalize(&l);
   cosa = (n.x * l.x) + (n.y * l.y) + (n.z * l.z);

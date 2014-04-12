@@ -24,6 +24,7 @@ public:
   virtual double	getZ() {return z;}
   unsigned int		applyLight(double, unsigned int);
   void			normalize(t_pt *);
+  void			applyRotation(t_pt *n, AObject *rot);
 
 private:
   double	x;
