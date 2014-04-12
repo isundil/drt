@@ -1,15 +1,23 @@
 #include "Cone.hpp"
 
-Cone::Cone(unsigned int color,double r) : AMathObject()
+Cone::Cone(unsigned int color, double r, double lxa, double lxi, double lya, double lyi, double lza,
+	       double lzi) : AMathObject()
 {
   this->color = color;
   this->r = r;
+  lim.limXMax = lxa;
+  lim.limXMin = lxi;
+  lim.limYMax = lya;
+  lim.limYMin = lyi;
+  lim.limZMax = lza;
+  lim.limZMin = lzi;
 }
 
 Cone::Cone(Cone &c) : AMathObject()
 {
   this->color = c.getColor();
   this->r = c.getR();
+  this->lim = c.getLim();
 }
 
 double		Cone::computeEquation(Camera *camera, Ray *ray)
@@ -30,7 +38,57 @@ double		Cone::computeEquation(Camera *camera, Ray *ray)
   // std::cout << res.first << std::endl;
   // std::cout << res.second << std::endl;
 
-  return UtilSdeg::getK(res, d);
+  double	k = UtilSdeg::getK(res, d);
+  t_pt		p;
+  p.x = camera->getX() + k * ray->getX();
+  p.y = camera->getY() + k * ray->getY();
+  p.z = camera->getZ() + k * ray->getZ();
+  if (lim.limXMax > lim.limXMin)
+    {
+      if (p.x < lim.limXMin || p.x > lim.limXMax)
+	{
+	  k = -1;
+	  if (res.second > 0)
+	    {
+	      p.x = camera->getX() + res.second * ray->getX();
+	      p.y = camera->getY() + res.second * ray->getY();
+	      p.z = camera->getZ() + res.second * ray->getZ();
+	      if (p.x > lim.limXMin && p.x < lim.limXMax)
+		k = res.second;
+	    }
+	}
+    }
+  if (lim.limYMax > lim.limYMin)
+    {
+      if (p.y < lim.limYMin || p.y > lim.limYMax)
+	{
+	  k = -1;
+	  if (res.second > 0)
+	    {
+	      p.x = camera->getX() + res.second * ray->getX();
+	      p.y = camera->getY() + res.second * ray->getY();
+	      p.z = camera->getZ() + res.second * ray->getZ();
+	      if (p.y > lim.limYMin && p.y < lim.limYMax)
+		k = res.second;
+	    }
+	}
+    }
+  if (lim.limZMax > lim.limZMin)
+    {
+      if (p.z < lim.limZMin || p.z > lim.limZMax)
+	{
+	  k = -1;
+	  if (res.second > 0)
+	    {
+	      p.x = camera->getX() + res.second * ray->getX();
+	      p.y = camera->getY() + res.second * ray->getY();
+	      p.z = camera->getZ() + res.second * ray->getZ();
+	      if (p.z > lim.limZMin && p.z < lim.limZMax)
+		k = res.second;
+	    }
+	}
+    }
+  return k;
 }
 
 t_pt	Cone::getNormale(t_pt p, t_pt l)

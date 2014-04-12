@@ -16,11 +16,22 @@
 typedef	struct		__attribute__ ((packed)) s_rayon {
   unsigned int		color;
   short			r;
+  short			lxa;
+  short			lxi;
+  short			lya;
+  short			lyi;
+  short			lza;
+  short			lzi;
 }			t_rayon;
 
 typedef	struct		__attribute__ ((packed)) s_angle {
   unsigned int		color;
-  double		a;
+  short			lxa;
+  short			lxi;
+  short			lya;
+  short			lyi;
+  short			lza;
+  short			lzi;
 }			t_angle;
 
 class		basicShape {
