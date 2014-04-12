@@ -225,12 +225,6 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
 
   applyRotation(&p, objRot);
   n = obj->getNormale(p, l);
-  p.x = p.x + objTrans->getX();
-  p.y = p.y + objTrans->getY();
-  p.z = p.z + objTrans->getZ();
-  l.x = x - p.x;
-  l.y = y - p.y;
-  l.z = z - p.z;
 
   // for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
   //   (*a)->object->preProcess(camera, ray);
@@ -239,14 +233,21 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   // x = spotTrans->getX();
   // y = spotTrans->getY();
   // z = spotTrans->getZ();
-  // p.x = camera->getX() + ray->getX() * k;
-  // p.y = camera->getY() + ray->getY() * k;
-  // p.z = camera->getZ() + ray->getZ() * k;
-  // l.x = x - p.x - objTrans->getX();
-  // l.y = y - p.y - objTrans->getY();
-  // l.z = z - p.z - objTrans->getZ();
+  p.x = camera->getX() + ray->getX() * k;
+  p.y = camera->getY() + ray->getY() * k;
+  p.z = camera->getZ() + ray->getZ() * k;
+  l.x = x - p.x - objTrans->getX();
+  l.y = y - p.y - objTrans->getY();
+  l.z = z - p.z - objTrans->getZ();
 
   shadow = isInShadow(objects, p, l, lastFound);
+  p.x = p.x + objTrans->getX();
+  p.y = p.y + objTrans->getY();
+  p.z = p.z + objTrans->getZ();
+  l.x = x - p.x;
+  l.y = y - p.y;
+  l.z = z - p.z;
+
   // n = obj->getNormale(p, l);
   this->normalize(&n);
   this->normalize(&l);
