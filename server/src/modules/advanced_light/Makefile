@@ -1,6 +1,6 @@
 
-NAME=	../../../modules/basicLight.so
-# NAME=	../../../modules/advancedLight.so
+# NAME=	../../../modules/basicLight.so
+NAME=	../../../modules/advancedLight.so
 
 CXX=	clang++ -std=c++11 -fpic -I../../kernel/render/ -I../includes/ -I../../kernel/modules -g3 -I../../kernel/
 
