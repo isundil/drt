@@ -9,6 +9,17 @@ namespace client
 {
     public class Cone : AObjects
     {
+        Cone(Cone o)
+            : base(o)
+        {
+            this.Height = o.Height;
+        }
+
+        override public object Clone()
+        {
+            return new Cone(this);
+        }
+
         new static public AObjects create_x(Points p1, Points p2, Viewport vp, bool tmp = false)
         {
             var d = (int)Math.Sqrt(Math.Pow(p2.Y - p1.Y, 2) + Math.Pow(p2.Z - p1.Z, 2));

@@ -123,7 +123,9 @@ namespace client
                 servers_map.Clear();
                 progressbar.Value = 0;
                 DrawPixel3DView_count = 0;
-                progressbar.Maximum = view_3d.Width * view_3d.Height;
+
+                this.destination = view_3d.Image;
+                this.pdestination = view_3d;
                 calculusWorker.DestinationImage = view_3d.Image;
                 calculusWorker.DoScenePreviewCalculus(ol);
             }
@@ -133,10 +135,26 @@ namespace client
 
         Dictionary<ushort, int> servers_map = new Dictionary<ushort, int>();
 
+        Image _destination;
+        public Image destination
+        {
+            get
+            {
+                return _destination;
+            }
+            set
+            {
+                _destination = value;
+                progressbar.Maximum = _destination.Width * _destination.Height;
+                progressbar.Value = 0;
+                DrawPixel3DView_count = 0;
+            }
+        }
+        public PictureBox pdestination;
         private void DrawPixel3DView(ushort src, int x, int y, Color c)
         {
-            if (x >= td_bitmap.Width || y >= td_bitmap.Height) return;
-            td_bitmap.SetPixel(x, y, c);
+            if (x >= destination.Width || y >= destination.Height) return;
+            ((Bitmap)destination).SetPixel(x, y, c);
 
             if (servers_map.ContainsKey(src))
             {
@@ -150,13 +168,16 @@ namespace client
             DrawPixel3DView_count++;
             progressbar.Value = DrawPixel3DView_count;
 
-            view_3d.Refresh();
+            if (pdestination != null) pdestination.Refresh();
 
             if (DrawPixel3DView_count == progressbar.Maximum)
             {
                 DrawPixel3DView_count = 0;
                 progressbar.Value = 0;
                 show_server_mapping.Enabled = true;
+
+                if (!ol.animatronic.IsFinished)
+                calculusWorker.RunWorkerAsync();
             }
         }
 
@@ -168,8 +189,8 @@ namespace client
             {
                 for (var y = 0; y < H; y++)
                 {
-                    if (minx + x < td_bitmap.Width && miny + y < td_bitmap.Height)
-                        td_bitmap.SetPixel(minx + x, miny + y, Color.FromArgb((Int32)BitConverter.ToInt32(bufpels, i)));
+                    if (minx + x < destination.Width && miny + y < destination.Height)
+                        ((Bitmap)destination).SetPixel(minx + x, miny + y, Color.FromArgb((Int32)BitConverter.ToInt32(bufpels, i)));
 
                     i += sizeof(Int32);
                 }
@@ -187,13 +208,16 @@ namespace client
             DrawPixel3DView_count += W * H;
             progressbar.Value = DrawPixel3DView_count;
 
-            view_3d.Refresh();
+            if (pdestination != null) pdestination.Refresh();
 
             if (DrawPixel3DView_count == progressbar.Maximum)
             {
                 DrawPixel3DView_count = 0;
                 progressbar.Value = 0;
                 show_server_mapping.Enabled = true;
+
+                if (!ol.animatronic.IsFinished)
+                calculusWorker.RunWorkerAsync();
             }
         }
 

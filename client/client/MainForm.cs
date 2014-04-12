@@ -1,4 +1,5 @@
-﻿using System;
+﻿using client.Animations;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -143,9 +144,15 @@ namespace client
             int x = 0;
             int y = 0;
 
+            var imagepixels = td_bitmap.Width * td_bitmap.Height;
+            var maxpixels = 0;
+            foreach (var key in servers_map.Keys)
+            { maxpixels += servers_map[key]; }
+
             foreach (var key in servers_map.Keys)
             {
-                for (var i = 0; i < servers_map[key]; i++)
+                var nbpixels = ((double)((double)servers_map[key] * imagepixels)) / maxpixels;
+                for (var i = 0; i < nbpixels; i++)
                 {
                     bm.SetPixel(x, y, colors[key % colors.Length]);
 

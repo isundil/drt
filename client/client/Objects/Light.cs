@@ -10,6 +10,15 @@ namespace client.Objects
 {
     public class Light : AObjects
     {
+        Light(Light o)
+            : base(o)
+        { }
+
+        override public object Clone()
+        {
+            return new Light(this);
+        }
+
         public override void Refresh()
         { }
 
