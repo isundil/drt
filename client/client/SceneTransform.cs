@@ -101,8 +101,8 @@ namespace client
 
             foreach (var o in ol)
             {
-                if (!s.RequestedModules.Contains(o.getModule()))
-                    s.RequestedModules.Add(o.getModule());
+                if (!s.RequestedModules.Contains(o.getModule(true)))
+                    s.RequestedModules.Add(o.getModule(true));
                 s.Items.Add(o.getSceneItem());
             }
 

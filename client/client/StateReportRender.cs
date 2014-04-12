@@ -21,7 +21,7 @@ namespace client
 
         List<string> LOADING = new List<string>() {
             "I'M SPARRRTACUS !",
-            "Preparing a Nutty Moka...",
+            "Preparing a Nutty Mocha...",
             "Landing on the moon...",
             "Testing midichlorians rate...",
             "I see skies of green, red roses too...",
@@ -31,11 +31,11 @@ namespace client
             "Converting coffee into code...",
             "Launching the pokeball...",
             "Conjuring a unicorn...",
-            "NYANYANYANYANYANYANYANYANYA NYAN NYAN NYANYA NYANYANYAN...",
+            "NYANYANYANYANYANYANYANYANYA NYAN...",
             "Switching on the light...",
             "Switching off the light...",
             "Playing David Guetta sound...",
-            "Making studid loading sentences...",
+            "Making stupid loading sentences...",
             "NAK NAK NAKNAAAAK !",
             "Forging one ring to rule them all...",
             "Making the awesome sonic RAINBOOOOM !"

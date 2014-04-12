@@ -331,7 +331,7 @@ namespace client
         abstract public bool solve_equation_y(Points p);
         abstract public bool solve_equation_z(Points p);
 
-        virtual public Modules.eModules getModule() { return Modules.eModules.BASIC_SHAPE; }
+        virtual public Modules.eModules getModule(bool final_render = false) { return Modules.eModules.BASIC_SHAPE; }
         public abstract int getSubModule();
 
         public abstract byte[] getBytes();
