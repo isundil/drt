@@ -147,6 +147,7 @@ namespace client
                 _destination = value;
                 progressbar.Maximum = _destination.Width * _destination.Height;
                 progressbar.Value = 0;
+                DrawPixel3DView_count = 0;
             }
         }
         public PictureBox pdestination;
