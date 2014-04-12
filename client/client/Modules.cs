@@ -34,7 +34,8 @@ namespace client
             { eModules.BASIC_SHAPE, new Dictionary<string, int>() {
                 { "SPHERE",      1 },
                 { "CYLINDER",    2 },
-                { "CONE",        3 }
+                { "CONE",        3 },
+                { "PLAN",        4 }
             } },
             { eModules.BASIC_TRANSFORM, new Dictionary<string, int>() {
                 { "TRANSLATION", 1 },

@@ -188,6 +188,9 @@ namespace client
                 case eDrawMode.CONE:
                     s = Cone.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
+                case eDrawMode.PLAN:
+                    s = Plan.create_x((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
             }
             if (s != null)
             {
@@ -226,6 +229,9 @@ namespace client
                 case eDrawMode.CONE:
                     s = Cone.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
+                case eDrawMode.PLAN:
+                    s = Plan.create_y((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
             }
             if (s != null)
             {
@@ -263,6 +269,9 @@ namespace client
                     break;
                 case eDrawMode.CONE:
                     s = Cone.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
+                    break;
+                case eDrawMode.PLAN:
+                    s = Plan.create_z((Points)p1.Clone(), (Points)p2.Clone(), vp);
                     break;
             }
             if (s != null)

@@ -144,6 +144,7 @@ namespace client
     [XmlInclude(typeof(Sphere))]
     [XmlInclude(typeof(Cylinder))]
     [XmlInclude(typeof(Cone))]
+    [XmlInclude(typeof(Plan))]
     abstract public class AObjects : ICloneable
     {
         protected AObjects()
