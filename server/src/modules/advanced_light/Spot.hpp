@@ -28,6 +28,7 @@ public:
   unsigned int		applyLight(double, unsigned int);
   bool			isInShadow(std::map<unsigned int, drt::render::Scene::t_Item *>, t_pt, t_pt, drt::render::Scene::t_Item *);
   void			normalize(t_pt *);
+  void			applyRotation(t_pt *n, AObject *rot);
 
 private:
   double	x;
