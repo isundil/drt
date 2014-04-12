@@ -2,6 +2,8 @@
 #include <string.h>
 #include <iostream>
 #include "Spot.hpp"
+#include "Transparency.hpp"
+#include "Reflection.hpp"
 
 extern "C"
 {
@@ -15,10 +17,10 @@ extern "C"
 	ret = (AObject*) new Spot();
 	break;
       case 2:
-	// transparency (double coef)
+	ret = new Transparency((double) *data);
 	break;
       case 3:
-	// reflection (double coef)
+	ret = new Reflection((double) *data);
 	break;
       default:
 	break;

@@ -106,23 +106,24 @@ Scene::t_Item	*Scene::parseItem( std::ifstream &s, module::ModuleManager *module
 			// std::cout << "  data contain [" << (char *) obj->data << "]" << std::endl;
 	}
 	std::string tmpStr = moduleArray[(int) obj->toReceive.moduleID];
-	std::cout << "module : [" << tmpStr << "]" << std::endl;
-	std::cout << "subModule : " << (short) obj->toReceive.subModule << std::endl;
-	std::cout << std::endl << "there is " << obj->toReceive.nbSubItem << " subItems" << std::endl;
+	// std::cout << "module : [" << tmpStr << "]" << std::endl;
+	// std::cout << "subModule : " << (short) obj->toReceive.subModule << std::endl;
+	// std::cout << std::endl << "there is " << obj->toReceive.nbSubItem << " subItems" << std::endl
+	  ;
 	for (unsigned int a = 0; a < obj->toReceive.nbSubItem; a++)
 	  {
-	    std::cout << "SubItem [" << std::endl;
+	    // std::cout << "SubItem [" << std::endl;
 		obj->subItems.push_back(parseItem(s, modules, moduleArray));
-	    std::cout << "]" << std::endl;
+	    // std::cout << "]" << std::endl;
 	  }
 
 	module::AModule	*tmpModule = modules->getModule(tmpStr);
 	if (tmpModule == nullptr)
 	  {
-	    std::cout << "tmpModule == nullptr" << std::endl;
+	    // std::cout << "tmpModule == nullptr" << std::endl;
 		throw network::CompilFail();
 	  }
-	std::cout << "getInstance" << std::endl;
+	// std::cout << "getInstance" << std::endl;
 	result = tmpModule->getInstance(obj->toReceive.subModule, obj->data);
 	obj->object = result;
 	return (obj);

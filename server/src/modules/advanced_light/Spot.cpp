@@ -2,6 +2,8 @@
 #include <iostream>
 #include "Spot.hpp"
 #include "Scene.hpp"
+#include "Transparency.hpp"
+#include "Reflection.hpp"
 
 Spot::Spot() {
   x = 0;
@@ -213,9 +215,17 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
   double	tmpk = k;
   unsigned int	tmpcolor = 0;
   drt::render::Scene::t_Item	*lastFound = nullptr;
+  double	coef = 0;
+  Transparency	*trans = nullptr;
 
-  transMax++;
-  // std::cout << "transMax = " << transMax << std::endl;
+  for (auto a = obj->subItems.cbegin(); a != obj->subItems.cend(); a++) {
+    trans = dynamic_cast<Transparency *> ((*a)->object);
+    if (trans)
+      break;
+  }
+  coef = trans->getCoef();
+  if (coef == 0)
+    return color;
 
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
@@ -238,9 +248,7 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
   if (lastFound != nullptr)
     for (auto it = objects.cbegin(); it != objects.cend(); it++)
       tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, tmpcolor);
-  transMax--;
-  // std::cout << "found color [" << tmpcolor << "] to merge with [" << color << "]" << std::endl;
-  return mergeColors2(tmpcolor, color, 0.2); // recuperer le coef de l'objet
+  return mergeColors2(tmpcolor, color, coef);
 }
 
 unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_Item *obj,
@@ -264,6 +272,19 @@ unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_I
   double	tmpk = k;
   unsigned int	tmpcolor = 0;
   drt::render::Scene::t_Item	*lastFound = nullptr;
+  double	coef = 0;
+  Reflection	*ref = nullptr;
+
+  for (auto a = obj->subItems.cbegin(); a != obj->subItems.cend(); a++) {
+    ref = dynamic_cast<Reflection *> ((*a)->object);
+    if (ref)
+      break;
+  }
+  coef = ref->getCoef();
+  if (coef == 0)
+    return color;
+
+  std::cout << "reflection ! :D"  << std::endl;
 
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
@@ -286,7 +307,7 @@ unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_I
   if (lastFound != nullptr)
     for (auto it = objects.cbegin(); it != objects.cend(); it++)
       tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, tmpcolor);
-  return mergeColors2(tmpcolor, color, 0.5); // recuperer le coef de l'objet
+  return mergeColors2(tmpcolor, color, coef);
 }
 
 unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray * ray,
