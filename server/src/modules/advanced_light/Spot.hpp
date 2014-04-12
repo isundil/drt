@@ -12,7 +12,7 @@ class	Scene;
 class		Spot : public AObject {
 public:
 
-  Spot();
+  Spot(unsigned int);
   Spot(Spot &);
 
   virtual double	computeEquation(Camera * camera, Ray * ray) {return -1;}
@@ -27,7 +27,7 @@ public:
   void			colorSeparator(unsigned int *, unsigned int *, unsigned int *, unsigned int);
   unsigned int		colorUnificator(unsigned int red, unsigned int green, unsigned int blue);
   unsigned int		mergeColors(unsigned int color1, unsigned int color2, unsigned int max);
-  unsigned int		applyLight(double, unsigned int);
+  unsigned int		applyLight(double, unsigned int, drt::render::Scene::t_Item *);
   bool			isInShadow(std::map<unsigned int, drt::render::Scene::t_Item *>, t_pt, t_pt, drt::render::Scene::t_Item *);
   void			normalize(t_pt *);
   void			applyRotation(t_pt *n, AObject *rot);
