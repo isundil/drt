@@ -4,12 +4,13 @@
 #include "Scene.hpp"
 #include "Transparency.hpp"
 #include "Reflection.hpp"
+#include "Brightness.hpp"
 
-Spot::Spot() {
+Spot::Spot(unsigned int _color) {
   x = 0;
   y = 0;
   z = 0;
-  color = 0xFFFFFF;
+  color = _color;
   refMax = 0;
   transMax = 0;
 }
@@ -18,7 +19,7 @@ Spot::Spot(Spot &s) {
   x = 0;
   y = 0;
   z = 0;
-  color = 0xFFFFFF;
+  color = getColor();
   refMax = 0;
   transMax = 0;
 }
@@ -31,20 +32,39 @@ void		Spot::normalize(t_pt *a) {
   a->z = a->z / r;
 }
 
-unsigned int	Spot::applyLight(double cosa, unsigned int color) {
+unsigned int	Spot::applyLight(double cosa, unsigned int color, drt::render::Scene::t_Item *obj) {
   unsigned int	r;
   unsigned int	g;
   unsigned int	b;
 
-  colorSeparator(&b, &g, &r, color);
+  unsigned int	rs;
+  unsigned int	gs;
+  unsigned int	bs;
 
-  r = cosa * r;
+  double	coef = 0;
+  Brightness	*bright = nullptr;
+
+  for (auto a = obj->subItems.cbegin(); a != obj->subItems.cend(); a++) {
+    bright = dynamic_cast<Brightness *> ((*a)->object);
+    if (bright)
+      break;
+  }
+  if (bright)
+    {
+      // std::cout << "Yay ! j'ai un coef !" << std::endl;
+      coef = bright->getCoef();
+    }
+
+  colorSeparator(&b, &g, &r, color);
+  colorSeparator(&bs, &gs, &rs, this->color);
+
+  r = cosa * r + cosa * rs * coef;
   if (r > 255)
     r = 255;
-  g = cosa * g;
+  g = cosa * g + cosa * gs * coef;
   if (g > 255)
     g = 255;
-  b = cosa * b;
+  b = cosa * b + cosa * bs * coef;
   if (b > 255)
     b = 255;
 
@@ -397,7 +417,7 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   if (cosa < 0)
     cosa = 0;
   if (shadow == false)
-    tmpcolor = applyLight(cosa, tmpcolor);
+    tmpcolor = applyLight(cosa, tmpcolor, lastFound);
   else
     tmpcolor = 0;
   color = mergeColors(tmpcolor, color, 0xFFFFFF);

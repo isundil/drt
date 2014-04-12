@@ -7,7 +7,8 @@ CXX=	clang++ -std=c++11 -fpic -I../../kernel/render/ -I../includes/ -I../../kern
 SRC=	AdvancedLight.cpp	\
 	Spot.cpp		\
 	Transparency.cpp	\
-	Reflection.cpp
+	Reflection.cpp		\
+	Brightness.cpp
 
 OBJ=	$(SRC:.cpp=.o)
 
