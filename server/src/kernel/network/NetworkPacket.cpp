@@ -10,7 +10,9 @@
 #include "Socket.hpp"
 #include "worker/NetworkWorker.hpp"
 #include "worker/WorkerManager.hpp"
+#include "worker/ManagedScene.hpp"
 #include "render/Scene.hpp"
+#include "UselessException.hpp"
 
 using namespace drt::network;
 
@@ -73,6 +75,18 @@ Result::Result(unsigned short _id, unsigned short px, unsigned short py, unsigne
 #endif
 	if (src == 0xFFFF)
 		src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
+}
+
+void ChunkResult::check() const
+{
+	drt::WorkerManager *m = drt::WorkerManager::getSingleton();
+	PeerInfo *const pi = m->getNetwork()->getPeer(id);
+	worker::ManagedScene *p;
+
+	if (pi->isDirect())
+		if ((p = m->getManagedScene(pi->getScene())))
+			if (!(p->chunkDone(*this)))
+				throw UselessException();
 }
 
 ChunkResult::ChunkResult(const ChunkResult &o): id(o.id), src(o.src), minx(o.minx), miny(o.miny), maxx(o.maxx), maxy(o.maxy), pixList(o.pixList)
@@ -481,10 +495,12 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 			if (!(*i)->getConfirmed() && (*i)->getSocket() != newServ->getSocket())
 			{
 				if (!(*i)->isAClient())
+				{
 					m.send(newServ, new SAuth((*i)->getId(), 0));
+					m.send(newServ, new Ready((*i)->getId(), (*i)->ready()));
+				}
 				else
 					m.send(newServ, new CAuth((*i)->getId()));
-				m.send(newServ, new Ready((*i)->getId(), (*i)->ready()));
 			}
 	}
 	else
@@ -507,6 +523,7 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 				m.broadcast(new Ready((*i)->getId(), (*i)->ready()));
 			}
 			m.send(pi, new IdCh(0xFFFF, (*i)->getId()));
+			m.send(pi, new Ready((*i)->getId(), (*i)->ready()));
 		}
 		m.broadcast(new IdCh(me->getOldId(), id), pi);
 		m.broadcast(new Ready(me->getId(), me->ready()));
@@ -612,6 +629,7 @@ void Result::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 void ChunkResult::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 {
 	PeerInfo *const pi = m.getNetwork()->getPeer(id);
+
 	m.send(pi, new ChunkResult(*this));
 }
 
@@ -805,7 +823,7 @@ std::stringstream * Result::getStream(size_t *buflen) const
 
 std::stringstream * ChunkResult::getStream(size_t *buflen) const
 {
-	std::stringstream *ss = new std::stringstream();
+	std::stringstream *ss;
 	const unsigned short mx = minx;
 	const unsigned short my = miny;
 	char code = 0x11;
@@ -814,6 +832,8 @@ std::stringstream * ChunkResult::getStream(size_t *buflen) const
 	wh[0] = maxx -minx +1;
 	wh[1] = maxy -miny +1;
 
+	this->check();
+	ss = new std::stringstream();
 	ss->write(&code, sizeof(code));
 	ss->write((char *)&id, sizeof(id));
 	ss->write((char *)&src, sizeof(src));
@@ -917,6 +937,15 @@ const drt::render::Scene *NewJob::getScene() const
 
 unsigned int NewJob::getSize() const
 { return size; }
+
+unsigned int ChunkResult::getX() const
+{ return minx; }
+
+unsigned int ChunkResult::getY() const
+{ return miny; }
+
+short ChunkResult::getFrom() const
+{ return id; }
 
 ChunkResult &ChunkResult::operator+=(std::tuple<unsigned short, unsigned short, unsigned int>item)
 {

@@ -284,6 +284,13 @@ class ChunkResult: public ANetworkPacket
 
 		unsigned int operator[](std::pair<unsigned short, unsigned short>) const;
 
+		unsigned int getX() const;
+		unsigned int getY() const;
+		short getFrom() const;
+
+	private:
+		void check() const;
+
 	private:
 		unsigned short id;
 		unsigned short src;
