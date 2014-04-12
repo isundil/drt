@@ -29,10 +29,16 @@ public:
   bool			isInShadow(std::map<unsigned int, drt::render::Scene::t_Item *>, t_pt, t_pt, drt::render::Scene::t_Item *);
   void			normalize(t_pt *);
   void			applyRotation(t_pt *n, AObject *rot);
+  unsigned int		mergeColors2(unsigned int color1, unsigned int color2, double coef);
+  unsigned int		transparency(t_pt, Ray *, t_pt , drt::render::Scene::t_Item *, unsigned int, drt::render::Scene *, std::map<unsigned int, drt::render::Scene::t_Item *>);
+  // unsigned int		reflection(t_pt, Ray *, t_pt , drt::render::Scene::t_Item *, unsigned int, std::map<unsigned int, drt::render::Scene::t_Item *>);
 
 private:
   double	x;
   double	y;
   double	z;
   unsigned int	color;
+
+  unsigned int	refMax;
+  unsigned int	transMax;
 };

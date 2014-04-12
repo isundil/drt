@@ -21,6 +21,7 @@ public:
   virtual double	getX();
   virtual double	getY();
   virtual double	getZ();
+
   double	getRX();
   double	getRY();
   double	getRZ();

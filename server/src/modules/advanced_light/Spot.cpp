@@ -9,6 +9,8 @@ Spot::Spot() {
   y = 0;
   z = 0;
   color = 0xFFFFFF;
+  refMax = 0;
+  transMax = 0;
 }
 
 void		Spot::normalize(t_pt *a) {
@@ -104,6 +106,31 @@ unsigned int	Spot::mergeColors(unsigned int color1, unsigned int color2, unsigne
   return colorUnificator(r1, g1, b1);
 }
 
+unsigned int	Spot::mergeColors2(unsigned int color1, unsigned int color2, double coef)
+{
+  unsigned int	r1 = 0;
+  unsigned int	g1 = 0;
+  unsigned int	b1 = 0;
+  unsigned int	r2 = 0;
+  unsigned int	g2 = 0;
+  unsigned int	b2 = 0;
+
+  colorSeparator(&b1, &g1, &r1, color1);
+  colorSeparator(&b2, &g2, &r2, color2);
+
+  r1 = r1 * coef + r2 * (1 - coef);
+  if (r1 > 255)
+    r1 = 255;
+  g1 = g1 * coef + g2 * (1 - coef);
+  if (g1 > 255)
+    g1 = 255;
+  b1 = b1 * coef + b2 * (1 - coef);
+  if (b1 > 255)
+    b1 = 255;
+
+  return colorUnificator(r1, g1, b1);
+}
+
 bool		Spot::isInShadow(std::map<unsigned int, drt::render::Scene::t_Item *> objects, t_pt p,
 				 t_pt l, drt::render::Scene::t_Item *obj)
 {
@@ -168,10 +195,57 @@ void		Spot::applyRotation(t_pt *n, AObject *rot)
   *n = tmp;
 }
 
+unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_Item *obj,
+				   unsigned int color, drt::render::Scene *scene,
+				   std::map<unsigned int, drt::render::Scene::t_Item *> objects)
+{
+  Camera	cam(p.x, p.y, p.z);
+  Ray		ray(r->getX(), r->getY(), r->getZ());
+  double	k = -1;
+  double	tmpk = k;
+  drt::render::Scene::t_Item	*lastFound = nullptr;
+  unsigned int	tmpcolor;
+
+  // transMax++;
+  // std::cout << "transMax = " << transMax << std::endl;
+
+  for (auto i = objects.cbegin(); i != objects.cend(); i++)
+    {
+      cam.reset();
+      ray.reset();
+      if ((*i).second->object != obj->object)
+	{
+	  // (*i).second->object->preProcess(); // I don't think the object will need a preProcess func.
+	  for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++)
+	    (*a)->object->preProcess(&cam, &ray);
+	  tmpk = (*i).second->object->computeEquation(&cam, &ray);
+	  if ((tmpk < k || k == -1) && tmpk >= 0)
+	    {
+	      k = tmpk;
+	      color = (*i).second->object->getColor();
+	      lastFound = (*i).second;
+	    }
+	}
+    }
+  if (lastFound != nullptr)
+    for (auto it = objects.cbegin(); it != objects.cend(); it++)
+      tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, color);
+  // transMax--;
+  // std::cout << "found color [" << tmpcolor << "] to merge with [" << color << "]" << std::endl;
+  return mergeColors2(tmpcolor, color, 0.4); // recuperer le coef de l'objet
+}
+
+// unsigned int	Spot::reflection(t_pt p, Ray *ray, t_pt norm, drt::render::Scene::t_Item *obj,
+				// unsigned int color,
+				   // std::map<unsigned int, drt::render::Scene::t_Item *> objects)
+// {
+// }
+
 unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray * ray,
 				  AObject * obj, double k, unsigned int color)
 {
   t_pt		p;
+  t_pt		p2;
   t_pt		l;
   t_pt		n;
   double	cosa;
@@ -179,6 +253,8 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   drt::render::Scene::t_Item	*lastFound = nullptr;
   drt::render::Scene::t_Item	*light = nullptr;
   unsigned int	tmpcolor;
+  unsigned int	transColor = 0;
+  unsigned int	reflectedColort = 0;
   unsigned int	nbSpots = 0;
   bool		shadow = false;
   AObject *objTrans = nullptr;
@@ -222,17 +298,22 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   p.x = camera->getX() + ray->getX() * k;
   p.y = camera->getY() + ray->getY() * k;
   p.z = camera->getZ() + ray->getZ() * k;
+  p2 = p;
 
   applyRotation(&p, objRot);
   n = obj->getNormale(p, l);
 
-  // for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
-  //   (*a)->object->preProcess(camera, ray);
-  // AObject *spotTrans = (*light->subItems.cbegin())->object;
-  // AObject *objTrans = (*lastFound->subItems.cbegin())->object;
-  // x = spotTrans->getX();
-  // y = spotTrans->getY();
-  // z = spotTrans->getZ();
+  // static unsigned int maxTrans = 0;
+  // if (maxTrans < 5)		// a modifier plus tard pour mettre des valeur setables
+  //   {
+  //     maxTrans++;
+  //     std::cout << "transparence !!!" << std::endl;
+  //     tmpcolor = transparency(p2, ray, n, lastFound, tmpcolor, scene, objects);
+  //     maxTrans--;
+  //   }
+  // if (refMax < 10)		// a modifier plus tard pour mettre des valeur setables
+  //   reflection(p2, ray, n, lastFound, tmpcolor, objects);
+
   p.x = camera->getX() + ray->getX() * k;
   p.y = camera->getY() + ray->getY() * k;
   p.z = camera->getZ() + ray->getZ() * k;
@@ -241,14 +322,7 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   l.z = z - p.z - objTrans->getZ();
 
   shadow = isInShadow(objects, p, l, lastFound);
-  p.x = p.x + objTrans->getX();
-  p.y = p.y + objTrans->getY();
-  p.z = p.z + objTrans->getZ();
-  l.x = x - p.x;
-  l.y = y - p.y;
-  l.z = z - p.z;
 
-  // n = obj->getNormale(p, l);
   this->normalize(&n);
   this->normalize(&l);
   cosa = (n.x * l.x) + (n.y * l.y) + (n.z * l.z);

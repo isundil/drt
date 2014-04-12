@@ -28,6 +28,7 @@ extern "C"
 
   char			*getName()
   {
+    // static char		*name = strdup("basic_light");
     static char		*name = strdup("advanced_light");
     return name;
   }
