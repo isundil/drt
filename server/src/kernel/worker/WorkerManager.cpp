@@ -292,6 +292,14 @@ void WorkerManager::computeScene(render::Scene *s)
 	managedScenes.push_back(scene);
 }
 
+worker::ManagedScene *WorkerManager::getManagedScene(const render::Scene *s) const
+{
+	for (auto i = managedScenes.cbegin(); i != managedScenes.cend(); i++)
+		if (**i == *s)
+			return *i;
+	return nullptr;
+}
+
 worker::NetworkWorker *WorkerManager::getNetwork()
 { return (worker::NetworkWorker *) networkWorker; }
 

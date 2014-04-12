@@ -56,11 +56,15 @@ namespace client
     {
         private ObjectsListB collection;
 
-        ObjectsList() { collection = new ObjectsListB(); }
+        ObjectsList()
+        {
+            collection = new ObjectsListB();
+            _animatronic = new Animatronic();
+        }
         public ObjectsList(MainForm f)
         {
             collection = new ObjectsListB(f);
-            animatronic = new Animatronic();
+            _animatronic = new Animatronic();
         }
 
         public AObjects GetById(int id)
@@ -72,7 +76,20 @@ namespace client
             return null;
         }
 
-        public Animatronic animatronic;
+        private Animatronic _animatronic;
+        public Animatronic Animatronic
+        {
+            get
+            {
+                return _animatronic;
+            }
+            set
+            {
+                if (value == null)
+                    return;
+                _animatronic = value;
+            }
+        }
 
         // For XML serialization only !
         public AObjects[] Items
@@ -314,6 +331,9 @@ namespace client
             }
         }
 
+        public double Transparency { get; set; }
+        public double Reflection { get; set; }
+
         [EditorAttribute(typeof(MyColorEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public MyColor Color { get; set; }
 
@@ -331,7 +351,7 @@ namespace client
         abstract public bool solve_equation_y(Points p);
         abstract public bool solve_equation_z(Points p);
 
-        virtual public Modules.eModules getModule() { return Modules.eModules.BASIC_SHAPE; }
+        virtual public Modules.eModules getModule(bool final_render = false) { return Modules.eModules.BASIC_SHAPE; }
         public abstract int getSubModule();
 
         public abstract byte[] getBytes();
@@ -345,7 +365,7 @@ namespace client
             return counts[type];
         }
 
-        public SceneItem getSceneItem()
+        public SceneItem getSceneItem(bool final_render = false)
         {
             var sc = new SceneItem(this);
 

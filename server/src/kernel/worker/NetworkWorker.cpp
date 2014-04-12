@@ -16,6 +16,7 @@
 #include "system/CpuUsage.hpp"
 #include "system/MemUsage.hpp"
 #include "render/Scene.hpp"
+#include "network/UselessException.hpp"
 
 using namespace drt::worker;
 
@@ -351,9 +352,13 @@ bool NetworkWorker::sendBroadcast()
 				continue;
 			if ((*i)->isAClient() && !packet->sendToClient(*i))
 				continue;
-			ss = packet->getStream(&packet_len);
-			(*i)->sendData(*ss, packet_len);
-			delete ss;
+			try {
+				ss = packet->getStream(&packet_len);
+				(*i)->sendData(*ss, packet_len);
+				delete ss;
+			}
+			catch (UselessException &e)
+			{ }
 			alreadySent.insert((*i)->getSocket());
 			if ((job = dynamic_cast<network::NewJob *>(packet)) != nullptr)
 			{
@@ -392,9 +397,13 @@ bool NetworkWorker::sendUnique()
 			continue;
 		if (peer->isAClient() && !packet->sendToClient(peer))
 			continue;
-		ss = packet->getStream(&packet_len);
-		peer->sendData(*ss, packet_len);
-		delete ss;
+		try {
+			ss = packet->getStream(&packet_len);
+			peer->sendData(*ss, packet_len);
+			delete ss;
+		}
+		catch (UselessException &e)
+		{ }
 		delete packet;
 	}
 	return true;

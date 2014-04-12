@@ -2,6 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace client
@@ -148,6 +152,12 @@ namespace client
                 progressbar.Maximum = _destination.Width * _destination.Height;
                 progressbar.Value = 0;
                 DrawPixel3DView_count = 0;
+
+                foreach (var t in taskList)
+                {
+                    t.Cancel(true);
+                }
+                taskList.Clear();
             }
         }
         public PictureBox pdestination;
@@ -168,17 +178,7 @@ namespace client
             DrawPixel3DView_count++;
             progressbar.Value = DrawPixel3DView_count;
 
-            if (pdestination != null) pdestination.Refresh();
-
-            if (DrawPixel3DView_count == progressbar.Maximum)
-            {
-                DrawPixel3DView_count = 0;
-                progressbar.Value = 0;
-                show_server_mapping.Enabled = true;
-
-                if (!ol.animatronic.IsFinished)
-                calculusWorker.RunWorkerAsync();
-            }
+            FinalizeDrawing();
         }
 
         private void DrawChunk3DView(ushort src, ushort W, ushort H, int minx, int miny, byte [] bufpels)
@@ -191,7 +191,6 @@ namespace client
                 {
                     if (minx + x < destination.Width && miny + y < destination.Height)
                         ((Bitmap)destination).SetPixel(minx + x, miny + y, Color.FromArgb((Int32)BitConverter.ToInt32(bufpels, i)));
-
                     i += sizeof(Int32);
                 }
             }
@@ -208,17 +207,105 @@ namespace client
             DrawPixel3DView_count += W * H;
             progressbar.Value = DrawPixel3DView_count;
 
-            if (pdestination != null) pdestination.Refresh();
+            FinalizeDrawing();
+        }
 
+        List<CancellationTokenSource> taskList = new List<CancellationTokenSource>();
+        private void FinalizeDrawing()
+        {
             if (DrawPixel3DView_count == progressbar.Maximum)
             {
                 DrawPixel3DView_count = 0;
                 progressbar.Value = 0;
                 show_server_mapping.Enabled = true;
 
-                if (!ol.animatronic.IsFinished)
-                calculusWorker.RunWorkerAsync();
+                if (!ol.Animatronic.IsFinished)
+                    calculusWorker.RunWorkerAsync();
+
+                var ts = new CancellationTokenSource();
+                CancellationToken ct = ts.Token;
+                
+                object dest = destination.Clone();
+                Task.Factory.StartNew(() =>
+                {
+                    apply_antialiasing(dest, ct);
+                }, ct);
+                taskList.Add(ts);
             }
+
+            if (pdestination != null) pdestination.Refresh();
+        }
+
+        static public readonly int AAX = 16;
+        Color getMeanColorArround(Bitmap bm, int x, int y, CancellationToken ct)
+        {
+            double R = 0;
+            double G = 0;
+            double B = 0;
+            double nbcolors = 0;
+            int AAX2 = AAX / 2;
+            for (var nx = -AAX2; nx < AAX2; nx++)
+            {
+                if (ct.IsCancellationRequested) return Color.Black;
+
+                if (nx + x < 0) continue;
+                if (nx + x >= bm.Width) break;
+                for (var ny = -AAX2; ny < AAX2; ny++)
+                {
+                    if (ct.IsCancellationRequested) return Color.Black;
+
+                    if (ny + y < 0) continue;
+                    if (ny + y >= bm.Height) break;
+
+                    Color pel = bm.GetPixel(nx + x, ny + y);
+                    var pivot = (AAX2 - Math.Abs(nx)) * (AAX2 - Math.Abs(ny)) + 1;
+
+                    R += pel.R * pivot;
+                    G += pel.G * pivot;
+                    B += pel.B * pivot;
+
+                    nbcolors += pivot;
+                }
+            }
+
+            return Color.FromArgb(
+                (int)(R / nbcolors),
+                (int)(G / nbcolors),
+                (int)(B / nbcolors));
+        }
+
+        private void apply_antialiasing(object destination, CancellationToken ct)
+        {
+            var bmp = (Bitmap)destination;
+
+            BitmapData data = bmp.LockBits(new Rectangle(0, 0, (int)bmp.PhysicalDimension.Width, (int)bmp.PhysicalDimension.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+            int bytes = Math.Abs(data.Stride) * bmp.Height;
+            byte[] outPut = new byte[bytes];
+            Marshal.Copy(data.Scan0, outPut, 0, bytes);
+            Marshal.Copy(outPut, 0, data.Scan0, bytes);
+            bmp.UnlockBits(data);
+
+            var cpy = bmp.Clone() as Bitmap;
+
+            for (var w = 0; w < cpy.Width; w++)
+            {
+                for (var h = 0; h < cpy.Height; h++)
+                {
+                    if (ct.IsCancellationRequested) return;
+                    bmp.SetPixel(w, h, getMeanColorArround(cpy, w, h, ct));
+                }
+            }
+
+            this.Invoke(UpdateImage, new object[] { bmp });
+        }
+
+        public delegate void UpdateImageDelegate(Bitmap bmp);
+        public UpdateImageDelegate UpdateImage;
+        private void updateImage(Bitmap bmp)
+        {
+            this.destination = bmp.Clone() as Bitmap;
+            this.pdestination.Image = this.destination;
+            this.pdestination.Refresh();
         }
 
         private bool drawTmpObject(MouseEventArgs e, Points p3, Util.eView v)

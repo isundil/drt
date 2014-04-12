@@ -65,6 +65,7 @@ class WorkerManager
 		bool sendQueueEmpty();
 
 		bool checkNextOp(drt::network::PeerInfo *peer=nullptr);
+		worker::ManagedScene *getManagedScene(const render::Scene *) const;
 
 		worker::NetworkWorker *getNetwork();
 

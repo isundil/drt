@@ -68,6 +68,7 @@ namespace client
             this.DrawPixel = new DrawPixelDelegate(DrawPixel3DView);
             this.DrawChunk = new DrawChunkDelegate(DrawChunk3DView);
             this.Monitor = new MonitorDelegate(UpdateMonitor);
+            this.UpdateImage = new UpdateImageDelegate(updateImage);
 
             td_bitmap = new Bitmap(view_3d.Width, view_3d.Height);
             empty_bitmap(td_bitmap);

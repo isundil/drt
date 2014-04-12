@@ -7,9 +7,23 @@ using System.Threading.Tasks;
 
 namespace client
 {
+    public class myTcpClient : TcpClient
+    {
+        public bool IsDisposed { get; set; }
+        protected override void Dispose(bool d)
+        {
+            IsDisposed = true;
+            base.Dispose(d);
+        }
+
+        public myTcpClient(string ip, int port)
+            : base (ip, port)
+        { }
+    }
+
     public class ConClient
     {
-        TcpClient con = null;
+        myTcpClient con = null;
 
         public enum eInstruction
         {
@@ -130,7 +144,7 @@ namespace client
             try
             {
                 clientId = 0xffff;
-                con = new TcpClient(ip, port);
+                con = new myTcpClient(ip, port);
 
                 CAUTH();
             }
@@ -222,6 +236,7 @@ namespace client
         public bool isAvailable()
         {
             if (con == null) return false;
+            if (con.IsDisposed) return false;
             if (con.Client == null) return false;
             return !((con.Client.Poll(1000, SelectMode.SelectRead) && (con.Available == 0)) || !con.Connected);
         }

@@ -116,7 +116,10 @@ namespace client.Objects
             }
         }
 
-        override public Modules.eModules getModule() { return Modules.eModules.BASIC_LIGHT; }
+        override public Modules.eModules getModule(bool final_render = false)
+        {
+            return (final_render ? Modules.eModules.ADVANCED_LIGHT : Modules.eModules.BASIC_LIGHT);
+        }
         override public int getSubModule()
         {
             return Modules.Submodules[Modules.eModules.BASIC_LIGHT]["LIGHT"];
@@ -127,7 +130,7 @@ namespace client.Objects
             return new byte[] { };
         }
 
-        new public SceneItem getSceneItem()
+        new public SceneItem getSceneItem(bool final_render = false)
         {
             var sc = new SceneItem(this);
 
@@ -138,6 +141,25 @@ namespace client.Objects
             translation.Module = (byte)Modules.eModules.BASIC_TRANSFORM;
             translation.SubModule = (byte)Modules.Submodules[Modules.eModules.BASIC_TRANSFORM]["TRANSLATION"];
             sc.addItem(translation);
+
+            if (getModule(final_render) == Modules.eModules.ADVANCED_LIGHT)
+            {
+                if (Transparency != 0)
+                {
+                    var transparency = new SceneItem(this);
+                    transparency.Module = (byte)Modules.eModules.ADVANCED_LIGHT;
+                    transparency.SubModule = (byte)Modules.Submodules[Modules.eModules.ADVANCED_LIGHT]["TRANSPARENCY"];
+                    sc.addItem(transparency);
+                }
+
+                if (Reflection != 0)
+                {
+                    var reflection = new SceneItem(this);
+                    reflection.Module = (byte)Modules.eModules.ADVANCED_LIGHT;
+                    reflection.SubModule = (byte)Modules.Submodules[Modules.eModules.ADVANCED_LIGHT]["REFLECTION"];
+                    sc.addItem(reflection);
+                }
+            }
 
             return sc;
         }

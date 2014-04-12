@@ -19,13 +19,15 @@ namespace client
         {
             BASIC_SHAPE,
             BASIC_TRANSFORM,
-            BASIC_LIGHT
+            BASIC_LIGHT,
+            ADVANCED_LIGHT
         }
         public static Dictionary<eModules, byte[]> ModuleNames = new Dictionary<eModules, byte[]>()
         {
             { eModules.BASIC_SHAPE, to20Bytes("basic_shape") },
             { eModules.BASIC_TRANSFORM, to20Bytes("basic_transform") },
-            { eModules.BASIC_LIGHT, to20Bytes("basic_light") }
+            { eModules.BASIC_LIGHT, to20Bytes("basic_light") },
+            { eModules.ADVANCED_LIGHT, to20Bytes("advanced_light") }
         };
         public static Dictionary<eModules, Dictionary<string, int>> Submodules = new Dictionary<eModules, Dictionary<string, int>>()
         {
@@ -40,6 +42,11 @@ namespace client
             } },
             { eModules.BASIC_LIGHT, new Dictionary<string, int>() {
                 { "LIGHT",       1 }
+            } },
+            { eModules.ADVANCED_LIGHT, new Dictionary<string, int>() {
+                { "LIGHT",       1 },
+                { "TRANSPARENCY",2 },
+                { "REFLECTION",  3 }
             } }
         };
     }
