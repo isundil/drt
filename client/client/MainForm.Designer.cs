@@ -59,6 +59,7 @@
             this.sphere_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.cylinder_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.cone_toolstrip = new System.Windows.Forms.ToolStripButton();
+            this.plane_toolstrip = new System.Windows.Forms.ToolStripButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -266,7 +267,8 @@
             this.light_toolstrip,
             this.sphere_toolstrip,
             this.cylinder_toolstrip,
-            this.cone_toolstrip});
+            this.cone_toolstrip,
+            this.plane_toolstrip});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -373,7 +375,7 @@
             this.cylinder_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.cylinder_toolstrip.Name = "cylinder_toolstrip";
             this.cylinder_toolstrip.Size = new System.Drawing.Size(23, 22);
-            this.cylinder_toolstrip.Text = "toolStripButton2";
+            this.cylinder_toolstrip.Text = "Cylinder";
             this.cylinder_toolstrip.Click += new System.EventHandler(this.cylinder_toolstrip_Click);
             // 
             // cone_toolstrip
@@ -383,8 +385,18 @@
             this.cone_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.cone_toolstrip.Name = "cone_toolstrip";
             this.cone_toolstrip.Size = new System.Drawing.Size(23, 22);
-            this.cone_toolstrip.Text = "toolStripButton1";
+            this.cone_toolstrip.Text = "Cone";
             this.cone_toolstrip.Click += new System.EventHandler(this.cone_toolstrip_Click);
+            // 
+            // plane_toolstrip
+            // 
+            this.plane_toolstrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.plane_toolstrip.Image = global::client.Properties.Resources.plan;
+            this.plane_toolstrip.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.plane_toolstrip.Name = "plane_toolstrip";
+            this.plane_toolstrip.Size = new System.Drawing.Size(23, 22);
+            this.plane_toolstrip.Text = "Plane";
+            this.plane_toolstrip.Click += new System.EventHandler(this.plane_toolstrip_Click);
             // 
             // panel1
             // 
@@ -722,6 +734,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ComboBox antialias;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripButton plane_toolstrip;
     }
 }
 

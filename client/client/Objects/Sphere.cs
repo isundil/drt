@@ -134,6 +134,8 @@ namespace client
             b.AddRange(BitConverter.GetBytes((UInt32)Color.GetARGB()));
             b.AddRange(BitConverter.GetBytes((UInt16)Radius));
 
+            AddLimits(b);
+
             return b.ToArray();
         }
     }

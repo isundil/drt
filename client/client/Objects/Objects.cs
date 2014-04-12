@@ -194,6 +194,13 @@ namespace client
             this.Transparency = o.Transparency;
             this.Reflection = o.Reflection;
             this.Brightness = o.Brightness;
+
+            this.LimXMax = o.LimXMax;
+            this.LimYMax = o.LimYMax;
+            this.LimZMax = o.LimZMax;
+            this.LimXMin = o.LimXMin;
+            this.LimYMin = o.LimYMin;
+            this.LimZMin = o.LimZMin;
         }
 
         abstract public object Clone();
@@ -338,6 +345,13 @@ namespace client
         public double Reflection { get; set; }
         public double Brightness { get; set; }
 
+        public short LimXMax { get; set; }
+        public short LimXMin { get; set; }
+        public short LimYMax { get; set; }
+        public short LimYMin { get; set; }
+        public short LimZMax { get; set; }
+        public short LimZMin { get; set; }
+
         [EditorAttribute(typeof(MyColorEditor), typeof(System.Drawing.Design.UITypeEditor))]
         public MyColor Color { get; set; }
 
@@ -357,6 +371,16 @@ namespace client
 
         virtual public Modules.eModules getModule(bool final_render = false) { return Modules.eModules.BASIC_SHAPE; }
         public abstract int getSubModule();
+
+        protected void AddLimits(List<byte> b)
+        {
+            b.AddRange(BitConverter.GetBytes((Int16)LimXMax));
+            b.AddRange(BitConverter.GetBytes((Int16)LimXMin));
+            b.AddRange(BitConverter.GetBytes((Int16)LimYMax));
+            b.AddRange(BitConverter.GetBytes((Int16)LimYMin));
+            b.AddRange(BitConverter.GetBytes((Int16)LimZMax));
+            b.AddRange(BitConverter.GetBytes((Int16)LimZMin));
+        }
 
         public abstract byte[] getBytes(bool final_render = false);
 

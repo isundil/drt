@@ -256,6 +256,8 @@ namespace client
             b.AddRange(BitConverter.GetBytes((UInt32)Color.GetARGB()));
             b.AddRange(BitConverter.GetBytes((double)a));
 
+            AddLimits(b);
+
             return b.ToArray();
         }
     }

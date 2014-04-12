@@ -301,6 +301,9 @@ namespace client
                     case eDrawMode.CONE:
                         object_type = typeof(Cone);
                         break;
+                    case eDrawMode.PLAN:
+                        object_type = typeof(Plan);
+                        break;
                 }
 
                 if (object_type == null) return false;

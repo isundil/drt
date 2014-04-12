@@ -12,6 +12,7 @@ namespace client
             SPHERE,
             CYLINDER,
             CONE,
+            PLAN,
             LIGHT,
             NONE,
             GRAB,

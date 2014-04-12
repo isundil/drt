@@ -133,6 +133,7 @@
     </Compile>
     <Compile Include="Objects\Light.cs" />
     <Compile Include="Objects\Objects.cs" />
+    <Compile Include="Objects\Plan.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneTransform.cs" />
@@ -284,6 +285,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cone_ptr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plan_ptr.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

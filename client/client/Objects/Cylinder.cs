@@ -79,7 +79,6 @@ namespace client
         {
             draw_points(b, vp, selected, Util.eView.x);
         }
-
         override public void draw_y(Image b, Viewport vp, bool selected)
         {
             draw_points(b, vp, selected, Util.eView.y);
@@ -164,7 +163,6 @@ namespace client
             return isInWireframe(p, Util.eView.z);
         }
 
-        static protected int count = 0;
 
         private List<Points> points_top = new List<Points>();
         private List<Points> points_bottom = new List<Points>();
@@ -206,6 +204,7 @@ namespace client
 
         public uint Height { get; set; }
 
+        static protected int count = 0;
         Cylinder()
         {
             this.centerPoint = new Points();
@@ -244,6 +243,8 @@ namespace client
 
             b.AddRange(BitConverter.GetBytes((UInt32)Color.GetARGB()));
             b.AddRange(BitConverter.GetBytes((UInt16)Radius));
+
+            AddLimits(b);
 
             return b.ToArray();
         }

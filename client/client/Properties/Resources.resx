@@ -160,6 +160,12 @@
   <data name="light_ptr" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\light_ptr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="plan" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plan.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="plan_ptr" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\plan_ptr.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="pointer_btn" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\pointer_btn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

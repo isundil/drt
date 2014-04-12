@@ -209,6 +209,13 @@ namespace client
 
             this.Cursor = new Cursor(Properties.Resources.cone_ptr.GetHicon());
         }
+
+        private void plane_toolstrip_Click(object sender, EventArgs e)
+        {
+            this.drawMode = eDrawMode.PLAN;
+
+            this.Cursor = new Cursor(Properties.Resources.plan_ptr.GetHicon());
+        }
     }
 
 }
