@@ -6,7 +6,7 @@
 class Cone : public AMathObject {
 public:
 
-  Cone(unsigned int color, double r);
+  Cone(unsigned int color, double r, double lxa, double lxi, double lya, double lyi, double lza, double lzi);
   Cone(Cone &);
 
   virtual double computeEquation(Camera * camera, Ray * ray);
@@ -22,8 +22,10 @@ public:
   virtual AObject	*clone() {return new Cone(*this);}
 
   double		getR() {return r;}
+  t_lim			getLim() {return lim;}
 
 private:
   double	r;
   unsigned int	color;
+  t_lim		lim;
 };

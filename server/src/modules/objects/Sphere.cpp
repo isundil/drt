@@ -1,16 +1,24 @@
 
 #include "Sphere.hpp"
 
-Sphere::Sphere(unsigned int color, double r) : AMathObject()
+Sphere::Sphere(unsigned int color, double r, double lxa, double lxi, double lya, double lyi, double lza,
+	       double lzi) : AMathObject()
 {
   this->color = color;
   this->r = r;
+  lim.limXMax = lxa;
+  lim.limXMin = lxi;
+  lim.limYMax = lya;
+  lim.limYMin = lyi;
+  lim.limZMax = lza;
+  lim.limZMin = lzi;
 }
 
 Sphere::Sphere(Sphere &s) :AMathObject()
 {
   this->color = s.getColor();
   this->r = s.getR();
+  this->lim = s.getLim();
 }
 
 double Sphere::computeEquation(Camera * camera, Ray * ray)
@@ -25,7 +33,27 @@ double Sphere::computeEquation(Camera * camera, Ray * ray)
   // std::cout << "res1 = " << res.first << std::endl;
   // std::cout << "res2 = " << res.second << std::endl;
 
-  return UtilSdeg::getK(res, d);
+  double	k = UtilSdeg::getK(res, d);
+  t_pt		p;
+  p.x = camera->getX() + k * ray->getX();
+  p.y = camera->getY() + k * ray->getY();
+  p.z = camera->getZ() + k * ray->getZ();
+  if (lim.limXMax > lim.limXMin)
+    {
+      if (p.x < lim.limXMin || p.x > lim.limXMax)
+	k = -1;
+    }
+  if (lim.limYMax > lim.limYMin)
+    {
+      if (p.y < lim.limYMin || p.y > lim.limYMax)
+	k = -1;
+    }
+  if (lim.limZMax > lim.limZMin)
+    {
+      if (p.z < lim.limZMin || p.z > lim.limZMax)
+	k = -1;
+    }
+  return k;
 }
 
 t_pt	Sphere::getNormale(t_pt p, t_pt l)
