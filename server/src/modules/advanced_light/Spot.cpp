@@ -181,6 +181,8 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   unsigned int	tmpcolor;
   unsigned int	nbSpots = 0;
   bool		shadow = false;
+  AObject *objTrans = nullptr;
+  AObject *objRot = nullptr;
 
   for (auto b = objects.cbegin(); b != objects.cend(); b++)
     {
