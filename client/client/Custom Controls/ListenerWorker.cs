@@ -10,11 +10,6 @@ using System.Windows.Forms;
 
 namespace client
 {
-    public class CompilFailException : Exception
-    {
-        public CompilFailException(string msg) : base(msg) { }
-    }
-
     public class ListenerWorker : BackgroundWorker
     {
         private ConClient Connection { get; set; }
@@ -138,5 +133,9 @@ namespace client
                 }
             }
         }
+    }
+    public class CompilFailException : Exception
+    {
+        public CompilFailException(string msg) : base(msg) { }
     }
 }

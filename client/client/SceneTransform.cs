@@ -66,7 +66,7 @@ namespace client
 
     public static class SceneTransform
     {
-        public static Scene TransformPreview(ObjectsList ol)
+        public static Scene TransformPreview(AObjects[] ol)
         {
             Scene s = new Scene();
 
@@ -80,10 +80,27 @@ namespace client
             s.RequestedModules.Add(Modules.eModules.BASIC_SHAPE);
             s.RequestedModules.Add(Modules.eModules.BASIC_TRANSFORM);
 
-            foreach (var o in ol.Collection)
+            foreach (var o in ol)
             {
                 if (!authModules.Contains(o.getModule()))
                     continue;
+                if (!s.RequestedModules.Contains(o.getModule()))
+                    s.RequestedModules.Add(o.getModule());
+                s.Items.Add(o.getSceneItem());
+            }
+
+            return s;
+        }
+
+        public static Scene TransformRender(AObjects[] ol)
+        {
+            Scene s = new Scene();
+
+            s.RequestedModules.Add(Modules.eModules.BASIC_SHAPE);
+            s.RequestedModules.Add(Modules.eModules.BASIC_TRANSFORM);
+
+            foreach (var o in ol)
+            {
                 if (!s.RequestedModules.Contains(o.getModule()))
                     s.RequestedModules.Add(o.getModule());
                 s.Items.Add(o.getSceneItem());

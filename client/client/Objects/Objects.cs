@@ -1,9 +1,11 @@
-﻿using client.Objects;
+﻿using client.Animations;
+using client.Objects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -58,12 +60,33 @@ namespace client
         public ObjectsList(MainForm f)
         {
             collection = new ObjectsListB(f);
+            animatronic = new Animatronic();
         }
+
+        public AObjects GetById(int id)
+        {
+            foreach (var o in Collection)
+            {
+                if (o.Id == id) return o;
+            }
+            return null;
+        }
+
+        public Animatronic animatronic;
 
         // For XML serialization only !
         public AObjects[] Items
         {
-            get { return collection.ToArray(); }
+            get {
+                var a = new AObjects[collection.Count];
+                int i = 0;
+                foreach (var o in collection)
+                {
+                    a[i] = o.Clone() as AObjects;
+                    i++;
+                }
+                return a;
+            }
             set
             {
                 foreach (var o in value)
@@ -104,7 +127,7 @@ namespace client
     [XmlInclude(typeof(Sphere))]
     [XmlInclude(typeof(Cylinder))]
     [XmlInclude(typeof(Cone))]
-    abstract public class AObjects
+    abstract public class AObjects : ICloneable
     {
         protected AObjects()
         {
@@ -125,10 +148,38 @@ namespace client
 
             if (!tmp)
             {
+                UUID = Guid.NewGuid().ToString();
+
                 total++;
                 Id = total;
             }
         }
+
+        protected AObjects(AObjects o)
+        {
+            Color = new MyColor(0, 0, 0);
+            matrixX = new MatrixX(0);
+            matrixY = new MatrixY(0);
+            matrixZ = new MatrixZ(0);
+
+            this.centerPoint = new Points();
+            this.Color = o.Color;
+            this.Id = o.Id;
+            this.Name = o.Name;
+            this.Radius = o.Radius;
+            this.RotX = o.RotX;
+            this.RotY = o.RotY;
+            this.RotZ = o.RotZ;
+            this.UUID = o.UUID;
+            this.X = o.X;
+            this.Y = o.Y;
+            this.Z = o.Z;
+        }
+
+        abstract public object Clone();
+
+        [Browsable(false)]
+        public string UUID { get; set; }
 
         public abstract void Refresh();
 

@@ -175,7 +175,7 @@ namespace client
 
             wait_for_instruction = false;
 
-            UInt16 Src = BitConverter.ToUInt16(bufhead, 0);
+            UInt16 Src = BitConverter.ToUInt16(bufhead, 2);
             UInt16 MinX = BitConverter.ToUInt16(bufhead, 4);
             UInt16 MinY = BitConverter.ToUInt16(bufhead, 6);
             byte W = bufhead[8];
