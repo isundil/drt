@@ -20,13 +20,13 @@ extern "C"
       {
       case SPHERE:
 	std::cout << "initializing Sphere" << std::endl;
-	ret = new Sphere(d->color, d->r);
+	ret = new Sphere(d->color, d->r, d->lxa, d->lxi, d->lya, d->lyi, d->lza, d->lzi);
 	break;
       case CYLINDRE:
-	ret = new Cylindre(d->color, d->r);
+	ret = new Cylindre(d->color, d->r, d->lxa, d->lxi, d->lya, d->lyi, d->lza, d->lzi);
 	break;
       case CONE:
-	ret = new Cone(a->color, (double)a->a);
+	ret = new Cone(a->color, (double)a->a, a->lxa, a->lxi, a->lya, a->lyi, a->lza, a->lzi);
 	break;
       case PLAN:
 	ret = new Plan((int) *data);
