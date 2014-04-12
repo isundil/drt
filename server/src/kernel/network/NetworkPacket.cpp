@@ -82,7 +82,10 @@ Result::Result(const Result &o): id(o.id), src(o.src), x(o.x), y(o.y), color(o.c
 { }
 
 ChunkResult::ChunkResult(unsigned short _id, unsigned short _src): id(_id), src(_src), minx(-1), miny(-1), maxx(0), maxy(0)
-{ }
+{
+	if (_src == 0xFFFF)
+		src = drt::WorkerManager::getSingleton()->getNetwork()->getMe()->getId();
+}
 
 Netsplit::Netsplit(unsigned short _id): id(_id)
 { }
@@ -357,7 +360,7 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 {
 	if (peer->getId() == (unsigned short)-1 && id == (unsigned short)-1)
 	{
-		peer->setConfirmed(manager.getNetwork()->nbSocket() -1);
+		peer->setConfirmed(manager.getNetwork()->nbServerSocket() -1);
 		peer->setId(manager.getNetwork()->incBiggerId());
 		manager.send(peer, new Welcome(peer->getId()));
 		//for (size_t i = 0; i < nbServer; i++)
@@ -367,6 +370,17 @@ void SAuth::doMagic(drt::WorkerManager &manager, drt::network::PeerInfo *peer)
 			manager.send(peer, new Confirm(peer->getId()));
 			manager.send(peer, new IdCh(-1, manager.getNetwork()->getMe()->getId()));
 			manager.send(peer, new Ready(manager.getNetwork()->getMe()->getId(), manager.getNetwork()->getMe()->ready()));
+			for (auto i = manager.getNetwork()->getPeers().cbegin(); i != manager.getNetwork()->getPeers().cend(); i++)
+				if (!(*i)->getConfirmed() && (*i)->getSocket() != peer->getSocket())
+				{
+					if (!(*i)->isAClient())
+					{
+						manager.send(peer, new SAuth((*i)->getId(), 0));
+						manager.send(peer, new Ready((*i)->getId(), (*i)->ready()));
+					}
+					else
+						manager.send(peer, new CAuth((*i)->getId()));
+				}
 		}
 		else
 			manager.broadcast(new IdCh(peer->getId(), -1), peer);
@@ -413,7 +427,7 @@ void IdCh::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *p)
 	else if (newId == 0xFFFF && oldId != m.getNetwork()->getMe()->getId())
 	{
 		network::PeerInfo *pi = m.getNetwork()->addServer(p->getSocket(), oldId);
-		unsigned int children = m.getNetwork()->nbSocket(p->getSocket());
+		unsigned int children = m.getNetwork()->nbServerSocket(p->getSocket());
 
 		pi->setConfirmed(children);
 		m.broadcast(new IdCh(*this), p);
@@ -466,7 +480,10 @@ void Confirm::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *pi)
 		for (auto i = m.getNetwork()->getPeers().cbegin(); i != m.getNetwork()->getPeers().cend(); i++)
 			if (!(*i)->getConfirmed() && (*i)->getSocket() != newServ->getSocket())
 			{
-				m.send(newServ, new SAuth((*i)->getId(), 0));
+				if (!(*i)->isAClient())
+					m.send(newServ, new SAuth((*i)->getId(), 0));
+				else
+					m.send(newServ, new CAuth((*i)->getId()));
 				m.send(newServ, new Ready((*i)->getId(), (*i)->ready()));
 			}
 	}
