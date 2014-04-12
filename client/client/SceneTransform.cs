@@ -103,7 +103,7 @@ namespace client
             {
                 if (!s.RequestedModules.Contains(o.getModule(true)))
                     s.RequestedModules.Add(o.getModule(true));
-                s.Items.Add(o.getSceneItem());
+                s.Items.Add(o.getSceneItem(true));
             }
 
             return s;
