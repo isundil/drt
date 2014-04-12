@@ -144,13 +144,13 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   p.z = camera->getZ() + ray->getZ() * k;
 
   applyRotation(&p, objRot);
+  l.x = x - p.x - objTrans->getX();
+  l.y = y - p.y - objTrans->getY();
+  l.z = z - p.z - objTrans->getZ();
   n = obj->getNormale(p, l);
   p.x = p.x + objTrans->getX();
   p.y = p.y + objTrans->getY();
   p.z = p.z + objTrans->getZ();
-  l.x = x - p.x;
-  l.y = y - p.y;
-  l.z = z - p.z;
 
   this->normalize(&n);
   this->normalize(&l);

@@ -392,6 +392,9 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   p2 = p;
 
   applyRotation(&p, objRot);
+  l.x = x - p.x - objTrans->getX();
+  l.y = y - p.y - objTrans->getY();
+  l.z = z - p.z - objTrans->getZ();
   n = obj->getNormale(p, l);
 
   camera->reset();
@@ -405,9 +408,6 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   // p.x = camera->getX() + ray->getX() * k;
   // p.y = camera->getY() + ray->getY() * k;
   // p.z = camera->getZ() + ray->getZ() * k;
-  l.x = x - p.x - objTrans->getX();
-  l.y = y - p.y - objTrans->getY();
-  l.z = z - p.z - objTrans->getZ();
 
   shadow = isInShadow(objects, p, l, lastFound);
 

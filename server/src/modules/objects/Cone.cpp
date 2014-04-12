@@ -46,17 +46,47 @@ double		Cone::computeEquation(Camera *camera, Ray *ray)
   if (lim.limXMax > lim.limXMin)
     {
       if (p.x < lim.limXMin || p.x > lim.limXMax)
-	k = -1;
+	{
+	  k = -1;
+	  if (res.second > 0)
+	    {
+	      p.x = camera->getX() + res.second * ray->getX();
+	      p.y = camera->getY() + res.second * ray->getY();
+	      p.z = camera->getZ() + res.second * ray->getZ();
+	      if (p.x > lim.limXMin && p.x < lim.limXMax)
+		k = res.second;
+	    }
+	}
     }
   if (lim.limYMax > lim.limYMin)
     {
       if (p.y < lim.limYMin || p.y > lim.limYMax)
-	k = -1;
+	{
+	  k = -1;
+	  if (res.second > 0)
+	    {
+	      p.x = camera->getX() + res.second * ray->getX();
+	      p.y = camera->getY() + res.second * ray->getY();
+	      p.z = camera->getZ() + res.second * ray->getZ();
+	      if (p.y > lim.limYMin && p.y < lim.limYMax)
+		k = res.second;
+	    }
+	}
     }
   if (lim.limZMax > lim.limZMin)
     {
       if (p.z < lim.limZMin || p.z > lim.limZMax)
-	k = -1;
+	{
+	  k = -1;
+	  if (res.second > 0)
+	    {
+	      p.x = camera->getX() + res.second * ray->getX();
+	      p.y = camera->getY() + res.second * ray->getY();
+	      p.z = camera->getZ() + res.second * ray->getZ();
+	      if (p.z > lim.limZMin && p.z < lim.limZMax)
+		k = res.second;
+	    }
+	}
     }
   return k;
 }

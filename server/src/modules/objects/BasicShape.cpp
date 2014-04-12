@@ -26,10 +26,10 @@ extern "C"
 	ret = new Cylindre(d->color, d->r, d->lxa, d->lxi, d->lya, d->lyi, d->lza, d->lzi);
 	break;
       case CONE:
-	ret = new Cone(a->color, (double)a->a, a->lxa, a->lxi, a->lya, a->lyi, a->lza, a->lzi);
+	ret = new Cone(d->color, d->r, d->lxa, d->lxi, d->lya, d->lyi, d->lza, d->lzi);
 	break;
       case PLAN:
-	ret = new Plan((int) *data);
+	ret = new Plan(a->color, a->lxa, a->lxi, a->lya, a->lyi, a->lza, a->lzi);
 	break;
       default:
 	break;
