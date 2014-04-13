@@ -551,5 +551,6 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
     tmpcolor = 0;
   color = mergeColors3(tmpcolor, color);
   // color = mergeColors2(tmpcolor, color, 0.5);
+  // color = mergeColors(tmpcolor, color, obj->getColor());
   return color;
 }

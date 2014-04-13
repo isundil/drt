@@ -160,7 +160,8 @@ unsigned int Scene::calc(WorkerManager &, unsigned int x, unsigned int y)
 	t_Item	*lastFound = nullptr;
 
 	x = this->width - x;
-	Ray *ray = new Ray(this->d, (double)(this->width / 2) - x, (double)(this->height / 2) - y);
+	// Ray *ray = new Ray(this->d, (double)(this->width / 2) - x, (double)(this->height / 2) - y);
+	Ray *ray = camera->getRay(this->d, (double)(this->width / 2) - x, (double)(this->height / 2) - y);
 
 	for (auto i = objects.cbegin(); i != objects.cend(); i++)
 	  {
