@@ -93,17 +93,17 @@ void		Spot::applyRotation(t_pt *n, AObject *rot)
 void		Spot::applyRotation2(t_pt *n, AObject *rot)
 {
   t_pt		tmp = *n;
-  double	_cos = cos(- rot->getX());
-  double	_sin = sin( -rot->getX());
+  double	_cos = 0;
+  double	_sin = 0;
   double	x;
   double	y;
   double	z;
 
-  _cos = cos(rot->getZ());
-  _sin = sin(rot->getZ());
-  x = tmp.x * _cos - tmp.y * _sin;
-  y = tmp.x * _sin + tmp.y * _cos;
-  z = tmp.z;
+  _cos = cos(- rot->getX());
+  _sin = sin(- rot->getX());
+  x = tmp.x;
+  y = tmp.y * _cos - tmp.z * _sin;
+  z = tmp.y * _sin + tmp.z * _cos;
   tmp.x = x;
   tmp.y = y;
   tmp.z = z;
@@ -117,11 +117,11 @@ void		Spot::applyRotation2(t_pt *n, AObject *rot)
   tmp.y = y;
   tmp.z = z;
 
-  _cos = cos(- rot->getZ());
-  _sin = sin(- rot->getZ());
-  x = tmp.x;
-  y = tmp.y * _cos - tmp.z * _sin;
-  z = tmp.y * _sin + tmp.z * _cos;
+  _cos = cos(rot->getZ());
+  _sin = sin(rot->getZ());
+  x = tmp.x * _cos - tmp.y * _sin;
+  y = tmp.x * _sin + tmp.y * _cos;
+  z = tmp.z;
   tmp.x = x;
   tmp.y = y;
   tmp.z = z;
@@ -163,10 +163,10 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   tmpcolor = lastFound->object->getColor();
   camera->reset();
   ray->reset();
-  t_pt tmpCam;
-  tmpCam.x = camera->getX();
-  tmpCam.y = camera->getY();
-  tmpCam.z = camera->getZ();
+  // t_pt tmpCam;
+  // tmpCam.x = camera->getX();
+  // tmpCam.y = camera->getY();
+  // tmpCam.z = camera->getZ();
   int d = 0;
   for (auto a = lastFound->subItems.cbegin(); a != lastFound->subItems.cend(); a++)
     {
@@ -179,18 +179,30 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
     }
   AObject *spotTrans = (*light->subItems.cbegin())->object;
 
+  t_pt tmpCam;
+  tmpCam.x = camera->getX();
+  tmpCam.y = camera->getY();
+  tmpCam.z = camera->getZ();
+
   x = spotTrans->getX();
   y = spotTrans->getY();
   z = spotTrans->getZ();
   p.x = camera->getX() + ray->getX() * k;
   p.y = camera->getY() + ray->getY() * k;
   p.z = camera->getZ() + ray->getZ() * k;
-
-  applyRotation(&p, objRot);
-  l.x = x - p.x - objTrans->getX();
-  l.y = y - p.y - objTrans->getY();
-  l.z = z - p.z - objTrans->getZ();
+  tmpCam.x -= objTrans->getX();
+  tmpCam.y -= objTrans->getY();
+  tmpCam.z -= objTrans->getZ();
   n = obj->getNormale(p, tmpCam);
+
+  // applyRotation(&n, objRot);
+  l.x = x - objTrans->getX();
+  l.y = y - objTrans->getY();
+  l.z = z - objTrans->getZ();
+  applyRotation2(&l, objRot);
+  l.x -= p.x;
+  l.y -= p.y;
+  l.z -= p.z;
 
   this->normalize(&n);
   this->normalize(&l);

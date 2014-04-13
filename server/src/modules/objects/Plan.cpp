@@ -28,8 +28,8 @@ double		Plan::computeEquation(Camera *camera, Ray *ray)
 
   if (camera->getZ() != 0 && ray->getZ() != 0)
     k = - camera->getZ() / ray->getZ();
-  // else
-  //   k = 0;
+  else if (camera->getZ() == 0 && ray->getZ() == 0)
+    k = -1;
 
   t_pt		p;
   p.x = camera->getX() + k * ray->getX();
