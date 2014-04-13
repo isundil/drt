@@ -638,7 +638,8 @@ void Calc::doMagic(drt::WorkerManager &m, PeerInfo *)
 	if (dst == m.getNetwork()->getMe()->getId())
 	{
 		PeerInfo *client = m.getNetwork()->getPeer(job);
-		m.addOperation(new drt::worker::AWorker::Operation(client, client->getScene(), op.x, op.y, op.width, op.height));
+		if (client)
+			m.addOperation(new drt::worker::AWorker::Operation(client, client->getScene(), op.x, op.y, op.width, op.height));
 	}
 	else
 		m.send(m.getNetwork()->getPeer(dst), new Calc(*this));
