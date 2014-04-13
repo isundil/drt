@@ -273,6 +273,8 @@ namespace client
                     bmp.SetPixel(w, h, getMeanColorArround(cpy, w, h));
                 }
             }
+
+            bmp.Save(@"TMP.BMP");
         }
 
         private bool drawTmpObject(MouseEventArgs e, Points p3, Util.eView v)
