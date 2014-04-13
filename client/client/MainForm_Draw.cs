@@ -215,13 +215,13 @@ namespace client
                 progressbar.Value = 0;
                 show_server_mapping.Enabled = true;
 
-                if (!ol.Animatronic.IsFinished)
-                    calculusWorker.RunWorkerAsync();
-
                 if (AAX != 0)
                 {
                     apply_antialiasing(destination);
                 }
+
+                if (!ol.Animatronic.IsFinished && calculusWorker.Mode == CalculusWorker.MODE.ANIM)
+                    calculusWorker.RunWorkerAsync();
             }
 
             if (pdestination != null) pdestination.Refresh();
@@ -273,6 +273,8 @@ namespace client
                     bmp.SetPixel(w, h, getMeanColorArround(cpy, w, h));
                 }
             }
+
+            bmp.Save(@"TMP.BMP");
         }
 
         private bool drawTmpObject(MouseEventArgs e, Points p3, Util.eView v)
