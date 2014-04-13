@@ -19,9 +19,25 @@ Spot::Spot(Spot &s) {
   x = 0;
   y = 0;
   z = 0;
-  color = getColor();
+  color = s.getColor();
   refMax = 0;
   transMax = 0;
+  // std::cout << "original :" << std::cout;
+  // s.describe();
+  // std::cout << "copy :" << std::cout;
+  // this->describe();
+}
+
+void	Spot::describe() {
+  std::cout << "+-------------------------------------------+" << std::endl
+	    << "| TYPE: advanced_light:Spot                 |" << std::endl
+	    << "| x = " << x << "                                     |" << std::endl
+	    << "| y = " << y << "                                     |" << std::endl
+	    << "| z = " << z << "                                     |" << std::endl
+	    << "| color = " << color << "                           |" << std::endl
+	    << "| refMax = " << refMax << "                                |" << std::endl
+	    << "| transMax = " << transMax << "                              |" << std::endl
+	    << "+-------------------------------------------+" << std::endl;
 }
 
 void		Spot::normalize(t_pt *a) {
@@ -54,6 +70,7 @@ unsigned int	Spot::applyLight(double cosa, unsigned int color, drt::render::Scen
       // std::cout << "Yay ! j'ai un coef !" << std::endl;
       coef = bright->getCoef();
     }
+  // coef = 0;
 
   colorSeparator(&b, &g, &r, color);
   colorSeparator(&bs, &gs, &rs, this->color);
@@ -157,6 +174,31 @@ unsigned int	Spot::mergeColors2(unsigned int color1, unsigned int color2, double
   b1 = b1 * coef + b2 * (1 - coef);
   if (b1 > 255)
     b1 = 255;
+
+  return colorUnificator(r1, g1, b1);
+}
+
+unsigned int	Spot::mergeColors3(unsigned int color1, unsigned int color2)
+{
+  unsigned int	r1 = 0;
+  unsigned int	g1 = 0;
+  unsigned int	b1 = 0;
+  unsigned int	r2 = 0;
+  unsigned int	g2 = 0;
+  unsigned int	b2 = 0;
+  unsigned int	rm = 0;
+  unsigned int	gm = 0;
+  unsigned int	bm = 0;
+
+  colorSeparator(&b1, &g1, &r1, color1);
+  colorSeparator(&b2, &g2, &r2, color2);
+
+  if (r1 < r2)
+    r1 = r2;
+  if (g1 < g2)
+    g1 = g2;
+  if (b1 < b2)
+    b1 = b2;
 
   return colorUnificator(r1, g1, b1);
 }
@@ -277,16 +319,28 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
   double	coef = 0;
   Transparency	*trans = nullptr;
 
+  transMax++;
+  if (transMax > 5)
+    {
+      transMax--;
+      return color;
+    }
   for (auto a = obj->subItems.cbegin(); a != obj->subItems.cend(); a++) {
     trans = dynamic_cast<Transparency *> ((*a)->object);
     if (trans)
       break;
   }
   if (!trans)
-    return color;
+    {
+      transMax--;
+      return color;
+    }
   coef = trans->getCoef();
   if (coef == 0)
-    return color;
+    {
+      transMax--;
+      return color;
+    }
 
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
@@ -309,6 +363,7 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
   if (lastFound != nullptr)
     for (auto it = objects.cbegin(); it != objects.cend(); it++)
       tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, tmpcolor);
+  transMax--;
   return mergeColors2(tmpcolor, color, coef);
 }
 
@@ -336,16 +391,28 @@ unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_I
   double	coef = 0;
   Reflection	*ref = nullptr;
 
+  refMax++;
+  if (refMax > 5)
+    {
+      refMax--;
+      return color;
+    }
   for (auto a = obj->subItems.cbegin(); a != obj->subItems.cend(); a++) {
     ref = dynamic_cast<Reflection *> ((*a)->object);
     if (ref)
       break;
   }
   if (!ref)
-    return color;
+    {
+      refMax--;
+      return color;
+    }
   coef = ref->getCoef();
   if (coef == 0)
-    return color;
+    {
+      refMax--;
+      return color;
+    }
 
   for (auto i = objects.cbegin(); i != objects.cend(); i++)
     {
@@ -368,6 +435,7 @@ unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_I
   if (lastFound != nullptr)
     for (auto it = objects.cbegin(); it != objects.cend(); it++)
       tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, tmpcolor);
+  refMax--;
   return mergeColors2(tmpcolor, color, coef);
 }
 
@@ -481,6 +549,8 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
     tmpcolor = applyLight(cosa, tmpcolor, lastFound);
   else
     tmpcolor = 0;
-  color = mergeColors2(tmpcolor, color, 0.5);
+  color = mergeColors3(tmpcolor, color);
+  // color = mergeColors2(tmpcolor, color, 0.5);
+  // color = mergeColors(tmpcolor, color, obj->getColor());
   return color;
 }

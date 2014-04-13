@@ -9,11 +9,11 @@ class	Camera;
 class	Ray;
 class	Scene;
 
-class		Spot : public AObject {
+class		BasicSpot : public AObject {
 public:
 
-  Spot();
-  Spot(Spot &);
+  BasicSpot();
+  BasicSpot(BasicSpot &);
 
   virtual double	computeEquation(Camera * camera, Ray * ray) {return -1;}
   virtual void		preProcess(Camera * camera, Ray * ray) {}
@@ -23,7 +23,7 @@ public:
   virtual double	getX() {return x;}
   virtual double	getY() {return y;}
   virtual double	getZ() {return z;}
-  virtual AObject	*clone() {return new Spot(*this);}
+  virtual AObject	*clone() {return new BasicSpot(*this);}
   unsigned int		applyLight(double, unsigned int);
   void			normalize(t_pt *);
   void			applyRotation(t_pt *n, AObject *rot);

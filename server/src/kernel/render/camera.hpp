@@ -24,6 +24,8 @@ public:
 
   virtual AObject	*clone() {return new Camera(*this);}
 
+  Ray		*getRay(double _x, double _y, double _z);
+
   double	getRX();
   double	getRY();
   double	getRZ();

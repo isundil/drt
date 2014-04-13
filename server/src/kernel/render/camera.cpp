@@ -1,5 +1,8 @@
 #include <string>
 #include "camera.hpp"
+#include "ray.hpp"
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 Camera::Camera(short x, short y, short z, double rx, double ry, double rz) : AObject() {
   this->x = (double)x;
@@ -35,6 +38,49 @@ Camera::Camera(Camera &cam) {
   mod_x = (double)0.f;
   mod_y = (double)0.f;
   mod_z = (double)0.f;
+}
+
+Ray	*Camera::getRay(double _x, double _y, double _z)
+{
+  t_pt		p;
+  double	x = 0;
+  double	y = 0;
+  double	z = 0;
+  double	_cos;
+  double	_sin;
+
+  p.x = _x - this->x;
+  p.y = _y - this->y;
+  p.z = _z - this->z;
+
+  _cos = cos(this->rx);
+  _sin = sin(this->rx);
+  x = p.x;
+  y = p.y * _cos - p.z * _sin;
+  z = p.y * _sin + p.z * _cos;
+  p.x = x;
+  p.y = y;
+  p.z = z;
+
+  _cos = cos(- this->ry);
+  _sin = sin(- this->ry);
+  x = p.x * _cos - p.z * _sin;
+  y = p.y;
+  z = p.x * _sin + p.z * _cos;
+  p.x = x;
+  p.y = y;
+  p.z = z;
+
+  _cos = cos(- this->rz);
+  _sin = sin(- this->rz);
+  x = p.x * _cos - p.y * _sin;
+  y = p.x * _sin + p.y * _cos;
+  z = p.z;
+  p.x = x + this->x;
+  p.y = y + this->y;
+  p.z = z + this->z;
+
+  return new Ray(p.x, p.y, p.z);
 }
 
 void	Camera::reset()
