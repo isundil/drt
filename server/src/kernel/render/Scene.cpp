@@ -55,7 +55,7 @@ Scene::Scene(Scene &s) : scenePath(s.getPath()) {
   camera = (Camera *) s.getCamera()->clone();
   d = s.getD();
   id = s.getId();
-  std::map<unsigned int, t_Item *> tmp = getObjects();
+  std::map<unsigned int, t_Item *> tmp = s.getObjects();
   for (auto a = tmp.cbegin(); a != tmp.cend(); a++) {
     t_Item *obj = new t_Item();
     obj->toReceive = (*a).second->toReceive;
@@ -65,6 +65,14 @@ Scene::Scene(Scene &s) : scenePath(s.getPath()) {
       obj2->toReceive = (*i)->toReceive;
       obj2->data = (*i)->data;
       obj2->object = (*i)->object->clone();
+      if (obj2->object->getX() != (*i)->object->getX())
+	std::cout << "difference !!! (getX)" << std::endl;
+      if (obj2->object->getY() != (*i)->object->getY())
+	std::cout << "difference !!! (getY)" << std::endl;
+      if (obj2->object->getZ() != (*i)->object->getZ())
+	std::cout << "difference !!! (getZ)" << std::endl;
+      if (obj2->object->getColor() != (*i)->object->getColor())
+	std::cout << "difference !!! (getColor)" << std::endl;
       obj->subItems.push_back(obj2);
     }
     obj->object = (*a).second->object->clone();
@@ -86,7 +94,7 @@ Scene::~Scene()
 
 Scene::s_Item::~s_Item()
 {
-	delete [] data;
+	// delete [] data;
 	delete object;
 	for (auto i = subItems.cbegin(); i != subItems.cend(); i++)
 		delete (*i);

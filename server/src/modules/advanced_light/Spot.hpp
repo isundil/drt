@@ -33,8 +33,11 @@ public:
   void			applyRotation(t_pt *n, AObject *rot);
   void			applyRotation2(t_pt *n, AObject *rot);
   unsigned int		mergeColors2(unsigned int color1, unsigned int color2, double coef);
+  unsigned int		mergeColors3(unsigned int color1, unsigned int color2);
   unsigned int		transparency(t_pt, Ray *, t_pt , drt::render::Scene::t_Item *, unsigned int, drt::render::Scene *, std::map<unsigned int, drt::render::Scene::t_Item *>);
   unsigned int		reflection(t_pt, Ray *, t_pt , drt::render::Scene::t_Item *, unsigned int, drt::render::Scene *, std::map<unsigned int, drt::render::Scene::t_Item *>);
+
+  void		describe();
 
 private:
   double	x;

@@ -39,7 +39,7 @@ void Worker::nextOp(Operation *op)
 		for (int j = op->y; j < maxY; j++)
 		{
 		  render::Scene *s2 = s->clone();
-			color = s->calc(manager, i, j);
+			color = s2->calc(manager, i, j);
 			delete (s2);
 			color |= 0xff000000;
 

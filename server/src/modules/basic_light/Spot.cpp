@@ -3,19 +3,19 @@
 #include "Spot.hpp"
 #include "Scene.hpp"
 
-Spot::Spot() {
+BasicSpot::BasicSpot() {
   x = 0.f;
   y = 0.f;
   z = 0.f;
 }
 
-Spot::Spot(Spot &s) {
+BasicSpot::BasicSpot(BasicSpot &s) {
   x = 0.f;
   y = 0.f;
   z = 0.f;
 }
 
-void		Spot::normalize(t_pt *a) {
+void		BasicSpot::normalize(t_pt *a) {
   double	r = sqrt(SQ(a->x) + SQ(a->y) + SQ(a->z));
 
   a->x = a->x / r;
@@ -23,7 +23,7 @@ void		Spot::normalize(t_pt *a) {
   a->z = a->z / r;
 }
 
-unsigned int	Spot::applyLight(double cosa, unsigned int color) {
+unsigned int	BasicSpot::applyLight(double cosa, unsigned int color) {
   unsigned int	r;
   unsigned int	g;
   unsigned int	b;
@@ -53,7 +53,7 @@ unsigned int	Spot::applyLight(double cosa, unsigned int color) {
   return tmpcolor;
 } 
 
-void		Spot::applyRotation(t_pt *n, AObject *rot)
+void		BasicSpot::applyRotation(t_pt *n, AObject *rot)
 {
   t_pt		tmp = *n;
   double	_cos = cos(- rot->getZ());
@@ -90,7 +90,7 @@ void		Spot::applyRotation(t_pt *n, AObject *rot)
   *n = tmp;
 }
 
-void		Spot::applyRotation2(t_pt *n, AObject *rot)
+void		BasicSpot::applyRotation2(t_pt *n, AObject *rot)
 {
   t_pt		tmp = *n;
   double	_cos = 0;
@@ -129,7 +129,7 @@ void		Spot::applyRotation2(t_pt *n, AObject *rot)
   *n = tmp;
 }
 
-void		Spot::colorSeparator(unsigned int *blue, unsigned int *green,
+void		BasicSpot::colorSeparator(unsigned int *blue, unsigned int *green,
 				     unsigned int *red, unsigned int a)
 {
   *blue = a & 0x0000FF;
@@ -140,7 +140,7 @@ void		Spot::colorSeparator(unsigned int *blue, unsigned int *green,
 
 }
 
-unsigned int	Spot::colorUnificator(unsigned int red, unsigned int green, unsigned int blue)
+unsigned int	BasicSpot::colorUnificator(unsigned int red, unsigned int green, unsigned int blue)
 {
   int	c;
 
@@ -154,7 +154,7 @@ unsigned int	Spot::colorUnificator(unsigned int red, unsigned int green, unsigne
   return (c);
 }
 
-unsigned int	Spot::mergeColors2(unsigned int color1, unsigned int color2, double coef)
+unsigned int	BasicSpot::mergeColors2(unsigned int color1, unsigned int color2, double coef)
 {
   unsigned int	r1 = 0;
   unsigned int	g1 = 0;
@@ -179,7 +179,7 @@ unsigned int	Spot::mergeColors2(unsigned int color1, unsigned int color2, double
   return colorUnificator(r1, g1, b1);
 }
 
-unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray * ray,
+unsigned int	BasicSpot::postProcess(drt::render::Scene * scene, Camera * camera, Ray * ray,
 				  AObject * obj, double k, unsigned int color)
 {
   t_pt		p;
@@ -195,7 +195,7 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
 
   for (auto b = objects.cbegin(); b != objects.cend(); b++)
     {
-      Spot *tmp = dynamic_cast<Spot *> ((*b).second->object);
+      BasicSpot *tmp = dynamic_cast<BasicSpot *> ((*b).second->object);
       if (tmp)
 	{
 	  if (tmp == this)

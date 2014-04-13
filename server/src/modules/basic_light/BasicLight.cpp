@@ -14,7 +14,7 @@ extern "C"
       {
       case 1:
 	std::cout << "initializing Spot" << std::endl;
-	ret = (AObject*) new Spot();
+	ret = (AObject*) new BasicSpot();
 	break;
       default:
 	break;
