@@ -90,6 +90,45 @@ void		Spot::applyRotation(t_pt *n, AObject *rot)
   *n = tmp;
 }
 
+void		Spot::applyRotation2(t_pt *n, AObject *rot)
+{
+  t_pt		tmp = *n;
+  double	_cos = cos(- rot->getX());
+  double	_sin = sin( -rot->getX());
+  double	x;
+  double	y;
+  double	z;
+
+  _cos = cos(rot->getZ());
+  _sin = sin(rot->getZ());
+  x = tmp.x * _cos - tmp.y * _sin;
+  y = tmp.x * _sin + tmp.y * _cos;
+  z = tmp.z;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+
+  _cos = cos(rot->getY());
+  _sin = sin(rot->getY());
+  x = tmp.x * _cos - tmp.z * _sin;
+  y = tmp.y;
+  z = tmp.x * _sin + tmp.z * _cos;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+
+  _cos = cos(- rot->getZ());
+  _sin = sin(- rot->getZ());
+  x = tmp.x;
+  y = tmp.y * _cos - tmp.z * _sin;
+  z = tmp.y * _sin + tmp.z * _cos;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+
+  *n = tmp;
+}
+
 unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray * ray,
 				  AObject * obj, double k, unsigned int color)
 {

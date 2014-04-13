@@ -5,6 +5,7 @@ Cone::Cone(unsigned int color, double r, double lxa, double lxi, double lya, dou
 {
   this->color = color;
   this->r = r;
+  std::cout << "                                            cone d'angle " << this->r << std::endl;
   lim.limXMax = lxa;
   lim.limXMin = lxi;
   lim.limYMax = lya;
@@ -39,55 +40,55 @@ double		Cone::computeEquation(Camera *camera, Ray *ray)
   // std::cout << res.second << std::endl;
 
   double	k = UtilSdeg::getK(res, d);
-  t_pt		p;
-  p.x = camera->getX() + k * ray->getX();
-  p.y = camera->getY() + k * ray->getY();
-  p.z = camera->getZ() + k * ray->getZ();
-  if (lim.limXMax > lim.limXMin)
-    {
-      if (p.x < lim.limXMin || p.x > lim.limXMax)
-	{
-	  k = -1;
-	  if (res.second > 0)
-	    {
-	      p.x = camera->getX() + res.second * ray->getX();
-	      p.y = camera->getY() + res.second * ray->getY();
-	      p.z = camera->getZ() + res.second * ray->getZ();
-	      if (p.x > lim.limXMin && p.x < lim.limXMax)
-		k = res.second;
-	    }
-	}
-    }
-  if (lim.limYMax > lim.limYMin)
-    {
-      if (p.y < lim.limYMin || p.y > lim.limYMax)
-	{
-	  k = -1;
-	  if (res.second > 0)
-	    {
-	      p.x = camera->getX() + res.second * ray->getX();
-	      p.y = camera->getY() + res.second * ray->getY();
-	      p.z = camera->getZ() + res.second * ray->getZ();
-	      if (p.y > lim.limYMin && p.y < lim.limYMax)
-		k = res.second;
-	    }
-	}
-    }
-  if (lim.limZMax > lim.limZMin)
-    {
-      if (p.z < lim.limZMin || p.z > lim.limZMax)
-	{
-	  k = -1;
-	  if (res.second > 0)
-	    {
-	      p.x = camera->getX() + res.second * ray->getX();
-	      p.y = camera->getY() + res.second * ray->getY();
-	      p.z = camera->getZ() + res.second * ray->getZ();
-	      if (p.z > lim.limZMin && p.z < lim.limZMax)
-		k = res.second;
-	    }
-	}
-    }
+  // t_pt		p;
+  // p.x = camera->getX() + k * ray->getX();
+  // p.y = camera->getY() + k * ray->getY();
+  // p.z = camera->getZ() + k * ray->getZ();
+  // if (lim.limXMax > lim.limXMin)
+  //   {
+  //     if (p.x < lim.limXMin || p.x > lim.limXMax)
+  // 	{
+  // 	  k = -1;
+  // 	  if (res.second > 0)
+  // 	    {
+  // 	      p.x = camera->getX() + res.second * ray->getX();
+  // 	      p.y = camera->getY() + res.second * ray->getY();
+  // 	      p.z = camera->getZ() + res.second * ray->getZ();
+  // 	      if (p.x > lim.limXMin && p.x < lim.limXMax)
+  // 		k = res.second;
+  // 	    }
+  // 	}
+  //   }
+  // if (lim.limYMax > lim.limYMin)
+  //   {
+  //     if (p.y < lim.limYMin || p.y > lim.limYMax)
+  // 	{
+  // 	  k = -1;
+  // 	  if (res.second > 0)
+  // 	    {
+  // 	      p.x = camera->getX() + res.second * ray->getX();
+  // 	      p.y = camera->getY() + res.second * ray->getY();
+  // 	      p.z = camera->getZ() + res.second * ray->getZ();
+  // 	      if (p.y > lim.limYMin && p.y < lim.limYMax)
+  // 		k = res.second;
+  // 	    }
+  // 	}
+  //   }
+  // if (lim.limZMax > lim.limZMin)
+  //   {
+  //     if (p.z < lim.limZMin || p.z > lim.limZMax)
+  // 	{
+  // 	  k = -1;
+  // 	  if (res.second > 0)
+  // 	    {
+  // 	      p.x = camera->getX() + res.second * ray->getX();
+  // 	      p.y = camera->getY() + res.second * ray->getY();
+  // 	      p.z = camera->getZ() + res.second * ray->getZ();
+  // 	      if (p.z > lim.limZMin && p.z < lim.limZMax)
+  // 		k = res.second;
+  // 	    }
+  // 	}
+  //   }
   return k;
 }
 
