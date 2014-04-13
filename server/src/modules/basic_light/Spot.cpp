@@ -129,6 +129,56 @@ void		Spot::applyRotation2(t_pt *n, AObject *rot)
   *n = tmp;
 }
 
+void		Spot::colorSeparator(unsigned int *blue, unsigned int *green,
+				     unsigned int *red, unsigned int a)
+{
+  *blue = a & 0x0000FF;
+  a = a >> 8;
+  *green = a & 0x0000FF;
+  a = a >> 8;
+  *red = a & 0x0000FF;
+
+}
+
+unsigned int	Spot::colorUnificator(unsigned int red, unsigned int green, unsigned int blue)
+{
+  int	c;
+
+  c = 0;
+  c = c >> 16;
+  c = red;
+  c = c << 8;
+  c += green;
+  c = c << 8;
+  c += blue;
+  return (c);
+}
+
+unsigned int	Spot::mergeColors2(unsigned int color1, unsigned int color2, double coef)
+{
+  unsigned int	r1 = 0;
+  unsigned int	g1 = 0;
+  unsigned int	b1 = 0;
+  unsigned int	r2 = 0;
+  unsigned int	g2 = 0;
+  unsigned int	b2 = 0;
+
+  colorSeparator(&b1, &g1, &r1, color1);
+  colorSeparator(&b2, &g2, &r2, color2);
+
+  r1 = r1 * coef + r2 * (1 - coef);
+  if (r1 > 255)
+    r1 = 255;
+  g1 = g1 * coef + g2 * (1 - coef);
+  if (g1 > 255)
+    g1 = 255;
+  b1 = b1 * coef + b2 * (1 - coef);
+  if (b1 > 255)
+    b1 = 255;
+
+  return colorUnificator(r1, g1, b1);
+}
+
 unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray * ray,
 				  AObject * obj, double k, unsigned int color)
 {
@@ -210,5 +260,6 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   if (cosa < 0)
     cosa = 0;
   tmpcolor = applyLight(cosa, tmpcolor);
+  tmpcolor = mergeColors2(tmpcolor, color, 0.5);
   return tmpcolor;
 }

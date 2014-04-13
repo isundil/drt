@@ -481,6 +481,6 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
     tmpcolor = applyLight(cosa, tmpcolor, lastFound);
   else
     tmpcolor = 0;
-  color = mergeColors(tmpcolor, color, 0xFFFFFF);
+  color = mergeColors2(tmpcolor, color, 0.5);
   return color;
 }
