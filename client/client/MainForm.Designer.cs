@@ -79,9 +79,11 @@
             this.panel8 = new System.Windows.Forms.Panel();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.show_server_mapping = new System.Windows.Forms.CheckBox();
-            this.calculusWorker = new client.CalculusWorker();
             this.antialias = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.finalrender = new System.Windows.Forms.CheckBox();
+            this.calculusWorker = new client.CalculusWorker();
+            this.skipanimations = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -600,14 +602,6 @@
             this.show_server_mapping.UseVisualStyleBackColor = true;
             this.show_server_mapping.CheckedChanged += new System.EventHandler(this.show_server_mapping_CheckedChanged);
             // 
-            // calculusWorker
-            // 
-            this.calculusWorker.Connection = null;
-            this.calculusWorker.DestinationImage = null;
-            this.calculusWorker.Offline = false;
-            this.calculusWorker.WorkerReportsProgress = true;
-            this.calculusWorker.WorkerSupportsCancellation = true;
-            // 
             // antialias
             // 
             this.antialias.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -618,7 +612,7 @@
             "4",
             "8",
             "16"});
-            this.antialias.Location = new System.Drawing.Point(500, 24);
+            this.antialias.Location = new System.Drawing.Point(696, 27);
             this.antialias.Name = "antialias";
             this.antialias.Size = new System.Drawing.Size(42, 21);
             this.antialias.TabIndex = 5;
@@ -627,11 +621,41 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(426, 30);
+            this.label1.Location = new System.Drawing.Point(622, 33);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 13);
+            this.label1.Size = new System.Drawing.Size(65, 13);
             this.label1.TabIndex = 6;
-            this.label1.Text = "Antialiasing x";
+            this.label1.Text = "Smoothing x";
+            // 
+            // finalrender
+            // 
+            this.finalrender.AutoSize = true;
+            this.finalrender.Location = new System.Drawing.Point(415, 29);
+            this.finalrender.Name = "finalrender";
+            this.finalrender.Size = new System.Drawing.Size(81, 17);
+            this.finalrender.TabIndex = 7;
+            this.finalrender.Text = "Final render";
+            this.finalrender.UseVisualStyleBackColor = true;
+            // 
+            // calculusWorker
+            // 
+            this.calculusWorker.Connection = null;
+            this.calculusWorker.DestinationImage = null;
+            this.calculusWorker.Offline = false;
+            this.calculusWorker.WorkerReportsProgress = true;
+            this.calculusWorker.WorkerSupportsCancellation = true;
+            // 
+            // skipanimations
+            // 
+            this.skipanimations.AutoSize = true;
+            this.skipanimations.Checked = true;
+            this.skipanimations.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.skipanimations.Location = new System.Drawing.Point(503, 29);
+            this.skipanimations.Name = "skipanimations";
+            this.skipanimations.Size = new System.Drawing.Size(100, 17);
+            this.skipanimations.TabIndex = 8;
+            this.skipanimations.Text = "Skip animations";
+            this.skipanimations.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -639,6 +663,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(750, 416);
+            this.Controls.Add(this.skipanimations);
+            this.Controls.Add(this.finalrender);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.antialias);
             this.Controls.Add(this.show_server_mapping);
@@ -735,6 +761,8 @@
         private System.Windows.Forms.ComboBox antialias;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripButton plane_toolstrip;
+        public System.Windows.Forms.CheckBox finalrender;
+        public System.Windows.Forms.CheckBox skipanimations;
     }
 }
 

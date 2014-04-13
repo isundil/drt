@@ -20,7 +20,7 @@ namespace client
 
         private void doScenePreviewCalculus(object o, DoWorkEventArgs e)
         {
-            if (mode != MODE.PREVIEW) return;
+            if (Mode != MODE.PREVIEW) return;
             var s = SceneTransform.TransformPreview(ol);
             
             if (! this.Offline) Connection.NEWJOB(s, DestinationImage.Size);
@@ -28,10 +28,10 @@ namespace client
 
         private void doFinalRenderCalculus(object o, DoWorkEventArgs e)
         {
-            if (mode != MODE.RENDER) return;
+            if (Mode != MODE.RENDER) return;
 
             render.Render.Invoke(render.Render.MyClose);
-            var s = SceneTransform.TransformRender(ol);
+            var s = SceneTransform.TransformRender(ol, form.finalrender.Checked);
             if (!this.Offline) Connection.NEWJOB(s, DestinationImage.Size);
         }
 
@@ -59,10 +59,10 @@ namespace client
 
         private void doFinalRenderWithAnimationsCalculus(object o, DoWorkEventArgs e)
         {
-            if (mode != MODE.ANIM) return;
+            if (Mode != MODE.ANIM) return;
 
 
-            var s = SceneTransform.TransformRender(ol);
+            var s = SceneTransform.TransformRender(ol, form.finalrender.Checked);
             var frame = animatronic.getNextFrame();
             if (frame == null)
             {
@@ -88,16 +88,17 @@ namespace client
             this.DoWork += new DoWorkEventHandler(doFinalRenderWithAnimationsCalculus);
         }
 
-        enum MODE {
+        public enum MODE {
             PREVIEW,
             RENDER,
             ANIM
-        }; MODE mode;
+        };
+        public MODE Mode;
 
         public void DoScenePreviewCalculus(ObjectsList ol)
         {
             this.ol = ol.Items;
-            mode = MODE.PREVIEW;
+            Mode = MODE.PREVIEW;
             this.RunWorkerAsync();
         }
 
@@ -110,12 +111,12 @@ namespace client
             this.form = f;
             this.render = r;
 
-            if (animatronic.FramesNumber == 0)
-                mode = MODE.RENDER;
+            if (animatronic.FramesNumber == 0 || form.skipanimations.Checked)
+                Mode = MODE.RENDER;
             else
             {
                 render.Render.Invoke(render.Render.SetMaximum, new object[] { animatronic.FramesNumber });
-                mode = MODE.ANIM;
+                Mode = MODE.ANIM;
             }
 
             this.RunWorkerAsync();

@@ -92,7 +92,7 @@ namespace client
             return s;
         }
 
-        public static Scene TransformRender(AObjects[] ol)
+        public static Scene TransformRender(AObjects[] ol, bool final_render)
         {
             Scene s = new Scene();
 
@@ -101,9 +101,9 @@ namespace client
 
             foreach (var o in ol)
             {
-                if (!s.RequestedModules.Contains(o.getModule(true)))
-                    s.RequestedModules.Add(o.getModule(true));
-                s.Items.Add(o.getSceneItem(true));
+                if (!s.RequestedModules.Contains(o.getModule(final_render)))
+                    s.RequestedModules.Add(o.getModule(final_render));
+                s.Items.Add(o.getSceneItem(final_render));
             }
 
             return s;
