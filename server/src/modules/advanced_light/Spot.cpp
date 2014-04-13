@@ -225,6 +225,45 @@ void		Spot::applyRotation(t_pt *n, AObject *rot)
   *n = tmp;
 }
 
+void		Spot::applyRotation2(t_pt *n, AObject *rot)
+{
+  t_pt		tmp = *n;
+  double	_cos = 0;
+  double	_sin = 0;
+  double	x;
+  double	y;
+  double	z;
+
+  _cos = cos(- rot->getX());
+  _sin = sin(- rot->getX());
+  x = tmp.x;
+  y = tmp.y * _cos - tmp.z * _sin;
+  z = tmp.y * _sin + tmp.z * _cos;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+
+  _cos = cos(rot->getY());
+  _sin = sin(rot->getY());
+  x = tmp.x * _cos - tmp.z * _sin;
+  y = tmp.y;
+  z = tmp.x * _sin + tmp.z * _cos;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+
+  _cos = cos(rot->getZ());
+  _sin = sin(rot->getZ());
+  x = tmp.x * _cos - tmp.y * _sin;
+  y = tmp.x * _sin + tmp.y * _cos;
+  z = tmp.z;
+  tmp.x = x;
+  tmp.y = y;
+  tmp.z = z;
+
+  *n = tmp;
+}
+
 unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_Item *obj,
 				   unsigned int color, drt::render::Scene *scene,
 				   std::map<unsigned int, drt::render::Scene::t_Item *> objects)
@@ -383,6 +422,11 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
     }
   AObject *spotTrans = (*light->subItems.cbegin())->object;
 
+  t_pt tmpCam;
+  tmpCam.x = camera->getX();
+  tmpCam.y = camera->getY();
+  tmpCam.z = camera->getZ();
+
   x = spotTrans->getX();
   y = spotTrans->getY();
   z = spotTrans->getZ();
@@ -391,25 +435,42 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   p.z = camera->getZ() + ray->getZ() * k;
   p2 = p;
 
+  tmpCam.x -= objTrans->getX();
+  tmpCam.y -= objTrans->getY();
+  tmpCam.z -= objTrans->getZ();
+  n = obj->getNormale(p, tmpCam);
+  l.x = x - objTrans->getX();
+  l.y = y - objTrans->getY();
+  l.z = z - objTrans->getZ();
+
+  // applyRotation(&p, objRot);
+  applyRotation2(&l, objRot);
+  l.x -= p.x;
+  l.y -= p.y;
+  l.z -= p.z;
+
   applyRotation(&p, objRot);
-  l.x = x - p.x - objTrans->getX();
-  l.y = y - p.y - objTrans->getY();
-  l.z = z - p.z - objTrans->getZ();
-  n = obj->getNormale(p, l);
+  t_pt l2;
+  l2.x = x - p.x - objTrans->getX();
+  l2.y = y - p.y - objTrans->getY();
+  l2.z = z - p.z - objTrans->getZ();
+
+  t_pt n2 = n;
+  applyRotation(&n2, objRot);
 
   camera->reset();
   ray->reset();
   p2.x = camera->getX() + ray->getX() * k;
   p2.y = camera->getY() + ray->getY() * k;
   p2.z = camera->getZ() + ray->getZ() * k;
-  tmpcolor = transparency(p2, ray, n, lastFound, tmpcolor, scene, objects);
-  tmpcolor = reflection(p2, ray, n, lastFound, tmpcolor, scene, objects);
+  tmpcolor = transparency(p2, ray, n2, lastFound, tmpcolor, scene, objects);
+  tmpcolor = reflection(p2, ray, n2, lastFound, tmpcolor, scene, objects);
 
   // p.x = camera->getX() + ray->getX() * k;
   // p.y = camera->getY() + ray->getY() * k;
   // p.z = camera->getZ() + ray->getZ() * k;
 
-  shadow = isInShadow(objects, p, l, lastFound);
+  shadow = isInShadow(objects, p, l2, lastFound);
 
   this->normalize(&n);
   this->normalize(&l);
@@ -420,6 +481,6 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
     tmpcolor = applyLight(cosa, tmpcolor, lastFound);
   else
     tmpcolor = 0;
-  color = mergeColors(tmpcolor, color, 0xFFFFFF);
+  color = mergeColors2(tmpcolor, color, 0.5);
   return color;
 }

@@ -7,8 +7,8 @@
 Rotation::Rotation(double x, double y, double z)
 {
   _x = x;
-  _y = z;
-  _z = y;
+  _y = y;
+  _z = z;
 }
 
 Rotation::Rotation(Rotation &r)
@@ -48,7 +48,7 @@ void	Rotation::xRotation(Camera * camera, Ray * ray)
 void	Rotation::yRotation(Camera * camera, Ray * ray)
 {
   // rotation en y
-  double	roty = (double)(this->_y);// + camera->getRY();
+  double	roty = (double)(this->_y);// - camera->getRY();
   double	cosy = cos(roty);
   double	siny = sin(roty);
   double	x;
@@ -75,7 +75,7 @@ void	Rotation::yRotation(Camera * camera, Ray * ray)
 void	Rotation::zRotation(Camera * camera, Ray * ray)
 {
   // rotation en z
-  double	rotz = (double)(this->_z);// + camera->getRZ();
+  double	rotz = (double)(this->_z);// - camera->getRZ();
   double	cosz = cos(rotz);
   double	sinz = sin(rotz);
   double	x;

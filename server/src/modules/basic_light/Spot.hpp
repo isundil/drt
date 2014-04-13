@@ -27,6 +27,10 @@ public:
   unsigned int		applyLight(double, unsigned int);
   void			normalize(t_pt *);
   void			applyRotation(t_pt *n, AObject *rot);
+  void			applyRotation2(t_pt *n, AObject *rot);
+  unsigned int		mergeColors2(unsigned int color1, unsigned int color2, double coef);
+  void			colorSeparator(unsigned int *, unsigned int *, unsigned int *, unsigned int);
+  unsigned int		colorUnificator(unsigned int red, unsigned int green, unsigned int blue);
 
 private:
   double	x;
