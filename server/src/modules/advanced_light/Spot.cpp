@@ -406,7 +406,13 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
 				   std::map<unsigned int, drt::render::Scene::t_Item *> objects)
 {
   Camera	cam(p.x, p.y, p.z);
-  Ray		ray(*r);
+  r->decMaxIT();
+  if (r->getMaxIT() <= 0)
+    {
+      r->incMaxIT();
+      return color;
+    }
+  Ray		ray(r->getX(), r->getY(), r->getZ(), r->getMaxIT());
   double	k = -1;
   double	tmpk = k;
   unsigned int	tmpcolor = 0;
@@ -459,6 +465,7 @@ unsigned int	Spot::transparency(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t
     for (auto it = objects.cbegin(); it != objects.cend(); it++)
       tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, tmpcolor);
   transMax--;
+  r->incMaxIT();
   return mergeColors2(tmpcolor, color, coef);
 }
 
@@ -478,7 +485,14 @@ unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_I
   tmpr.x = (-2.f * norm.x) * p_s + tmpr.x;
   tmpr.y = (-2.f * norm.y) * p_s + tmpr.y;
   tmpr.z = (-2.f * norm.z) * p_s + tmpr.z;
-  Ray		ray(tmpr.x, tmpr.y, tmpr.z);
+  r->decMaxIT();
+  if (r->getMaxIT() <= 0)
+    {
+      // std::cout << "r->getMaxIT() <= 0 (" << r->getMaxIT() << ") end of recursion." << std::endl;
+      r->incMaxIT();
+      return color;
+    }
+  Ray		ray(tmpr.x, tmpr.y, tmpr.z, r->getMaxIT());
   double	k = -1;
   double	tmpk = k;
   unsigned int	tmpcolor = 0;
@@ -531,6 +545,7 @@ unsigned int	Spot::reflection(t_pt p, Ray *r, t_pt norm, drt::render::Scene::t_I
     for (auto it = objects.cbegin(); it != objects.cend(); it++)
       tmpcolor = (*it).second->object->postProcess(scene, &cam, &ray, lastFound->object, k, tmpcolor);
   refMax--;
+  r->incMaxIT();
   return mergeColors2(tmpcolor, color, coef);
 }
 

@@ -6,6 +6,7 @@ class Ray : public AObject {
 public:
   
   Ray(double, double, double);
+  Ray(double, double, double, int);
   Ray(Ray &r);
   virtual double	computeEquation(Camera * camera, Ray * ray) {
     (void)camera;
@@ -31,6 +32,9 @@ public:
   void		setY(double _y);
   void		setZ(double _z);
 
+  int		getMaxIT() {return maxIT;}
+  void		decMaxIT() {maxIT--;}
+  void		incMaxIT() {maxIT++;}
   void		reset();
 
 private:
@@ -41,5 +45,7 @@ private:
   double	mod_x;
   double	mod_y;
   double	mod_z;
+
+  int		maxIT;
 };
 
