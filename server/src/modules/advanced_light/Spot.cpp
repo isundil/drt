@@ -48,6 +48,48 @@ void		Spot::normalize(t_pt *a) {
   a->z = a->z / r;
 }
 
+unsigned int	Spot::applyShadow(double cosa, unsigned int color, drt::render::Scene::t_Item *obj,
+				  t_shadow shadow) {
+  unsigned int	r;
+  unsigned int	g;
+  unsigned int	b;
+
+  unsigned int	rs;
+  unsigned int	gs;
+  unsigned int	bs;
+
+  double	coef = 0;
+  Brightness	*bright = nullptr;
+
+  for (auto a = obj->subItems.cbegin(); a != obj->subItems.cend(); a++) {
+    bright = dynamic_cast<Brightness *> ((*a)->object);
+    if (bright)
+      break;
+  }
+  if (bright)
+    coef = bright->getCoef();
+
+  // std::cout << "shadow:" << std::endl
+  // 	    << "coef: " << shadow.coef << std::endl
+  // 	    << "color: " << shadow.color << std::endl
+  // 	    << "shadow: " << shadow.shadow << std::endl;
+  colorSeparator(&b, &g, &r, color);
+  colorSeparator(&bs, &gs, &rs, shadow.color);
+
+  r = (cosa * r + cosa * rs * coef) * shadow.coef;
+  if (r > 255)
+    r = 255;
+  g = (cosa * g + cosa * gs * coef) * shadow.coef;
+  if (g > 255)
+    g = 255;
+  b = (cosa * b + cosa * bs * coef) * shadow.coef;
+  if (b > 255)
+    b = 255;
+
+  color = colorUnificator(r, g, b);
+  return color;
+} 
+
 unsigned int	Spot::applyLight(double cosa, unsigned int color, drt::render::Scene::t_Item *obj) {
   unsigned int	r;
   unsigned int	g;
@@ -140,15 +182,22 @@ unsigned int	Spot::mergeColors(unsigned int color1, unsigned int color2, unsigne
   // if (b1 > 255)
   //   b1 = 255;
 
-  r1 = r1 + r2;
-  if (r1 > rm)
-    r1 = rm;
-  g1 = g1 + g2;
-  if (g1 > gm)
-    g1 = gm;
-  b1 = b1 + b2;
-  if (b1 > bm)
-    b1 = bm;
+  // r1 = r1 + r2;
+  // if (r1 > rm)
+  //   r1 = rm;
+  // g1 = g1 + g2;
+  // if (g1 > gm)
+  //   g1 = gm;
+  // b1 = b1 + b2;
+  // if (b1 > bm)
+  //   b1 = bm;
+
+  if (r1 > r2)
+    r1 = r2;
+  if (g1 > g2)
+    g1 = g2;
+  if (b1 > b2)
+    b1 = b2;
 
   return colorUnificator(r1, g1, b1);
 }
@@ -203,6 +252,52 @@ unsigned int	Spot::mergeColors3(unsigned int color1, unsigned int color2)
   return colorUnificator(r1, g1, b1);
 }
 
+t_shadow       	Spot::getShadow(std::map<unsigned int, drt::render::Scene::t_Item *> objects, t_pt p,
+				 t_pt l, drt::render::Scene::t_Item *obj)
+{
+  p.x += (*obj->subItems.cbegin())->object->getX();
+  p.y += (*obj->subItems.cbegin())->object->getY();
+  p.z += (*obj->subItems.cbegin())->object->getZ();
+  Camera	camera(p.x, p.y, p.z);
+  Ray		ray(l.x, l.y, l.z);
+  double	k = -1;
+  // double	tmpk = k;
+  // bool		res = false;
+  Transparency	*trans;
+  t_shadow	res;
+
+  res.coef = 1;
+  res.color = this->color;
+  res.shadow = false;
+
+  for (auto i = objects.cbegin(); i != objects.cend(); i++)
+    {
+      camera.reset();
+      ray.reset();
+      if ((*i).second->object != obj->object)
+      	{
+      	  for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++)
+	    (*a)->object->preProcess(&camera, &ray);
+      	  k = (*i).second->object->computeEquation(&camera, &ray);
+      	  if (k < 1 && k > 0)
+	    {
+	      res.shadow = true;
+	      for (auto a = (*i).second->subItems.cbegin(); a != (*i).second->subItems.cend(); a++) {
+		trans = dynamic_cast<Transparency *> ((*a)->object);
+		if (trans)
+		  break;
+	      }
+	      if (trans) {
+		res.coef = res.coef * trans->getCoef();
+		res.color = mergeColors(res.color, i->second->object->getColor(), 0xFFFFFF);
+	      }
+	      else
+		res.coef = 0;
+	    }
+	}
+    }
+  return res;
+}
 bool		Spot::isInShadow(std::map<unsigned int, drt::render::Scene::t_Item *> objects, t_pt p,
 				 t_pt l, drt::render::Scene::t_Item *obj)
 {
@@ -538,19 +633,22 @@ unsigned int	Spot::postProcess(drt::render::Scene * scene, Camera * camera, Ray 
   // p.y = camera->getY() + ray->getY() * k;
   // p.z = camera->getZ() + ray->getZ() * k;
 
-  shadow = isInShadow(objects, p, l2, lastFound);
+  t_shadow	shad = getShadow(objects, p, l2, lastFound);
+  // shadow = isInShadow(objects, p, l2, lastFound);
 
   this->normalize(&n);
   this->normalize(&l);
   cosa = (n.x * l.x) + (n.y * l.y) + (n.z * l.z);
   if (cosa < 0)
     cosa = 0;
-  if (shadow == false)
+  if (shad.shadow == false)
     tmpcolor = applyLight(cosa, tmpcolor, lastFound);
+  else if (shad.coef > 0)
+    tmpcolor = applyShadow(cosa, tmpcolor, lastFound, shad);
   else
     tmpcolor = 0;
-  // color = mergeColors3(tmpcolor, color);
-  color = mergeColors2(tmpcolor, color, 0.5);
+  color = mergeColors3(tmpcolor, color);
+  // color = mergeColors2(tmpcolor, color, 0.5);
   // color = mergeColors(tmpcolor, color, obj->getColor());
   return color;
 }

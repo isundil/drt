@@ -9,6 +9,12 @@ class	Camera;
 class	Ray;
 class	Scene;
 
+typedef	struct		s_shadow {
+  unsigned int		color;
+  double		coef;
+  bool			shadow;
+}			t_shadow;
+
 class		Spot : public AObject {
 public:
 
@@ -36,6 +42,8 @@ public:
   unsigned int		mergeColors3(unsigned int color1, unsigned int color2);
   unsigned int		transparency(t_pt, Ray *, t_pt , drt::render::Scene::t_Item *, unsigned int, drt::render::Scene *, std::map<unsigned int, drt::render::Scene::t_Item *>);
   unsigned int		reflection(t_pt, Ray *, t_pt , drt::render::Scene::t_Item *, unsigned int, drt::render::Scene *, std::map<unsigned int, drt::render::Scene::t_Item *>);
+  t_shadow       	getShadow(std::map<unsigned int, drt::render::Scene::t_Item *> objects, t_pt p, t_pt l, drt::render::Scene::t_Item *obj);
+  unsigned int		applyShadow(double cosa, unsigned int color, drt::render::Scene::t_Item *obj, t_shadow shadow);
 
   void		describe();
 
