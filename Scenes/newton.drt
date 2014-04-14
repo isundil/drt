@@ -56,22 +56,10 @@
         <Modifier>-18</Modifier>
         <UUID>2680092e-ce7d-4323-b279-a3aa916d623c</UUID>
       </AAnimation>
-      <AAnimation xsi:type="TranslateY">
-        <StartingFrame>0</StartingFrame>
-        <FrameNumber>6</FrameNumber>
-        <Modifier>-24</Modifier>
-        <UUID>2680092e-ce7d-4323-b279-a3aa916d623c</UUID>
-      </AAnimation>
       <AAnimation xsi:type="RotateX">
         <StartingFrame>6</StartingFrame>
         <FrameNumber>6</FrameNumber>
         <Modifier>18</Modifier>
-        <UUID>2680092e-ce7d-4323-b279-a3aa916d623c</UUID>
-      </AAnimation>
-      <AAnimation xsi:type="TranslateY">
-        <StartingFrame>6</StartingFrame>
-        <FrameNumber>6</FrameNumber>
-        <Modifier>24</Modifier>
         <UUID>2680092e-ce7d-4323-b279-a3aa916d623c</UUID>
       </AAnimation>
       <AAnimation xsi:type="RotateX">
@@ -80,34 +68,16 @@
         <Modifier>-18</Modifier>
         <UUID>f625ab9b-929c-4f00-b10f-76122efe5228</UUID>
       </AAnimation>
-      <AAnimation xsi:type="TranslateY">
-        <StartingFrame>0</StartingFrame>
-        <FrameNumber>6</FrameNumber>
-        <Modifier>-24</Modifier>
-        <UUID>f625ab9b-929c-4f00-b10f-76122efe5228</UUID>
-      </AAnimation>
-      <AAnimation xsi:type="RotateY">
+      <AAnimation xsi:type="RotateX">
         <StartingFrame>6</StartingFrame>
         <FrameNumber>6</FrameNumber>
         <Modifier>18</Modifier>
-        <UUID>f625ab9b-929c-4f00-b10f-76122efe5228</UUID>
-      </AAnimation>
-      <AAnimation xsi:type="TranslateY">
-        <StartingFrame>6</StartingFrame>
-        <FrameNumber>6</FrameNumber>
-        <Modifier>24</Modifier>
         <UUID>f625ab9b-929c-4f00-b10f-76122efe5228</UUID>
       </AAnimation>
       <AAnimation xsi:type="RotateX">
         <StartingFrame>12</StartingFrame>
         <FrameNumber>6</FrameNumber>
         <Modifier>18</Modifier>
-        <UUID>27d12624-7292-4285-a6e7-3bac7187a62a</UUID>
-      </AAnimation>
-      <AAnimation xsi:type="TranslateY">
-        <StartingFrame>12</StartingFrame>
-        <FrameNumber>6</FrameNumber>
-        <Modifier>24</Modifier>
         <UUID>27d12624-7292-4285-a6e7-3bac7187a62a</UUID>
       </AAnimation>
       <AAnimation xsi:type="RotateX">
@@ -116,34 +86,16 @@
         <Modifier>-18</Modifier>
         <UUID>27d12624-7292-4285-a6e7-3bac7187a62a</UUID>
       </AAnimation>
-      <AAnimation xsi:type="TranslateY">
-        <StartingFrame>18</StartingFrame>
-        <FrameNumber>6</FrameNumber>
-        <Modifier>-24</Modifier>
-        <UUID>27d12624-7292-4285-a6e7-3bac7187a62a</UUID>
-      </AAnimation>
       <AAnimation xsi:type="RotateX">
         <StartingFrame>12</StartingFrame>
         <FrameNumber>6</FrameNumber>
         <Modifier>18</Modifier>
         <UUID>b3b909ae-3654-4c8b-b35f-7097c362db9c</UUID>
       </AAnimation>
-      <AAnimation xsi:type="TranslateY">
-        <StartingFrame>12</StartingFrame>
-        <FrameNumber>6</FrameNumber>
-        <Modifier>24</Modifier>
-        <UUID>b3b909ae-3654-4c8b-b35f-7097c362db9c</UUID>
-      </AAnimation>
       <AAnimation xsi:type="RotateX">
         <StartingFrame>18</StartingFrame>
         <FrameNumber>6</FrameNumber>
         <Modifier>-18</Modifier>
-        <UUID>b3b909ae-3654-4c8b-b35f-7097c362db9c</UUID>
-      </AAnimation>
-      <AAnimation xsi:type="TranslateY">
-        <StartingFrame>18</StartingFrame>
-        <FrameNumber>6</FrameNumber>
-        <Modifier>-24</Modifier>
         <UUID>b3b909ae-3654-4c8b-b35f-7097c362db9c</UUID>
       </AAnimation>
     </Animations>
@@ -206,7 +158,7 @@
       <Radius>10</Radius>
       <X>0</X>
       <Y>0</Y>
-      <Z>35</Z>
+      <Z>15</Z>
       <RotX>0</RotX>
       <RotY>0</RotY>
       <RotZ>0</RotZ>
@@ -231,7 +183,7 @@
       <Radius>10</Radius>
       <X>0</X>
       <Y>-20</Y>
-      <Z>35</Z>
+      <Z>15</Z>
       <RotX>0</RotX>
       <RotY>0</RotY>
       <RotZ>0</RotZ>
@@ -256,7 +208,7 @@
       <Radius>10</Radius>
       <X>0</X>
       <Y>-40</Y>
-      <Z>35</Z>
+      <Z>15</Z>
       <RotX>0</RotX>
       <RotY>0</RotY>
       <RotZ>0</RotZ>
@@ -281,7 +233,7 @@
       <Radius>10</Radius>
       <X>0</X>
       <Y>20</Y>
-      <Z>35</Z>
+      <Z>15</Z>
       <RotX>0</RotX>
       <RotY>0</RotY>
       <RotZ>0</RotZ>
@@ -306,7 +258,7 @@
       <Radius>10</Radius>
       <X>0</X>
       <Y>40</Y>
-      <Z>35</Z>
+      <Z>15</Z>
       <RotX>0</RotX>
       <RotY>0</RotY>
       <RotZ>0</RotZ>
@@ -537,11 +489,11 @@
       <UUID>2680092e-ce7d-4323-b279-a3aa916d623c</UUID>
       <Name>left_string_1</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>36</X>
       <Y>-40</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>35</RotY>
+      <RotY>26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -550,24 +502,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>f625ab9b-929c-4f00-b10f-76122efe5228</UUID>
       <Name>left_string_2</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>-36</X>
       <Y>-40</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>-35</RotY>
+      <RotY>-26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -576,24 +528,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>3f6bfc8d-e7cb-4671-a106-4c503d6cfd2b</UUID>
       <Name>Cylinder11</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>-36</X>
       <Y>-20</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>-35</RotY>
+      <RotY>-26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -602,24 +554,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>e3f8a109-cb6d-477b-91a4-affd6e660d3d</UUID>
       <Name>Cylinder12</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>36</X>
       <Y>-20</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>35</RotY>
+      <RotY>26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -628,24 +580,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>3e24289f-2b6c-4031-9f8d-2f5c3ede55c3</UUID>
       <Name>Cylinder13</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>-36</X>
       <Y>0</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>-35</RotY>
+      <RotY>-26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -654,24 +606,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>2616b58d-1f15-4ffe-8032-41c9e3842115</UUID>
       <Name>Cylinder14</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>36</X>
       <Y>0</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>35</RotY>
+      <RotY>26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -680,24 +632,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>8a6e6f3c-a0d5-4c28-b374-a2e384fa8e57</UUID>
       <Name>Cylinder15</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>-36</X>
       <Y>20</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>-35</RotY>
+      <RotY>-26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -706,24 +658,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>33b74c70-9b71-4cd7-bbcc-2c5f01883f0f</UUID>
       <Name>Cylinder16</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>36</X>
       <Y>20</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>35</RotY>
+      <RotY>26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -732,24 +684,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>27d12624-7292-4285-a6e7-3bac7187a62a</UUID>
       <Name>right_string_1</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>-36</X>
       <Y>40</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>-35</RotY>
+      <RotY>-26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -758,24 +710,24 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Cylinder">
       <UUID>b3b909ae-3654-4c8b-b35f-7097c362db9c</UUID>
       <Name>right_string_2</Name>
       <Radius>1</Radius>
-      <X>0</X>
+      <X>36</X>
       <Y>40</Y>
-      <Z>35</Z>
+      <Z>90</Z>
       <RotX>0</RotX>
-      <RotY>35</RotY>
+      <RotY>26</RotY>
       <RotZ>0</RotZ>
       <Transparency>0</Transparency>
       <Reflection>0</Reflection>
@@ -784,14 +736,14 @@
       <LimXMin>0</LimXMin>
       <LimYMax>0</LimYMax>
       <LimYMin>0</LimYMin>
-      <LimZMax>70</LimZMax>
-      <LimZMin>0</LimZMin>
+      <LimZMax>0</LimZMax>
+      <LimZMin>-85</LimZMin>
       <Color>
         <R>255</R>
         <G>255</G>
         <B>255</B>
       </Color>
-      <Height>140</Height>
+      <Height>180</Height>
     </AObjects>
     <AObjects xsi:type="Light">
       <UUID>58ae1d00-d894-47ff-baa0-e9d73fdf1971</UUID>
