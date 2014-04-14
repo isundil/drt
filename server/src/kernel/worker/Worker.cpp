@@ -35,16 +35,16 @@ void Worker::nextOp(Operation *op)
 	if (!s)
 		return;
 	rList = new drt::network::ChunkResult(s->getId());
+	render::Scene *s2 = s->clone();
 	for (int i = op->x; i < maxX; i++)
 		for (int j = op->y; j < maxY; j++)
 		{
-		  render::Scene *s2 = s->clone();
 			color = s2->calc(manager, i, j);
-			delete (s2);
 			color |= 0xff000000;
 
 			(*rList) += std::make_tuple(i, j, color);
 		}
+		delete (s2);
 	manager.send(op->client, rList);
 }
 

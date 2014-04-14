@@ -7,12 +7,21 @@ Ray::Ray(double x, double y, double z) : AObject() {
   this->x = x;
   this->y = y;
   this->z = z;
+  this->maxIT = 5;
+}
+
+Ray::Ray(double x, double y, double z, int _maxit) : AObject() {
+  this->x = x;
+  this->y = y;
+  this->z = z;
+  this->maxIT = _maxit;
 }
 
 Ray::Ray(Ray &r) : AObject() {
   this->x = r.getX();
   this->y = r.getY();
   this->z = r.getZ();
+  this->maxIT = r.getMaxIT();
 }
 
 double Ray::getX()
