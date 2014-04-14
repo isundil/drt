@@ -51,8 +51,8 @@ namespace client.Animations
             var test2 = new Jillzhang.GifUtility.GifEncoder(@"TMP.GIF");
             test2.Encode(test);
 
-            var w = new Jillzhang.GifUtility.GifHelper();
-            w.WaterMark(@"TMP.GIF", "Distributed RT - ITCS 422", Color.White, new Font(new FontFamily("Arial"), 8), 0, 0, @"TMP.GIF");
+            //var w = new Jillzhang.GifUtility.GifHelper();
+            //w.WaterMark(@"TMP2.GIF", "Distributed RT - ITCS 422", Color.White, new Font(new FontFamily("Arial"), 8), 0, 0, @"TMP2.GIF");
 
             renderer.Picture.LoadAsync(@"TMP.GIF");
         }

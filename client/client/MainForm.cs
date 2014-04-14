@@ -100,6 +100,7 @@ namespace client
             redraw();
         }
 
+        AObjects copy = null;
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
@@ -109,6 +110,23 @@ namespace client
                     ol.Remove(ol.Selected);
                     ol.Selected = null;
                     redraw();
+                    e.Handled = true;
+                }
+            }
+            if (e.Control && e.KeyCode == Keys.C)
+            {
+                if (ol.Selected != ol.Items[0])
+                copy = ol.Selected.Clone() as AObjects;
+                e.Handled = true;
+            }
+            if (e.Control && e.KeyCode == Keys.V)
+            {
+                if (copy != null)
+                {
+                    var cpy = copy.Copy();
+                    ol.Add(cpy);
+                    ol.Selected = cpy;
+                    e.Handled = true;
                 }
             }
         }

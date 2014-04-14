@@ -147,6 +147,15 @@ namespace client
     [XmlInclude(typeof(Plan))]
     abstract public class AObjects : ICloneable
     {
+        public AObjects Copy()
+        {
+            AObjects n = this.Clone() as AObjects;
+            n.Name = "Copy of " + this.Name;
+            n.AddOneToCount(n.GetType());
+            n.Register(true);
+            return n;
+        }
+
         protected AObjects()
         {
             Color = new MyColor(0, 0, 0);
@@ -154,8 +163,7 @@ namespace client
             matrixY = new MatrixY(0);
             matrixZ = new MatrixZ(0);
 
-            ++total;
-            Id = total;
+            Register(false);
         }
 
         protected AObjects(bool tmp) {
@@ -166,11 +174,17 @@ namespace client
 
             if (!tmp)
             {
-                UUID = Guid.NewGuid().ToString();
-
-                total++;
-                Id = total;
+                Register(true);
             }
+        }
+
+        private void Register(bool give_uuid = false)
+        {
+            if (give_uuid)
+            UUID = Guid.NewGuid().ToString();
+
+            total++;
+            Id = total;
         }
 
         protected AObjects(AObjects o)
