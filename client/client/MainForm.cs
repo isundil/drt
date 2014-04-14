@@ -124,6 +124,7 @@ namespace client
                 if (copy != null)
                 {
                     var cpy = copy.Copy();
+                    cpy.Refresh();
                     ol.Add(cpy);
                     ol.Selected = cpy;
                     e.Handled = true;

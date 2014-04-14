@@ -38,7 +38,27 @@ namespace client
             "Making stupid loading sentences...",
             "NAK NAK NAKNAAAAK !",
             "Forging one ring to rule them all...",
-            "Making the awesome sonic RAINBOOOOM !"
+            "Making the awesome sonic RAINBOOOOM !",
+            "Stealing a cow with a UFO...",
+            "The cake is a lie !",
+            "This is SPARTAAA !!!",
+            @"السلام عليكم",
+            "RTFM",
+            @"أريد أن أكل الدجاج",
+            "Cleaning lambda sector...",
+            "KNOCK KNOCK ! Who's there ?",
+            "(> ^_^)>",
+            "LOADING...",
+            "Reaching 88mph...",
+            "Brace yourselves, summer is comming !",
+            "Luke, I am your father !",
+            "It's not about loading an image, it's about sending a message...",
+            "Some people just want to see the final render...",
+            "SPLEEEEEENDID !",
+            "Do. Or do not. There is no try.",
+            "Hey. Hey. Hey apple. Hey. Hey Apple !",
+            "*** ERROR 404 ***",
+            "Aaaaaand it's gone..."
         };
 
         private void setMaximum(int max)
