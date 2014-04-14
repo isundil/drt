@@ -254,7 +254,7 @@ namespace client
             double a = Math.Atan2(Radius, (double)Height / 2);
 
             b.AddRange(BitConverter.GetBytes((UInt32)Color.GetARGB()));
-            b.AddRange(BitConverter.GetBytes((double)a));
+            b.AddRange(BitConverter.GetBytes((double)(a / 2)));
 
             AddLimits(b);
 
