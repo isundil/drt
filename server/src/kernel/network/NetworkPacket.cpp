@@ -600,6 +600,8 @@ void CompilFail::doMagic(drt::WorkerManager &m, drt::network::PeerInfo *)
 	network::PeerInfo *src = m.getNetwork()->getPeer(from);
 	network::PeerInfo *dst = m.getNetwork()->getPeer(id);
 
+	if (!dst || !src)
+		return;
 	if (dst->isDirect())
 	{
 		m.compilFail(src, dst->getScene());
