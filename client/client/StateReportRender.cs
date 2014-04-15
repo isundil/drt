@@ -52,7 +52,7 @@ namespace client
             "Reaching 88mph...",
             "Brace yourselves, summer is comming !",
             "Luke, I am your father !",
-            "It's not about loading an image, it's about sending a message...",
+            "With a great Raytracer comes great renders...",
             "Some people just want to see the final render...",
             "SPLEEEEEENDID !",
             "Do. Or do not. There is no try.",
