@@ -183,6 +183,7 @@ namespace client
                         y = 0;
                         x++;
                     }
+                    if (x >= bm.Width || y >= bm.Height) break;
                 }
             }
 
